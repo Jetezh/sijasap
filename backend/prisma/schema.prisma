@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  output   = "./node_modules/.prisma/client"
 }
 
 datasource db {
@@ -14,36 +14,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id_user Int @id @default(autoincrement())   
-  username String? @db.VarChar(255)
-  password String? @db.VarChar(255)
-  nama_lengkap String? @db.VarChar(255)
-  role_id Int
-  fakultas_id Int
-  unit_universitas_id Int
+enum Role {
+  ADMIN
+  SUPERADMIN
+  DOSEN
+  MAHASISWA
+}
 
-  role Role @relation(fields: [role_id], references: [id_role])
-  fakultas Fakultas @relation(fields: [fakultas_id], references: [id_fakultas])
-  unitUniversitas UnitUniversitas @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
+model User {
+  id_user Int @id @default(autoincrement())
+  email_upnvj String? @unique(map: "email")
+  username String
+  password String
+  nama_lengkap String?
+  role Role
+  fakultas_id Int?
+  unit_universitas_id Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fakultas Fakultas? @relation(fields: [fakultas_id], references: [id_fakultas])
+  unitUniversitas UnitUniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
 
   peminjaman  Peminjaman[]
 
   @@map("user")
 }
 
-model Role {
-  id_role Int @id @default(autoincrement())
-  nama_role String @unique
-  
-  user User[]
-
-  @@map("role")
-}
-
 model Fakultas {
   id_fakultas Int @id @default(autoincrement())
-  nama_fakultas String @db.VarChar(255)
+  nama_fakultas String
 
   user User[]
   ruangan Ruangan[]
@@ -55,19 +55,19 @@ model Fakultas {
 
 model UnitUniversitas {
   id_unit_univesitas Int @id @default(autoincrement())
-  nama_unit String @db.VarChar(255)
+  nama_unit String
 
   user User[]
   ruangan Ruangan[]
   kalenderAkademik KalenderAkademik[]
   hariLibur HariLibur[]
 
-  @@map("UnitUnivesitas")
+  @@map("UnitUniversitas")
 }
 
 model Ruangan {
   id_ruangan Int @id @default(autoincrement())
-  nama_ruangan String @db.VarChar(255)
+  nama_ruangan String
   gedung String
   lantai Int
   kapasitas Int
@@ -78,21 +78,31 @@ model Ruangan {
   fakultas Fakultas? @relation(fields: [fakultas_id], references: [id_fakultas])
   unitUniversitas UnitUniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
 
-  fasilitasRuangan FasilitasRuangan[]
   peminjaman Peminjaman[]
   jadwalKuliah JadwalKuliah[]
+  ruanganFasilitas RuanganFasilitas[]
 
   @@map("Ruangan")
 }
 
-model FasilitasRuangan {
+model Fasilitas {
   id_fasilitas Int @id @default(autoincrement())
-  id_ruangan Int
   nama_fasilitas String
 
-  ruangan Ruangan @relation(fields: [id_ruangan], references: [id_ruangan])
+  ruanganFasilitas RuanganFasilitas[]
 
-  @@map("FasilitasRuangan")
+  @@map("Fasilitas")
+}
+
+model RuanganFasilitas {
+  id_ruangan Int
+  id_fasilitas Int
+
+  ruangan Ruangan @relation(fields: [id_ruangan], references: [id_ruangan])
+  fasilitas Fasilitas @relation(fields: [id_fasilitas], references: [id_fasilitas])
+
+  @@id([id_ruangan, id_fasilitas])
+  @@map("RuanganFasilitas")
 }
 
 model Peminjaman  {
