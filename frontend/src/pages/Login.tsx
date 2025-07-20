@@ -36,6 +36,7 @@ const Login: React.FC = () => {
       Cookies.set('user', JSON.stringify(response.data.user));
 
       setIsAuthenticated(true);
+      // otentikasi user
       setUser(response.data.user);
 
       const role = response.data.user.role?.toUpperCase();
@@ -103,7 +104,7 @@ const Login: React.FC = () => {
               <button type='submit' className='lg:text-3xl md:text-2xl text-lg font-medium text-white lg:px-8 lg:py-5 md:px-6 md:py-4 px-4 py-2 lg:rounded-lg md:rounded-md rounded-sm bg-(--blue-button) hover:cursor-pointer hover:bg-(--blue-button-hover) duration-300'>Login</button>
             </form>
             <div className='w-full ring-gray-200 ring-1 lg:mt-10 md:mt-7 mt-5'></div>
-            <a className='lg:text-2xl md:text-xl text-md hover:cursor-pointer lg:mt-8 md:mt-6 mt-4'>bantuan<i>(Help)</i></a>
+            <a className='lg:text-2xl md:text-xl text-md text-(--link-color) hover:text-(--link-hover-color) hover:cursor-pointer lg:mt-8 md:mt-6 mt-4'>bantuan<i>(Help)</i></a>
           </div>
           <div>
             <button className='lg:text-3xl md:text-2xl text-lg text-white lg:px-8 lg:py-5 md:px-6 md:py-4 px-4 py-2 lg:rounded-lg md:rounded-md rounded-sm bg-(--red-button) hover:bg-(--red-button-hover) hover:cursor-pointer duration-300'>Ketentuan Peminjaman</button>

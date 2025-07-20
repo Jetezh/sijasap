@@ -1,15 +1,47 @@
 import React from 'react';
+import assets from '../../assets/assets';
+import Caraousal from '../../components/Caraousal';
 
 const Home: React.FC = () => {
+  const slides = [
+    {
+      img: assets.gedungFEB,
+      alt: 'gedung-feb',
+    },
+    {
+      img: assets.gedungFH,
+      alt: 'gedung-fh',
+    },
+    {
+      img: assets.gedungFIK,
+      alt: 'gedung-fik',
+    },
+    {
+      img: assets.gedungFIKES,
+      alt: 'gedung-fikes',
+    },
+    {
+      img: assets.gedungFISIP,
+      alt: 'gedung-fisip',
+    },
+    {
+      img: assets.gedungFK,
+      alt: 'gedung-fk',
+    },
+    {
+      img: assets.gedungFT,
+      alt: 'gedung-ft',
+    }
+  ]
+
+  type slides = {
+    img: string,
+    alt: string
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Home</h1>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-600">Welcome to the Room Reservation System</p>
-          <p className="text-gray-600 mt-2">This is where mahasiswa and dosen users can browse and reserve university rooms and facilities.</p>
-        </div>
-      </div>
+    <div className="w-full h-full mx-auto bg-gray-100">
+      <Caraousal slides={slides} />
     </div>
   );
 };

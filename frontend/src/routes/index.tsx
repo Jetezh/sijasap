@@ -2,10 +2,13 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Routes, Route, Navigate } from 'react-router-dom';
 
+import Layout from "../components/Layout";
 import Login from "../pages/Login";
 import AdminDashboard from "../pages/admin/Dashboard";
 import SuperAdminDashboard from "../pages/superadmin/Dashboard";
 import Home from "../pages/users/Home";
+import Ruangan from "../pages/users/Ruangan";
+import Fasilitas from "../pages/users/Fasilitas";
 
 export default function AppRoutes() {
     const authContext = useContext(AuthContext);
@@ -38,25 +41,29 @@ export default function AppRoutes() {
             {/* Default route - redirect to login */}
             <Route path="/" element={<Navigate to="/login" replace />} />
             
-            {/* Login route */}
+            {/* Login route - tanpa layout */}
             <Route path="/login" element={
                 isAuthenticated ? <Navigate to={getRedirectPath()} replace /> : <Login />
             } />
             
-            {/* Admin routes */}
+            {/* Admin routes - tanpa layout */}
             <Route path="/admin/dashboard/home" element={
                 isAuthenticated && user?.role === 'ADMIN' ? <AdminDashboard /> : <Navigate to="/login" replace />
             } />
             
-            {/* Superadmin routes */}
+            {/* Superadmin routes - tanpa layout */}
             <Route path="/superadmin/dashboard/home" element={
                 isAuthenticated && user?.role === 'SUPERADMIN' ? <SuperAdminDashboard /> : <Navigate to="/login" replace />
             } />
             
-            {/* Home route for mahasiswa and dosen */}
-            <Route path="/home" element={
-                isAuthenticated && (user?.role === 'MAHASISWA' || user?.role === 'DOSEN') ? <Home /> : <Navigate to="/login" replace />
-            } />
+            {/* User routes dengan Layout SPA */}
+            <Route path="/" element={
+                isAuthenticated && (user?.role === 'MAHASISWA' || user?.role === 'DOSEN') ? <Layout /> : <Navigate to="/login" replace />
+            }>
+                <Route path="home" element={<Home />} />
+                <Route path="ruangan" element={<Ruangan />} />
+                <Route path="fasilitas" element={<Fasilitas />} />
+            </Route>
             
             {/* Catch all route - redirect to login */}
             <Route path="*" element={<Navigate to="/login" replace />} />

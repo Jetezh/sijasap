@@ -1,0 +1,52 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState, useCallback } from "react";
+
+function Caraousal({ slides }: {slides: {img: string, alt: string}[]}) {
+    const [ current, setCurrent ] = useState(0);
+
+    const prevSlide = () => {
+        return current === 0 ? setCurrent(slides.length - 1) : setCurrent(current - 1);
+    }
+
+    const nextSlide = useCallback(() => {
+        setCurrent((current) => (current === slides.length - 1 ? 0 : current + 1));
+      }, [slides.length]);
+      
+    useEffect(() => {
+    const interval = setInterval(nextSlide, 4000);
+    return () => clearInterval(interval);
+    }, [nextSlide]);
+
+  return (
+    <div className="overflow-hidden relative lg:h-screen md:h-1/2 h-1/4">
+        <div className="flex transition h-full ease-out duration-500" style={{
+            width: `${slides.length * 100}%`,
+            transform: `translateX(-${current * (100 / slides.length)}%)`   
+        }}>
+            {slides.map( (s, i) => {
+                return <img 
+                key={i} 
+                src={s.img} 
+                alt={s.alt} 
+                className="object-cover h-full"
+                style={{ width: `${100 / slides.length}%` }}
+                 />
+            })}
+        </div>
+        <div className="absolute h-full w-full top-0 flex flex-row justify-between items-center lg:text-3xl md:text-xl text-sm lg:px-10 md:px-7 px-3 z-10">
+            <button onClick={prevSlide} className="hover:cursor-pointer rounded-full bg-white hover:bg-(--gray-color) lg:px-10 lg:py-8 md:px-6 md:py-4 px-2 py-1 duration-300">
+                <FontAwesomeIcon icon={faAngleLeft} />
+            </button>
+            <button onClick={nextSlide} className="hover:cursor-pointer rounded-full bg-white hover:bg-(--gray-color) lg:px-10 lg:py-8 md:px-6 md:py-4 px-2 py-1 duration-300">
+                <FontAwesomeIcon icon={faAngleRight} />
+            </button>
+        </div>
+        <div className="absolute w-full h-full flex items-center top-0 justify-center lg:text-5xl md:text-2xl text-md text-white font-bold lg:px-0 md:px-0 px-6">
+            <h1>SIJASAP<br />Sistem Informasi Peminjaman Sarana dan Prasarana</h1>
+        </div>
+    </div>
+  )
+}
+
+export default Caraousal
