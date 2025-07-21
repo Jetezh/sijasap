@@ -9,6 +9,9 @@ import gedungFIKES from './Gedung-FIKES.webp';
 import gedungFISIP from './Gedung-FISIP.webp';
 import gedungFK from './Gedung-FK.webp';
 import gedungFT from './Gedung-FT.webp';
+import badgeUPNVJ from './badge-upnvj.png';
+import badgeBLU from './badge-BLU.png';
+import badgeTutwuri from './badge-tutwuri.png'
 
 const assets = {
     bannerUpnvj,
@@ -21,7 +24,10 @@ const assets = {
     gedungFIKES,
     gedungFISIP,
     gedungFK,
-    gedungFT
+    gedungFT,
+    badgeUPNVJ,
+    badgeBLU,
+    badgeTutwuri
 }
 
 export default assets;

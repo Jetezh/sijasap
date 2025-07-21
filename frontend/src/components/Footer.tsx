@@ -9,7 +9,7 @@ function Footer() {
   return (
     <footer className="bg-(--primary-color) font-medium text-white lg:py-6 md:py-5 py-3">
       <div className="mx-auto lg:px-10 md:px-4 px-3">
-        <div className="flex flex-col md:flex-row justify-between items-center lg:text-xl md:text-md text-sm">
+        <div className="flex flex-col md:flex-row justify-between items-center lg:text-xl md:text-md text-xs">
           {/* Social Media Links */}
           <div className="flex flex-wrap justify-center space-x-6 mb-4 md:mb-0">
             <a href={facebook} className="hover:text-blue-400 transition-colors">Facebook</a>

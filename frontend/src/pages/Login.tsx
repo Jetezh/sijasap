@@ -47,9 +47,15 @@ const Login: React.FC = () => {
       } else if (role === "MAHASISWA" || role === "DOSEN") {
         navigate('/home', { replace: true });
       }
-    } catch (err: any) {
-      setValidation(err.response?.data || null);
-      setLoginFailed(err.response?.data || { message: 'Login gagal. Tolong coba lagi.' });
+    } catch (err) {
+      if(err && typeof err === "object" && "response in err") {
+        const errorObj = err as { response?: {data?: any} };
+        setValidation(errorObj.response?.data || null);
+        setLoginFailed(errorObj.response?.data || { message: 'Login gagal. Tolong coba lagi.' });
+      } else {
+        setValidation(null);
+        setLoginFailed({ message:'Login gagal. Tolong coba lagi.'});
+      }
     }
   }
 

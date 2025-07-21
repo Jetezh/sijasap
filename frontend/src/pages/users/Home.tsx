@@ -1,6 +1,7 @@
 import React from 'react';
 import assets from '../../assets/assets';
 import Caraousal from '../../components/Caraousal';
+import BuildingList from '../../components/BuildingList';
 
 const Home: React.FC = () => {
   const slides = [
@@ -39,9 +40,20 @@ const Home: React.FC = () => {
     alt: string
   }
 
+  const buildingList = [
+    "Fakultas Ilmu Komputer",
+    "Fakultas Ekonomi dan Bisni",
+    "Fakultas Kedokteran",
+    "Fakultas Hukum",
+    "Fakultas Ilmu Kesehatan",
+    "Fakultas Teknik",
+    "Fakultas Ilmu Sosial dan Ilmu Politik"
+  ]
+
   return (
     <div className="w-full h-full mx-auto bg-gray-100">
       <Caraousal slides={slides} />
+      <BuildingList building={buildingList} />
     </div>
   );
 };
