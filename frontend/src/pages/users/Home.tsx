@@ -2,6 +2,9 @@ import React from 'react';
 import assets from '../../assets/assets';
 import Caraousal from '../../components/Caraousal';
 import BuildingList from '../../components/BuildingList';
+import DatePicker from '../../components/DatePicker';
+import TimePicker from '../../components/TimePicker';
+import Button from '../../components/Button';
 
 const Home: React.FC = () => {
   const slides = [
@@ -54,6 +57,18 @@ const Home: React.FC = () => {
     <div className="w-full h-full mx-auto bg-gray-100">
       <Caraousal slides={slides} />
       <BuildingList building={buildingList} />
+      <div className='py-5 px-10'>
+        <form className='flex flex-row gap-5 text-2xl'>
+          <DatePicker title='Tanggal Awal' />
+          <DatePicker title='Tanggal Akhir' />
+          <TimePicker title='Waktu Mulai' />
+          <TimePicker title='Waktu Akhir' />
+          <Button />
+        </form>
+      </div>
+      <div className='gap-5'>
+        <span className='text-2xl font-medium'>Informasi Ruangan</span>
+      </div>
     </div>
   );
 };

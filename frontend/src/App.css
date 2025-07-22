@@ -5,6 +5,35 @@
   text-align: center;
 }
 
+select {
+  min-inline-size: 14ch;
+  justify-content: space-between;
+
+  &, &::picker(select) {
+    appearance: base-select;
+    padding: 1rem;
+    border: none;
+    border-radius: .5rem;
+    line-height: 1.6;
+  }
+
+  &::picker(select) {
+    margin-block-start: 0.5rem;
+  }
+
+  &::picker-icon {
+    display: none;
+  }
+
+  .arrow {
+    transition: rotate 0.3s ease;
+
+    :open & {
+      rotate: 180deg;
+    }
+  }
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);

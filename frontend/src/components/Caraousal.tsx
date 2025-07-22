@@ -36,7 +36,7 @@ function Caraousal({ slides }: {slides: {img: string, alt: string}[]}) {
                  />
             })}
         </div>
-        <div className="absolute h-full w-full top-0 flex flex-row justify-between items-center lg:text-3xl md:text-xl text-sm lg:px-10 md:px-7 px-3 z-10">
+        <div className="absolute h-full w-full top-0 flex flex-row justify-between items-center lg:text-3xl md:text-xl text-sm lg:px-10 md:px-7 px-3 z-11">
             <button onClick={prevSlide} className="hover:cursor-pointer rounded-full bg-white hover:bg-(--gray-color) lg:px-10 lg:py-8 md:px-6 md:py-4 px-2 py-0.5 duration-300">
                 <FontAwesomeIcon icon={faAngleLeft} />
             </button>
@@ -47,6 +47,11 @@ function Caraousal({ slides }: {slides: {img: string, alt: string}[]}) {
         <div className="absolute w-full h-full flex items-center top-0 justify-center lg:text-5xl md:text-2xl text-md text-white font-bold lg:px-0 md:px-0 px-6">
             <h1>SIJASAP<br />Sistem Informasi Peminjaman Sarana dan Prasarana</h1>
         </div>
+        <div className="absolute lg:top-10 md:top-5 top-3 flex justify-end w-full h-full lg:px-10 md:px-7 px-3 lg:gap-4 md:gap-3 gap-1 z-10">
+            <img src={assets.badgeUPNVJ} className="lg:w-20 lg:h-20 md:w-15 md:h-15 w-7 h-7" />
+            <img src={assets.badgeTutwuri} className="lg:w-20 lg:h-20 md:w-15 md:h-15 w-7 h-7" />
+            <img src={assets.badgeBLU} className="lg:w-20 lg:h-20 md:w-15 md:h-15 w-7 h-7" />
+        </div>
         <div className="absolute bottom-0 flex justify-center w-full lg:py-5 md:py-3 py-1 lg:gap-3 md:gap-2 gap-1">
             {
                 slides.map((s, i) => {
@@ -56,11 +61,6 @@ function Caraousal({ slides }: {slides: {img: string, alt: string}[]}) {
                     className={`rounded-full lg:w-7 lg:h-7 md:w-5 md:h-5 w-2.5 h-2.5 lg:border-4 md:border-3 border-2 border-white hover:cursor-pointer z-11 ${i === current ? "bg-white" : "bg-transparent"}`}></div>
                 })
             }
-        </div>
-        <div>
-            <img src={assets.badgeUPNVJ} />
-            <img src={assets.badgeTutwuri} />
-            <img src={assets.badgeBLU} />
         </div>
     </div>
   )
