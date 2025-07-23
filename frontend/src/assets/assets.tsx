@@ -11,7 +11,13 @@ import gedungFK from './Gedung-FK.webp';
 import gedungFT from './Gedung-FT.webp';
 import badgeUPNVJ from './badge-upnvj.png';
 import badgeBLU from './badge-BLU.png';
-import badgeTutwuri from './badge-tutwuri.png'
+import badgeTutwuri from './badge-tutwuri.png';
+
+// Ruangan FIK
+// FIKLAB
+import fiklab301 from './fiklab-301.jpg'
+
+// FIK
 
 const assets = {
     bannerUpnvj,
@@ -27,7 +33,8 @@ const assets = {
     gedungFT,
     badgeUPNVJ,
     badgeBLU,
-    badgeTutwuri
+    badgeTutwuri,
+    fiklab301
 }
 
 export default assets;

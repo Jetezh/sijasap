@@ -5,9 +5,18 @@
   text-align: center;
 }
 
+select:hover {
+  cursor: pointer;
+}
+
+option:hover {
+  cursor: pointer;
+}
+
 select {
   min-inline-size: 14ch;
   justify-content: space-between;
+  font-weight: 500;
 
   &, &::picker(select) {
     appearance: base-select;
