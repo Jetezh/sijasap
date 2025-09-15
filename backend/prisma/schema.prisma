@@ -74,6 +74,9 @@ model Ruangan {
   tipe_ruangan String
   fakultas_id Int?
   unit_universitas_id Int?
+  imgUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   fakultas Fakultas? @relation(fields: [fakultas_id], references: [id_fakultas])
   unitUniversitas UnitUniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])

@@ -9,6 +9,7 @@ import SuperAdminDashboard from "../pages/superadmin/Dashboard";
 import Home from "../pages/users/Home";
 import Ruangan from "../pages/users/Ruangan";
 import Fasilitas from "../pages/users/Fasilitas";
+import Notifications from "../pages/users/Notifications";
 
 export default function AppRoutes() {
     const authContext = useContext(AuthContext);
@@ -63,8 +64,9 @@ export default function AppRoutes() {
                 <Route path="home" element={<Home />} />
                 <Route path="ruangan" element={<Ruangan />} />
                 <Route path="fasilitas" element={<Fasilitas />} />
+                <Route path="notifikasi" element={<Notifications />} />
             </Route>
-            
+
             {/* Catch all route - redirect to login */}
             <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

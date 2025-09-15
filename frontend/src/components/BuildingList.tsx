@@ -9,7 +9,7 @@ type BuildingListProps = {
 const BuildingList: React.FC<BuildingListProps> = ({ building }) => {
   return (
     <div className="pt-5">
-        <select className="px-10 py-5 text-2xl bg-white border-none shadow-md">
+        <select className="lg:px-10 lg:py-5 md:px-7 md:py-4 px-5 py-2 lg:text-2xl md:text-xl text-sm bg-white border-none shadow-md">
           <button>
             <selectedcontent></selectedcontent>
             <span className="arrow"><FontAwesomeIcon icon={faChevronDown} /></span>

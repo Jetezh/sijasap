@@ -89,18 +89,18 @@ const Home: React.FC = () => {
     <div className="w-full h-full mx-auto bg-gray-100">
       <Caraousal slides={slides} />
       <BuildingList building={buildingList} />
-      <div className='py-5'>
-        <form className='flex flex-row flex-wrap gap-5 text-2xl font-medium px-10'>
-          <DatePicker title='Tanggal Awal' />
-          <DatePicker title='Tanggal Akhir' />
-          <TimePicker title='Waktu Mulai' />
-          <TimePicker title='Waktu Akhir' />
-          <Button title='Check' />
+      <div className='lg:py-10 md:py-7 py-5'>
+        <form className='flex flex-row flex-wrap justify-between lg:text-2xl md:text-xl text-sm font-medium lg:px-10 md:px-7 px-5'>
+          <DatePicker title='Tanggal Awal' classname='lg:basis-3/14 md:basis-1/2 basis-full' />
+          <DatePicker title='Tanggal Akhir' classname='lg:basis-3/14 md:basis-1/2 basis-full' />
+          <TimePicker title='Waktu Mulai' classname='lg:basis-2/14 md:basis-1/3 basis-1/2' />
+          <TimePicker title='Waktu Akhir' classname='lg:basis-2/14 md:basis-1/3 basis-1/2' />
+          <Button title='Check' classname='lg:basis-3/14 md:basis-1/3 basis-full lg:h-34 md:h-25 md:mt-4 lg:mt-0 mt-2 lg:mx-0 md:mx-0 mx-1' />
         </form>
       </div>
-      <div className='mt-15 px-10 flex flex-col gap-10'>
+      <div className='lg:mt-15 md:mt-10 mt-5 lg:px-10 md:px-7 px-5 flex flex-col gap-10'>
         <span className='text-3xl font-medium'>Informasi Ruangan</span>
-        <div className='flex flex-row flex-wrap gap-5 justify-between'>
+        <div className='flex flex-row flex-wrap justify-between'>
           {
             rooms.map((s, i) => {
               return <RoomCard {...s} key={"room" + i} />

@@ -5,6 +5,7 @@ import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import Alerts from '../components/Alerts';
+import Modal from '../components/Modal';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ const Login: React.FC = () => {
 
   const [ validation, setValidation ] = useState<{errors?: Array<{path: string, msg: string}>} | null>(null);
   const [ loginFailed, setLoginFailed ] = useState<{message?: string} | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,10 +64,10 @@ const Login: React.FC = () => {
 
   return (
     <div className='flex flex-col w-full h-screen'>
-      <div className='flex w-full lg:shadow-(--banner-shadow-lg) md:shadow-(--banner-shadow-md) shadow-(--banner-shadow) justify-center'>
+      <header className='flex w-full lg:shadow-(--banner-shadow-lg) md:shadow-(--banner-shadow-md) shadow-(--banner-shadow) justify-center z-10'>
         <img src={assets.bannerUpnvj} alt='banner-upnvj.png' loading='lazy' className='object-cover'/>
-      </div>
-      <div className='flex lg:flex-row md:flex-col flex-col w-full lg:h-screen'>
+      </header>
+      <main className='flex lg:flex-row md:flex-col flex-col w-full lg:h-screen'>
         <div className='flex flex-col flex-1 gap-5 justify-center items-center p-10'>
           <div className='w-7/12'>
             <img src={assets.highSchoolAmico} className='object-cover' />
@@ -113,10 +116,19 @@ const Login: React.FC = () => {
             <a className='lg:text-2xl md:text-xl text-md text-(--link-color) hover:text-(--link-hover-color) hover:cursor-pointer lg:mt-8 md:mt-6 mt-4'>bantuan<i>(Help)</i></a>
           </div>
           <div>
-            <button className='lg:text-3xl md:text-2xl text-lg text-white lg:px-8 lg:py-5 md:px-6 md:py-4 px-4 py-2 lg:rounded-lg md:rounded-md rounded-sm bg-(--red-button) hover:bg-(--red-button-hover) hover:cursor-pointer duration-300'>Ketentuan Peminjaman</button>
+            <button onClick={() => setIsModalOpen(true)} className='lg:text-3xl md:text-2xl text-lg text-white lg:px-8 lg:py-5 md:px-6 md:py-4 px-4 py-2 lg:rounded-lg md:rounded-md rounded-sm bg-(--red-button) hover:bg-(--red-button-hover) hover:cursor-pointer duration-300'>Ketentuan Peminjaman</button>
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+              <h2>Ketentuan Peminjaman</h2>
+              <p>Berikut adalah ketentuan peminjaman ruang:</p>
+              <ul className='flex flex-col gap-2 list-decimal list-inside text-left'>
+                <li>Peminjaman hanya untuk civitas akademika UPNVJ.</li>
+                <li>Ruang yang dipinjam harus sesuai dengan kebutuhan.</li>
+                <li>Peminjam bertanggung jawab atas kebersihan ruang.</li>
+              </ul>
+            </Modal>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

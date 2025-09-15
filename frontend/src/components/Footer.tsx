@@ -6,6 +6,8 @@ function Footer() {
   const youtube = 'https://www.youtube.com/channel/UCMw_GH6YVHMSHKcSA2WJjhw/videos';
   const tiktok = 'https://www.tiktok.com/@upnveteranjakarta';
 
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="bg-(--primary-color) font-medium text-white lg:py-6 md:py-5 py-3">
       <div className="mx-auto lg:px-10 md:px-4 px-3">
@@ -23,7 +25,7 @@ function Footer() {
           <div className="lg:hidden md:hidden border-1 border-gray-300 rounded-xl w-full mb-2"/>
           {/* Copyright */}
           <div>
-            Copyright UPNVJ 2025
+            Copyright UPNVJ ${currentYear}
           </div>
         </div>
       </div>

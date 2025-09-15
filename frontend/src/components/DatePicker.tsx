@@ -1,10 +1,12 @@
-type DatePickerProps = { title: string }
+import cn from 'clsx'
 
-function DatePicker({ title }: DatePickerProps ) {
+type DatePickerProps = { title: string, classname?: string }
+
+function DatePicker({ title, classname }: DatePickerProps ) {
   return (
-    <div className="flex flex-col flex-1 gap-3 text-left">
+    <div className={cn("flex flex-col gap-3 text-left lg:p-0 md:p-1.5 p-1", classname)}>
         <label>{title}</label>
-        <input type='date' id={title} className="bg-white px-7 py-7 shadow-md" />
+        <input type='date' id={title} className="bg-white lg:p-7 md:p-5 p-3 shadow-md" />
     </div>
   )
 }

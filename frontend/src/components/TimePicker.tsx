@@ -1,10 +1,12 @@
-type TimePickerProps = { title: string }
+import cn from 'clsx'
 
-function TimePicker({ title }: TimePickerProps) {
+type TimePickerProps = { title: string, classname?: string }
+
+function TimePicker({ title, classname }: TimePickerProps) {
   return (
-    <div className="flex flex-col flex-1 gap-3 text-left">
+    <div className={cn("flex flex-col gap-3 text-left lg:p-0 md:p-1.5 p-1", classname)}>
         <label>{title}</label>
-        <input type="time" id={title} className="bg-white px-7 py-7 shadow-md"/>
+        <input type="time" id={title} className="bg-white lg:p-7 md:p-5 p-3 shadow-md"/>
     </div>
   )
 }
