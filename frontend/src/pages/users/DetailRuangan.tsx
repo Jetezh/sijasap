@@ -1,5 +1,6 @@
 import Button from "../../components/Button"
 import assets from "../../assets/assets"
+import { Link } from "react-router-dom"
 
 function DetailRuangan() {
   return (
@@ -7,7 +8,9 @@ function DetailRuangan() {
         <section className="w-full lg:[height:calc(50vh-7rem)] md:h-96 h-60 p-0 relative">
             <img src={assets.gedungFIK} alt="Foto Ruangan" className="w-full h-full object-cover" />
             <h1 className="absolute bottom-4 left-4 text-white font-bold lg:text-5xl md:text-3xl text-xl">Nama Ruangan</h1>
-            <Button title="Pinjam Ruangan" classname="absolute bottom-4 right-4 lg:py-4 lg:px-10 md:py-3 md:px-7 py-2 px-5" />
+            <Link to={"/reserving-form"}>
+                <Button title="Pinjam Ruangan" classname="absolute bottom-4 right-4 lg:py-4 lg:px-10 md:py-3 md:px-7 py-2 px-5" />
+            </Link>
         </section>
         <section className="flex lg:flex-row md:flex-row flex-col lg:gap-10 md:gap-7 gap-5 lg:px-5 md:px-2 px-4">
             <div className="flex flex-col basis-1/2 gap-5 ">
@@ -36,6 +39,12 @@ function DetailRuangan() {
                             <h1>Kapasitas</h1>
                             <div className="bg-gray-200 border-1 py-5">asdasd</div>
                         </div>
+                </div>
+                <div>
+                    <h1 className="text-2xl text-left">Fasilitas Nama Ruangan</h1>
+                    <div>
+                        
+                    </div>
                 </div>
                 <div>
 

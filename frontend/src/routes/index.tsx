@@ -11,6 +11,7 @@ import Ruangan from "../pages/users/Ruangan";
 import Fasilitas from "../pages/users/Fasilitas";
 import Notifications from "../pages/users/Notifications";
 import DetailRuangan from "../pages/users/DetailRuangan";
+import ReservingForm from "../pages/users/ReservingForm";
 
 export default function AppRoutes() {
     const authContext = useContext(AuthContext);
@@ -67,6 +68,7 @@ export default function AppRoutes() {
                 <Route path="fasilitas" element={<Fasilitas />} />
                 <Route path="notifikasi" element={<Notifications />} />
                 <Route path="detail-ruangan" element={<DetailRuangan />} />
+                <Route path="reserving-form" element={<ReservingForm />} />
             </Route>
 
             {/* Catch all route - redirect to login */}
