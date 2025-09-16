@@ -46,7 +46,7 @@ const Home: React.FC = () => {
 
   const buildingList = [
     "Fakultas Ilmu Komputer",
-    "Fakultas Ekonomi dan Bisni",
+    "Fakultas Ekonomi dan Bisnis",
     "Fakultas Kedokteran",
     "Fakultas Hukum",
     "Fakultas Ilmu Kesehatan",
@@ -95,7 +95,7 @@ const Home: React.FC = () => {
           <DatePicker title='Tanggal Akhir' classname='lg:basis-3/14 md:basis-1/2 basis-full' />
           <TimePicker title='Waktu Mulai' classname='lg:basis-2/14 md:basis-1/3 basis-1/2' />
           <TimePicker title='Waktu Akhir' classname='lg:basis-2/14 md:basis-1/3 basis-1/2' />
-          <Button title='Check' classname='lg:basis-3/14 md:basis-1/3 basis-full lg:h-34 md:h-25 md:mt-4 lg:mt-0 mt-2 lg:mx-0 md:mx-0 mx-1' />
+          <Button title='Check' classname='lg:basis-3/14 text-base md:basis-1/3 basis-full lg:h-34 md:h-25 md:mt-4 lg:mt-0 mt-2 lg:mx-0 md:mx-0 mx-1 py-4' />
         </form>
       </div>
       <div className='lg:mt-15 md:mt-10 mt-5 lg:px-10 md:px-7 px-5 flex flex-col gap-10'>

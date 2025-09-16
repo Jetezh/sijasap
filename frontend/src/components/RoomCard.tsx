@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import Button from "./Button"
 import Tag from "./Tag"
 
@@ -20,7 +21,9 @@ function RoomCard(props: RoomCardProps) {
               <p><span className="font-medium">Lantai: </span>{props.lantai}</p>
               <p><span className="font-medium">Antrian Pinjaman: </span>{props.antrianPinjaman}</p>
             </div>
-            <Button title="View Details" classname="w-full lg:text-xl md:text-lg text-sm lg:py-5 md:py-3 py-2" />
+            <Link to={"/detail-ruangan"}>
+              <Button title="View Details" classname="w-full lg:text-xl md:text-lg text-sm lg:py-5 md:py-3 py-2" />
+            </Link>
         </div>
     </div>
   )
