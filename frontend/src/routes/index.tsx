@@ -2,16 +2,28 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import Layout from "../components/Layout";
+// Login page import
 import Login from "../pages/Login";
-import AdminDashboard from "../pages/admin/Dashboard";
-import SuperAdminDashboard from "../pages/superadmin/Dashboard";
+
+// User page imports
+import Layout from "../components/Layout";
 import Home from "../pages/users/Home";
 import Ruangan from "../pages/users/Ruangan";
 import Fasilitas from "../pages/users/Fasilitas";
 import Notifications from "../pages/users/Notifications";
 import DetailRuangan from "../pages/users/DetailRuangan";
 import ReservingForm from "../pages/users/ReservingForm";
+
+// Admin page imports
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import AdminHome from "../pages/admin/AdminHome";
+import Profile from "../pages/admin/Profile";
+import Laporan from "../pages/admin/Laporan";
+import KalenderAkademik from "../pages/admin/KalenderAkademik";
+import RuangDanFasilitas from "../pages/admin/RuangDanFasilitas";
+
+// Superadmin page imports
+import SuperAdminDashboard from "../pages/superadmin/Dashboard";
 
 export default function AppRoutes() {
     const authContext = useContext(AuthContext);
@@ -28,7 +40,7 @@ export default function AppRoutes() {
         
         switch (user.role) {
             case 'ADMIN':
-                return "/admin/dashboard/home";
+                return "/admin/";
             case 'SUPERADMIN':
                 return "/superadmin/dashboard/home";
             case 'MAHASISWA':
@@ -50,9 +62,15 @@ export default function AppRoutes() {
             } />
             
             {/* Admin routes - tanpa layout */}
-            <Route path="/admin/dashboard/home" element={
+            <Route path="/admin" element={
                 isAuthenticated && user?.role === 'ADMIN' ? <AdminDashboard /> : <Navigate to="/login" replace />
-            } />
+            }>
+                <Route path="home" element={<AdminHome />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="kalender-akademik" element={<KalenderAkademik />} />
+                <Route path="laporan" element={<Laporan />} />
+                <Route path="ruang-fasilitas" element={<RuangDanFasilitas />} />
+            </Route>
             
             {/* Superadmin routes - tanpa layout */}
             <Route path="/superadmin/dashboard/home" element={

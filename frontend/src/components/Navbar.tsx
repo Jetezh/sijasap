@@ -22,7 +22,7 @@ function Navbar({ className }: NavbarProps) {
 
   const { setIsAuthenticated } = authContext;
 
-  const login = () => {
+  const logout = () => {
     Cookies.remove('token');
     Cookies.remove('user');
 
@@ -48,7 +48,7 @@ function Navbar({ className }: NavbarProps) {
                 <FontAwesomeIcon icon={faUser} />
                 <div className=''>Profile</div>
               </DropdownItem>
-              <DropdownItem callbackFn={login}>
+              <DropdownItem callbackFn={logout}>
                 <FontAwesomeIcon icon={faPowerOff} />
                 <div className=''>Logout</div>
               </DropdownItem>

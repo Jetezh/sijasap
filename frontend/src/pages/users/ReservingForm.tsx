@@ -1,8 +1,10 @@
-import React from 'react'
-
 function ReservingForm() {
   return (
-    <div>ReservingForm</div>
+    <div>
+      <form>
+
+      </form>
+    </div>
   )
 }
 

@@ -62,6 +62,11 @@ const Login: React.FC = () => {
     }
   }
 
+  const showPassword =() => {
+    const passwordInput = document.getElementById('password') as HTMLInputElement;
+    return passwordInput.type === 'password' ? passwordInput.type = 'text' : passwordInput.type = 'password';
+  }
+
   return (
     <div className='flex flex-col w-full h-screen'>
       <header className='flex w-full lg:shadow-(--banner-shadow-lg) md:shadow-(--banner-shadow-md) shadow-(--banner-shadow) justify-center z-10'>
@@ -104,12 +109,17 @@ const Login: React.FC = () => {
                 className='lg:text-3xl md:text-2xl text-lg bg-(--gray-color) lg:px-7 lg:py-5 md:px-6 md:py-3 px-4 py-2 lg:rounded-md rounded-sm'
               />
               <input 
+                id='password'
                 type='password' 
                 placeholder='password' 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className='lg:text-3xl md:text-2xl text-lg bg-(--gray-color) lg:px-7 lg:py-5 md:px-6 md:py-3 px-4 py-2 lg:rounded-md rounded-sm'
               />
+              <label className='lg:text-2xl md:text-xl text-sm flex flex-row lg:gap-3 md:gap-2 gap-1 items-center hover:cursor-pointer'>
+                <input type='checkbox' className='hover:cursor-pointer lg:w-7 lg:h-7 md:w-5 md:h-5 w-3 h-3 duration-300' onClick={showPassword} />
+                Show Password
+              </label>
               <button type='submit' className='lg:text-3xl md:text-2xl text-lg font-medium text-white lg:px-8 lg:py-5 md:px-6 md:py-4 px-4 py-2 lg:rounded-lg md:rounded-md rounded-sm bg-(--blue-button) hover:cursor-pointer hover:bg-(--blue-button-hover) duration-300'>Login</button>
             </form>
             <div className='w-full ring-gray-200 ring-1 lg:mt-10 md:mt-7 mt-5'></div>
@@ -117,7 +127,7 @@ const Login: React.FC = () => {
           </div>
           <div>
             <button onClick={() => setIsModalOpen(true)} className='lg:text-3xl md:text-2xl text-lg text-white lg:px-8 lg:py-5 md:px-6 md:py-4 px-4 py-2 lg:rounded-lg md:rounded-md rounded-sm bg-(--red-button) hover:bg-(--red-button-hover) hover:cursor-pointer duration-300'>Ketentuan Peminjaman</button>
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <Modal isOpen={isModalOpen}>
               <h2>Ketentuan Peminjaman</h2>
               <p>Berikut adalah ketentuan peminjaman ruang:</p>
               <ul className='flex flex-col gap-2 list-decimal list-inside text-left'>
@@ -125,6 +135,7 @@ const Login: React.FC = () => {
                 <li>Ruang yang dipinjam harus sesuai dengan kebutuhan.</li>
                 <li>Peminjam bertanggung jawab atas kebersihan ruang.</li>
               </ul>
+              <button onClick={() => setIsModalOpen(false)} className='bg-(--red-button) hover:bg-(--red-button-hover) hover:cursor-pointer duration-300 text-white px-4 py-2 rounded-md w-full'>Close</button>
             </Modal>
           </div>
         </div>
