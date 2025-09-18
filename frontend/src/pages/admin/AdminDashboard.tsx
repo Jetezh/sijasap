@@ -5,7 +5,7 @@ import { Outlet, useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import Modal from '../../components/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faUser, faCalendarDays, faFile, faPersonShelter, faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons';
+import { faHouse, faBars, faUser, faCalendarDays, faFile, faPersonShelter, faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons';
 
 const AdminDashboard: React.FC = () => {
   const authContext = React.useContext(AuthContext);
@@ -15,8 +15,17 @@ const AdminDashboard: React.FC = () => {
 
   const { setIsAuthenticated } = authContext;
   const [ isModalOpen, setIsModalOpen ] = React.useState(false);
+  const [ sidebarCollapsed,  setSidebarCollapsed ] = React.useState(false);
 
   const navigate = useNavigate();
+
+  const sidebarItems = [
+    { name: 'Home', icon: faHouse, path: 'home' },
+    { name: 'Profile', icon: faUser, path: 'profile' },
+    { name: 'Kalender Akademik', icon: faCalendarDays, path: 'kalender-akademik' },
+    { name: 'Laporan', icon: faFile, path: 'laporan' },
+    { name: 'Ruang & Fasilitas', icon: faPersonShelter, path: 'ruang-fasilitas' },
+  ];
 
   const logout = () => {
     Cookies.remove('token');
@@ -29,13 +38,25 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-row bg-gray-100">
-      <LeftSidebar title='Fakultas Ilmu Komputer'>
-        <Link to={"home"}><SidebarItem className='flex gap-4 items-center'><FontAwesomeIcon icon={faHouse} />Home</SidebarItem></Link>
-        <Link to={"profile"}><SidebarItem className='flex gap-6 items-center'><FontAwesomeIcon icon={faUser} />Profile</SidebarItem></Link>
-        <Link to={"kalender-akademik"}><SidebarItem className='flex gap-6 items-center'><FontAwesomeIcon icon={faCalendarDays} />Kalender Akademik</SidebarItem></Link>
-        <Link to={"laporan"}><SidebarItem className='flex gap-7 items-center'><FontAwesomeIcon icon={faFile} />Laporan</SidebarItem></Link>
-        <Link to={"ruang-fasilitas"}><SidebarItem className='flex gap-5 items-center'><FontAwesomeIcon icon={faPersonShelter} />Ruang & Fasilitas</SidebarItem></Link>
-        <SidebarItem className='flex gap-5 items-center' onClick={() => setIsModalOpen(true)}><FontAwesomeIcon icon={faArrowRightFromBracket} />Log out</SidebarItem>
+      <LeftSidebar className={`min-h-screen ${sidebarCollapsed ? 'min-w-28' : 'min-w-120'} duration-300`}>
+        <div className='fixed'>
+          <div className="px-5 py-4 border-b-3 mb-2 flex gap-5 items-center font-bold duration-300" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
+            <FontAwesomeIcon icon={faBars} className='hover:cursor-pointer w-10' />{!sidebarCollapsed && <span>Fakultas Ilmu Komputer</span>}
+          </div>
+          {
+            sidebarItems.map((item) => (
+              <Link key={item.name} to={item.path}>
+                <SidebarItem className='flex gap-4'>
+                  <FontAwesomeIcon icon={item.icon} className='w-10' />
+                  { !sidebarCollapsed && item.name }
+                </SidebarItem>
+              </Link>
+            ))
+          }
+          <SidebarItem className='flex gap-5 items-center' onClick={() => setIsModalOpen(true)}>
+            <FontAwesomeIcon icon={faArrowRightFromBracket} className='w-10' />{ !sidebarCollapsed && "Log out" }
+          </SidebarItem>
+        </div>
         <Modal isOpen={isModalOpen}>
           <h1>Apakah kamu ingin keluar?</h1>
           <div className='flex flex-row gap-4'>
@@ -44,7 +65,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         </Modal>
       </LeftSidebar>
-      <main className="max-w-7xl mx-auto">
+      <main className="">
         <Outlet />
       </main>
     </div>

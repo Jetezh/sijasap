@@ -40,7 +40,7 @@ export default function AppRoutes() {
         
         switch (user.role) {
             case 'ADMIN':
-                return "/admin/";
+                return "/admin/home";
             case 'SUPERADMIN':
                 return "/superadmin/dashboard/home";
             case 'MAHASISWA':

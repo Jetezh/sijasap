@@ -44,7 +44,7 @@ const Login: React.FC = () => {
 
       const role = response.data.user.role?.toUpperCase();
       if(role === "ADMIN") {
-        navigate('/admin/dashboard/home', { replace: true });
+        navigate('/admin/home', { replace: true });
       } else if (role === "SUPERADMIN") {
         navigate('/superadmin/dashboard/home', { replace: true });
       } else if (role === "MAHASISWA" || role === "DOSEN") {
