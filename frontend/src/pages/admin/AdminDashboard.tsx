@@ -46,14 +46,14 @@ const AdminDashboard: React.FC = () => {
           {
             sidebarItems.map((item) => (
               <Link key={item.name} to={item.path}>
-                <SidebarItem className='flex gap-4'>
+                <SidebarItem to={item.path} className='flex gap-4'>
                   <FontAwesomeIcon icon={item.icon} className='w-10' />
                   { !sidebarCollapsed && item.name }
                 </SidebarItem>
               </Link>
             ))
           }
-          <SidebarItem className='flex gap-5 items-center' onClick={() => setIsModalOpen(true)}>
+          <SidebarItem to="" className='flex gap-5 items-center' onClick={() => setIsModalOpen(true)}>
             <FontAwesomeIcon icon={faArrowRightFromBracket} className='w-10' />{ !sidebarCollapsed && "Log out" }
           </SidebarItem>
         </div>
@@ -65,7 +65,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         </Modal>
       </LeftSidebar>
-      <main className="">
+      <main className={`flex-1 ml-${sidebarCollapsed ? '28 ' : '120'} duration-300`}>
         <Outlet />
       </main>
     </div>

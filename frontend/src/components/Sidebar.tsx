@@ -1,4 +1,5 @@
 import cn from 'clsx'
+import { NavLink } from 'react-router-dom'
 
 type LeftSidebarProps = {
   children?: React.ReactNode,
@@ -7,7 +8,7 @@ type LeftSidebarProps = {
 
 function LeftSidebar({children, className}: LeftSidebarProps) {
   return (
-    <div className={cn("text-left text-3xl font-medium px-4 py-2 bg-white border-r border-gray-200 fixed", className)}>
+    <div className={cn("text-left text-3xl font-medium px-4 py-2 bg-white border-r border-gray-200", className)}>
       {children}
     </div>
   )
@@ -16,14 +17,26 @@ function LeftSidebar({children, className}: LeftSidebarProps) {
 type SidebarItemProps = {
   children?: React.ReactNode,
   className?: string,
+  to: string
   onClick?: () => void
 }
 
-function SidebarItem({children, className, onClick}: SidebarItemProps) {
+function SidebarItem({children, className, to, onClick}: SidebarItemProps) {
   return (
-    <div onClick={onClick} className={cn("flex items-center mb-2 px-5 py-4 rounded hover:bg-(--primary-color) hover:text-white cursor-pointer duration-300", className)}>
+    <NavLink
+      to={to}
+      end
+      className={({ isActive }) =>
+        cn(
+          "flex items-center mb-2 px-5 py-4 rounded hover:bg-[var(--primary-color)] hover:text-white cursor-pointer duration-300",
+          isActive && "bg-[var(--primary-color)] text-white",
+          className
+        )
+      }
+      onClick={onClick}
+    >
       {children}
-    </div>
+    </NavLink>
   )
 }
 
