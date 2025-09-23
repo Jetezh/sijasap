@@ -17,26 +17,40 @@ function LeftSidebar({children, className}: LeftSidebarProps) {
 type SidebarItemProps = {
   children?: React.ReactNode,
   className?: string,
-  to: string
+  to?: string
   onClick?: () => void
 }
 
 function SidebarItem({children, className, to, onClick}: SidebarItemProps) {
+  if(to) {
+    return (
+      <NavLink
+        to={to}
+        end
+        className={({ isActive }) =>
+          cn(
+            "flex items-center mb-2 px-5 py-4 rounded hover:bg-green-100 hover:text-black cursor-pointer duration-300",
+            isActive && "bg-[var(--primary-color)] text-white",
+            className
+          )
+        }
+        onClick={onClick}
+      >
+        {children}
+      </NavLink>
+    )
+  }
+
   return (
-    <NavLink
-      to={to}
-      end
-      className={({ isActive }) =>
-        cn(
-          "flex items-center mb-2 px-5 py-4 rounded hover:bg-[var(--primary-color)] hover:text-white cursor-pointer duration-300",
-          isActive && "bg-[var(--primary-color)] text-white",
-          className
-        )
-      }
+    <div
+      className={cn(
+        "flex items-center mb-2 px-5 py-4 rounded hover:bg-[var(--primary-color)] hover:text-white cursor-pointer duration-300",
+        className
+      )}
       onClick={onClick}
     >
       {children}
-    </NavLink>
+    </div>
   )
 }
 

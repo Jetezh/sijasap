@@ -1,8 +1,9 @@
 import React from 'react'
+import cn from 'clsx'
 
-function Container({children}: {children?: React.ReactNode}) {
+function Container({children, className}: {children?: React.ReactNode, className?: string}) {
   return (
-    <div className="flex flex-col bg-white p-3 rounded-md shadow-(--card-shadow) gap-5 mt-3">
+    <div className={cn("flex flex-col bg-white p-3 rounded-md shadow-(--card-shadow) gap-5 mt-3", className)}>
         {children}
     </div>
   )

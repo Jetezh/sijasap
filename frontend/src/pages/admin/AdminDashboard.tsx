@@ -38,7 +38,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-row bg-gray-100">
-      <LeftSidebar className={`min-h-screen ${sidebarCollapsed ? 'min-w-28' : 'min-w-120'} duration-300`}>
+      <LeftSidebar className={` min-h-screen ${sidebarCollapsed ? 'min-w-28' : 'min-w-120'} duration-300`}>
         <div className='fixed'>
           <div className="px-5 py-4 border-b-3 mb-2 flex gap-5 items-center font-bold duration-300" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
             <FontAwesomeIcon icon={faBars} className='hover:cursor-pointer w-10' />{!sidebarCollapsed && <span>Fakultas Ilmu Komputer</span>}
@@ -53,7 +53,7 @@ const AdminDashboard: React.FC = () => {
               </Link>
             ))
           }
-          <SidebarItem to="" className='flex gap-5 items-center' onClick={() => setIsModalOpen(true)}>
+          <SidebarItem className='flex gap-5 items-center' onClick={() => setIsModalOpen(true)}>
             <FontAwesomeIcon icon={faArrowRightFromBracket} className='w-10' />{ !sidebarCollapsed && "Log out" }
           </SidebarItem>
         </div>

@@ -1,6 +1,21 @@
 import Button from "../../components/Button";
 import Container from "../../components/Container";
 
+const permintaanPeminjamanTest = {
+    "nama": "Budi Santoso",
+    "nim": "123456789",
+    "program strudi": "S1 Informatika",
+    "semester": "5",
+    "email": "budi.santoso@mahasiswa.upnvj.ac.id",
+    "tanggal": "2023-10-15",
+    "waktu mulai": "10:00",
+    "waktu selesai": "12:00",
+    "Dosen Pembimbing": "Dr. Andi Wijaya",
+    "Mata Kuliah": "Pemrograman Lanjut",
+    "NIP/NIK Dosen Pembimbing": "987654321",
+    "Tujuan Peminjaman": "Kelas PenggantiPraktikum Pemrograman",
+}
+
 function AdminHome() {
   return (
     <div className="flex flex-col gap-5 px-5 py-5">
@@ -11,7 +26,6 @@ function AdminHome() {
 
           </div>
           <Button title="Tampilkan Semua" classname="lg:text-2xl md:text-2xl lg:py-3 w-70 mx-auto" />
-
         </Container>
       </section>
       <section className="flex flex-row gap-5">
