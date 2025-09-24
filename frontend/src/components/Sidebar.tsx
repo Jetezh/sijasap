@@ -44,7 +44,7 @@ function SidebarItem({children, className, to, onClick}: SidebarItemProps) {
   return (
     <div
       className={cn(
-        "flex items-center mb-2 px-5 py-4 rounded hover:bg-[var(--primary-color)] hover:text-white cursor-pointer duration-300",
+        "flex items-center mb-2 px-5 py-4 rounded hover:bg-green-100 hover:text-black cursor-pointer duration-300",
         className
       )}
       onClick={onClick}

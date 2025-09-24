@@ -39,21 +39,25 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-row bg-gray-100">
       <LeftSidebar className={` min-h-screen ${sidebarCollapsed ? 'min-w-28' : 'min-w-120'} duration-300`}>
-        <div className='fixed'>
-          <div className="px-5 py-4 border-b-3 mb-2 flex gap-5 items-center font-bold duration-300" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
-            <FontAwesomeIcon icon={faBars} className='hover:cursor-pointer w-10' />{!sidebarCollapsed && <span>Fakultas Ilmu Komputer</span>}
+        <div className='fixed flex flex-col justify-between h-screen'>
+          <div>
+            <div className="px-5 py-4 border-b-5 border-b-(--primary-color) mb-2 flex gap-5 items-center font-bold duration-300" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
+              <FontAwesomeIcon icon={faBars} className='hover:cursor-pointer w-10' />{!sidebarCollapsed && <span>Fakultas Ilmu Komputer</span>}
+            </div>
+            <div>
+              {
+                sidebarItems.map((item) => (
+                  <Link key={item.name} to={item.path}>
+                    <SidebarItem to={item.path} className='flex gap-4'>
+                      <FontAwesomeIcon icon={item.icon} className='w-10' />
+                      { !sidebarCollapsed && item.name }
+                    </SidebarItem>
+                  </Link>
+                ))
+              }
+            </div>
           </div>
-          {
-            sidebarItems.map((item) => (
-              <Link key={item.name} to={item.path}>
-                <SidebarItem to={item.path} className='flex gap-4'>
-                  <FontAwesomeIcon icon={item.icon} className='w-10' />
-                  { !sidebarCollapsed && item.name }
-                </SidebarItem>
-              </Link>
-            ))
-          }
-          <SidebarItem className='flex gap-5 items-center' onClick={() => setIsModalOpen(true)}>
+          <SidebarItem className='flex mb-5 gap-5 items-center hover:bg-red-100 text-(--red-button) hover:text-red-600' onClick={() => setIsModalOpen(true)}>
             <FontAwesomeIcon icon={faArrowRightFromBracket} className='w-10' />{ !sidebarCollapsed && "Log out" }
           </SidebarItem>
         </div>
