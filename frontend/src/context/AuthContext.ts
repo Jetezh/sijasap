@@ -4,6 +4,8 @@ export type User = {
     id: string;
     username: string;
     role: 'ADMIN' | 'SUPERADMIN' | 'MAHASISWA' | 'DOSEN';
+    fullName?: string;
+    email?: string;
     // Add other user properties as needed
 }
 

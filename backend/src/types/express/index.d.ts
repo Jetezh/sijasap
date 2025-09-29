@@ -8,6 +8,8 @@ declare global {
           id: number;
           username: string;
           role: 'SUPERADMIN' | 'ADMIN' | 'MAHASISWA' | 'DOSEN';
+          nama_lengkap?: string;
+          email_upnvj?: string;
         }
       }
     }
