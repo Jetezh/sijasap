@@ -4,19 +4,34 @@ import Cookies from 'js-cookie';
 import api from '../services/api';
 
 export const AuthProvider = ({ children }: {children: ReactNode}) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get('token'));
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const token = Cookies.get('token');
+        const savedUser = Cookies.get('user');
+        
         if (!token) {
             setIsAuthenticated(false);
             setUser(null);
+            setIsLoading(false);
             return;
         }
 
-        setIsAuthenticated(true);
-        api.get('/auth/me')
+        // Set initial state from saved data
+        if (savedUser) {
+            try {
+                const parsedUser = JSON.parse(savedUser);
+                setUser(parsedUser);
+                setIsAuthenticated(true);
+            } catch (error) {
+                console.error('Error parsing saved user data:', error);
+            }
+        }
+
+        // Verify token with server
+        api.get('/api/auth/profile')
             .then((res) => {
                 if(res.data?.success && res.data?.user) {
                     const freshUser: User = {
@@ -25,18 +40,43 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
                         role: res.data.user.role,
                     };
                     setUser(freshUser);
+                    setIsAuthenticated(true);
+                    // Update saved user data
+                    Cookies.set('user', JSON.stringify(freshUser));
                 } else {
+                    // If server response is invalid, clear everything
+                    setIsAuthenticated(false);
                     setUser(null);
+                    Cookies.remove('token');
+                    Cookies.remove('user');
                 }
             })
-            .catch(() => {
-                setIsAuthenticated(false);
-                setUser(null);
+            .catch((error) => {
+                console.error('Auth verification failed:', error);
+                // Only clear auth if we don't have saved user data
+                if (!savedUser) {
+                    setIsAuthenticated(false);
+                    setUser(null);
+                    Cookies.remove('token');
+                    Cookies.remove('user');
+                }
+                // If we have saved user data, keep the user logged in
+                // but mark as not verified
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     }, [])
 
+    const logout = () => {
+        setIsAuthenticated(false);
+        setUser(null);
+        Cookies.remove('token');
+        Cookies.remove('user');
+    };
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser }}>
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, isLoading, logout }}>
             {children}
         </AuthContext.Provider>
     )

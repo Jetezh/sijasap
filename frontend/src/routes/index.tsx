@@ -32,7 +32,19 @@ export default function AppRoutes() {
         throw new Error("AuthContext must be used within an AuthProvider");
     }
     
-    const { isAuthenticated, user } = authContext;
+    const { isAuthenticated, user, isLoading } = authContext;
+
+    // Show loading screen while checking authentication
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading...</p>
+                </div>
+            </div>
+        );
+    }
 
     // Fungsi untuk menentukan kemana users yang sudah terontetikasi berdasarkan role
     const getRedirectPath = () => {

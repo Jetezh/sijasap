@@ -13,7 +13,9 @@ export type AuthContextType = {
     isAuthenticated: boolean,
     setIsAuthenticated: Dispatch<SetStateAction<boolean>>,
     user: User | null,
-    setUser: Dispatch<SetStateAction<User | null>>
+    setUser: Dispatch<SetStateAction<User | null>>,
+    isLoading: boolean,
+    logout: () => void
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
