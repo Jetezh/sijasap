@@ -38,6 +38,8 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
                         id: String(res.data.user.id),
                         username: res.data.user.username,
                         role: res.data.user.role,
+                        fullName: res.data.user.fullName,
+                        namaFakultas: res.data.user.namaFakultas,
                     };
                     setUser(freshUser);
                     setIsAuthenticated(true);
@@ -68,15 +70,8 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
             });
     }, [])
 
-    const logout = () => {
-        setIsAuthenticated(false);
-        setUser(null);
-        Cookies.remove('token');
-        Cookies.remove('user');
-    };
-
     return (
-        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, isLoading, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, isLoading }}>
             {children}
         </AuthContext.Provider>
     )

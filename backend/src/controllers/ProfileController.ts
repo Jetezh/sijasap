@@ -13,7 +13,12 @@ export const ProfileController = async (req: Request, res: Response) => {
                 id_user: true,
                 username: true,
                 role: true,
-                nama_lengkap: true
+                nama_lengkap: true,
+                fakultas: {
+                    select: {
+                        nama_fakultas: true
+                    }
+                }
             }
         });
 
@@ -25,7 +30,8 @@ export const ProfileController = async (req: Request, res: Response) => {
                 id: user.id_user,
                 username: user.username,
                 role: user.role,
-                fullName: user.nama_lengkap
+                fullName: user.nama_lengkap,
+                namaFakultas: user.fakultas?.nama_fakultas,
             }
         });
     } catch (err) {

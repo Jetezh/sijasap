@@ -6,6 +6,7 @@ export type User = {
     role: 'ADMIN' | 'SUPERADMIN' | 'MAHASISWA' | 'DOSEN';
     fullName?: string;
     email?: string;
+    namaFakultas?: string;
     // Add other user properties as needed
 }
 
@@ -15,7 +16,6 @@ export type AuthContextType = {
     user: User | null,
     setUser: Dispatch<SetStateAction<User | null>>,
     isLoading: boolean,
-    logout: () => void
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

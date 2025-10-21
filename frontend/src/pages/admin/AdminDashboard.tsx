@@ -1,8 +1,9 @@
 import React from 'react';
 import { LeftSidebar, SidebarItem } from '../../components/Sidebar';
-import Cookies from 'js-cookie';
-import { Outlet, useNavigate, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import Cookies from 'js-cookie';
+
 import Modal from '../../components/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faBars, faUser, faCalendarDays, faFile, faPersonShelter, faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +14,7 @@ const AdminDashboard: React.FC = () => {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
 
-  const { setIsAuthenticated } = authContext;
+  const { user, setIsAuthenticated, setUser } = authContext;
   const [ isModalOpen, setIsModalOpen ] = React.useState(false);
   const [ sidebarCollapsed,  setSidebarCollapsed ] = React.useState(false);
 
@@ -28,13 +29,13 @@ const AdminDashboard: React.FC = () => {
   ];
 
   const logout = () => {
+    setIsAuthenticated(false);
+    setUser(null);
     Cookies.remove('token');
     Cookies.remove('user');
 
-    setIsAuthenticated(false);
-
     navigate('/login', { replace: true })
-  }
+  };
 
   return (
     <div className="min-h-screen flex flex-row bg-gray-100">
@@ -42,7 +43,7 @@ const AdminDashboard: React.FC = () => {
         <div className='fixed flex flex-col justify-between h-screen'>
           <div>
             <div className="px-5 py-4 border-b-5 border-b-(--primary-color) mb-2 flex gap-5 items-center font-bold duration-300" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
-              <FontAwesomeIcon icon={faBars} className='hover:cursor-pointer w-10' />{!sidebarCollapsed && <span>Fakultas Ilmu Komputer</span>}
+              <FontAwesomeIcon icon={faBars} className='hover:cursor-pointer w-10' />{!sidebarCollapsed && <span>{ !user?.namaFakultas ? 'Fakultas UPNVJ' : user.namaFakultas}</span>}
             </div>
             <div>
               {
