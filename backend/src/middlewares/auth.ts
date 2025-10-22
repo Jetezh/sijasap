@@ -12,7 +12,13 @@ export const verifyToken = (req: express.Request, res: express.Response, next: e
 
     jwt.verify(token, secret, (err: any, decoded: any) => {
         if(err) return res.status(401).json({message: "Token tidak valid"});
-        req.user = { id: decoded.id, username: decoded.username, role: decoded.role } as any;
+        req.user = { 
+            id: decoded.id, 
+            username: decoded.username, 
+            role: decoded.role,
+            fakultasId: decoded.fakultasId,
+            unitUniversitasId: decoded.unitUniversitasId
+        } as any;
         next();
     })
 }

@@ -3,13 +3,46 @@ import prisma from "../../prisma/client";
 
 export const RuangController = async (req: Request, res:Response) => {
     try {
-
         if(!req.user?.id) {
             return res.status(401).json({ success: false, message: 'Unauthorized' })
         }
 
-        const ruang = await prisma.ruangan.count({
-            where: { fakultas_id:  }
+        const totalRuang = await prisma.ruangan.count({
+            where: { fakultas_id: req.user?.fakultas_id}
         })
+
+        if(!totalRuang) {
+            return res.status(404).json({ success: false, message: 'Ruangan Not Found' });
+        }
+
+        return res.json({
+            success: true,
+            total_ruangan: totalRuang
+        })
+    } catch(err) {
+        console.error('Error fetching ruang data:', err);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' })
+    }
+}
+
+export const FasilitasController = async (req: Request, res:Response) => {
+    try {
+        if(!req.user?.id) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' })
+        }
+
+        const fasilitas = await prisma.fasilitas.findMany()
+
+        if(!fasilitas) {
+            return res.status(404).json({ success: false, message: 'Fasilitas Not Found' });
+        }
+
+        return res.json({
+            success: true,
+            data: fasilitas,
+        })
+    } catch(err) {
+        console.log('Error fetching fasilitas data:', err);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' })
     }
 }

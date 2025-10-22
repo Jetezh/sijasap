@@ -2,9 +2,31 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Button from "../../components/Button"
 import Container from "../../components/Container"
 import { faBuilding } from "@fortawesome/free-solid-svg-icons"
-
+import api from "../../services/api"
+import { useContext, useEffect } from "react"
+import { AuthContext } from "../../context/AuthContext"
 
 function RuangDanFasilitas() {
+
+  const authContext = useContext(AuthContext);
+  
+  if (!authContext) {
+    throw new Error("AuthContext must be used within an AuthProvider");
+  }
+
+  const { user } = authContext;
+
+  useEffect(() => {
+    const fetchRuangan = async () => {
+      try{
+          const dataRuangan = await api.get('/api/ruangan');
+          
+      }catch(err) {
+
+      }
+    }
+  }, []);
+
   return (
     <div className="flex flex-col gap-15 px-15 py-15">
       <div>
@@ -19,7 +41,7 @@ function RuangDanFasilitas() {
             <p className="lg:text-2xl text-gray-400">Total Ruang</p>
           </Container>
           <Container className="flex-1">
-            
+            <div></div>
             <p>Tersedia</p>
           </Container>
           <Container className="flex-1">

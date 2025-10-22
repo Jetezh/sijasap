@@ -10,6 +10,8 @@ declare global {
           role: 'SUPERADMIN' | 'ADMIN' | 'MAHASISWA' | 'DOSEN';
           nama_lengkap?: string;
           email_upnvj?: string;
+          fakultas_id?: number;
+          unit_Universitas_Id?: number;
         }
       }
     }

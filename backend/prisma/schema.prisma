@@ -112,10 +112,8 @@ model Peminjaman  {
   id_peminjaman Int @id @default(autoincrement())
   id_user Int
   id_ruangan  Int
-  tanggal_mulai DateTime
-  tanggal_selesai DateTime
-  jam_mulai String
-  jam_selesai String
+  waktu_mulai DateTime
+  waktu_selesai DateTime
   tujuan String
   jumlah_peserta  Int
   status_peminjaman_id  Int

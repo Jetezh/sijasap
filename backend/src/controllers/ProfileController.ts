@@ -14,6 +14,8 @@ export const ProfileController = async (req: Request, res: Response) => {
                 username: true,
                 role: true,
                 nama_lengkap: true,
+                fakultas_id: true,
+                unit_universitas_id: true,
                 fakultas: {
                     select: {
                         nama_fakultas: true
@@ -31,6 +33,8 @@ export const ProfileController = async (req: Request, res: Response) => {
                 username: user.username,
                 role: user.role,
                 fullName: user.nama_lengkap,
+                fakultasId: user?.fakultas_id,
+                unitUniversitasId: user?.unit_universitas_id,
                 namaFakultas: user.fakultas?.nama_fakultas,
             }
         });

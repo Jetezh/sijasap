@@ -11,8 +11,8 @@ router.post('/login', loginController);
 // route untuk fetch data user
 router.get('/auth/profile', verifyToken, ProfileController);
 
-// // route untuk fetch data ruang
-// router.get('/ruang');
+// // route untuk fetch data ruangan
+// router.get('/ruangan');
 
 // // route untuk fetch data fasilitas
 // router.get('/fasilitas');

@@ -20,7 +20,8 @@ export const loginController = async (req: Request, res: Response) => {
         const { username, password } = parsed.data;
     
         const user = await prisma.user.findFirst({
-            where: { username }
+            where: { username },
+            include: { fakultas: true }
         })
     
         if(!user) return res.status(401).json({success: false, message: 'Username tidak ditemukan'});
@@ -29,7 +30,11 @@ export const loginController = async (req: Request, res: Response) => {
     
         if(!valid) return res.status(401).json({success: false, message: 'Password salah'});
     
-        const token = jwt.sign({id: user.id_user, role: user.role}, process.env.JWT_SECRET as string, { expiresIn: "1h"});
+        const token = jwt.sign({
+            id: user.id_user, 
+            role: user.role, 
+            fakultasId: user.fakultas_id
+        }, process.env.JWT_SECRET as string, { expiresIn: "1h"});
     
         return res.json({
             success: false,
@@ -46,35 +51,5 @@ export const loginController = async (req: Request, res: Response) => {
             success: false,
             message: "Internal server error"
         })
-    }
-}
-
-export const meController = async (req: Request, res: Response) => {
-    try {
-        if(!req.user?.id) {
-            return res.status(401).json({ success: false, message: 'Unauthorized' });
-        }
-
-        const user = await prisma.user.findUnique({
-            where: { id_user: req.user.id },
-            select: {
-                id_user: true,
-                username: true,
-                role: true,
-            }
-        });
-
-        if(!user) return res.status(404).json({ success: false, message: 'User not found' });
-
-        return res.json({
-            success: true,
-            user: {
-                id: user.id_user,
-                username: user.username,
-                role: user.role,
-            }
-        });
-    } catch (err) {
-        return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }

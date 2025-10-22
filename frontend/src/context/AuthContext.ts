@@ -6,6 +6,8 @@ export type User = {
     role: 'ADMIN' | 'SUPERADMIN' | 'MAHASISWA' | 'DOSEN';
     fullName?: string;
     email?: string;
+    fakultasId?: number,
+    unitUniversitasId?: number, 
     namaFakultas?: string;
     // Add other user properties as needed
 }
