@@ -37,7 +37,7 @@ export const loginController = async (req: Request, res: Response) => {
         }, process.env.JWT_SECRET as string, { expiresIn: "1h"});
     
         return res.json({
-            success: false,
+            success: true,
             message: 'Login Berhasil',
             token,
             user: {

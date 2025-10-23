@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
         }
 
         // Verify token with server
-        api.get('/api/auth/profile')
+        api.get('/api/profile')
             .then((res) => {
                 if(res.data?.success && res.data?.user) {
                     const freshUser: User = {
