@@ -1,19 +1,19 @@
 import { Request, Response } from "express";
 import prisma from "../../prisma/client";
 
-export const TotalRuangController = async (req: Request, res:Response) => {
+export const RuangController = async (req: Request, res:Response) => {
     try {
         if(!req.user?.id) {
             return res.status(401).json({ success: false, message: 'Unauthorized' })
         }
 
-        const totalRuang = await prisma.ruangan.count({
+        const ruangan = await prisma.ruangan.findMany({
             where: { fakultas_id: req.user?.fakultas_id}
         })
 
         return res.json({
             success: true,
-            total_ruangan: totalRuang
+            ruangan: ruangan,
         })
     } catch(err) {
         console.error('Error fetching ruang data:', err);
@@ -35,7 +35,7 @@ export const FasilitasController = async (req: Request, res:Response) => {
 
         return res.json({
             success: true,
-            data: fasilitas,
+            fasilitas: fasilitas,
         })
     } catch(err) {
         console.log('Error fetching fasilitas data:', err);

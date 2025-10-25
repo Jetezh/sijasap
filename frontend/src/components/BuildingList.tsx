@@ -2,8 +2,14 @@ import type React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
+
+type Fakultas = {
+  id_fakultas: number;
+  nama_fakultas: string;
+}
+
 type BuildingListProps = {
-  building: string[];
+  building: Fakultas[];
 }
 
 const BuildingList: React.FC<BuildingListProps> = ({ building }) => {
@@ -17,8 +23,8 @@ const BuildingList: React.FC<BuildingListProps> = ({ building }) => {
           <option>Pilih Gedung</option>
           <hr />
           {
-            building.map((b) => {
-              return <option value={b}><span>{b}</span></option>
+            building.map((fakultas) => {
+              return <option key={fakultas.id_fakultas} value={fakultas.id_fakultas}><span>{fakultas.nama_fakultas}</span></option>
             })
           }
         </select>

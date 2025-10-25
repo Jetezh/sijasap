@@ -6,6 +6,7 @@ import api from "../../services/api"
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import FasilitasCard from "../../components/FasilitasCard"
 
 function RuangDanFasilitas() {
 
@@ -17,28 +18,46 @@ function RuangDanFasilitas() {
 
   const { isAuthenticated } = authContext;
 
-  const [ totalRuangan, setTotalRuangan ] = useState<number>(0);
+  const [ ruangan, setRuangan ] = useState([]);
+  const [ fasilitas, setFasilitas ] = useState([]);
 
   useEffect(() => {
-    const fetchTotalRuangan = async () => {
+    if(!isAuthenticated) return;
 
-      if(!isAuthenticated) return;
+    const fetchRuangan = async () => {
 
       try{
           const response = await api.get('/api/ruangan');
           
-          if(response.data?.success && response.data?.total_ruangan){
-            setTotalRuangan(response.data.total_ruangan);
+          if(response.data?.success && response.data?.ruangan){
+            setRuangan(response.data.ruangan);
           } else {
-            throw new Error('Invalid response format')
+            throw new Error('Invalid response format');
           }
 
-      }catch(err) {
+      } catch(err) {
         console.error('Error fetching user data:', err);
       }
     }
 
-    fetchTotalRuangan();
+    fetchRuangan();
+
+    const fetchDataFasilitas = async () => {
+      try{
+        const response = await api.get('/api/fasilitas');
+
+        if(response.data?.success && response.data?.fasilitas) {
+          setFasilitas(response.data.fasilitas);
+          console.log(response.data.fasilitas);
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch(err) {
+        console.error('Error fetching user data:', err);
+      }
+    }
+
+    fetchDataFasilitas();
   }, [isAuthenticated]);
 
   return (
@@ -51,7 +70,7 @@ function RuangDanFasilitas() {
         <div className="flex flex-row justify-between gap-15">
           <Container className="flex-1 justify-center items-center lg:text-5xl font-medium gap-5 flex py-10">
             <FontAwesomeIcon icon={faBuilding} className="text-(--primary-color) lg:text-5xl" />
-            <div className="font-bold">{totalRuangan}</div>
+            <div className="font-bold">{ruangan.length}</div>
             <p className="lg:text-2xl text-gray-400">Total Ruang</p>
           </Container>
           <Container className="flex-1 justify-center items-center lg:text-5xl font-medium gap-5 flex py-10">
@@ -61,7 +80,7 @@ function RuangDanFasilitas() {
               loop
               autoplay
             />
-            {0}
+            <div className="font-bold text-">{0}</div>
             <p className="lg:text-2xl text-gray-400">Tersedia</p>
           </Container>
           <Container className="flex-1 justify-center items-center lg:text-5xl font-medium gap-5 flex py-10">
@@ -85,24 +104,15 @@ function RuangDanFasilitas() {
             <p className="lg:text-2xl text-gray-400">Maintenance</p>
           </Container>
         </div>
-        <Container>
-          <div className="flex flex-row">
-            <input type="text" className="mx-auto bg-gray-100 rounded-md px-5 py-3 lg:text-2xl md:text-xl" placeholder="Search..." />
-            <Button title="Add" classname="lg:text-2xl md:text-2xl w-30"/>
-          </div>
-        </Container>
       </div>
       <div className="flex flex-col gap-15" >
-        <h1 className="font-bold lg:text-5xl text-left">Detail Ruangan</h1>
-        <Container>
-          <div className="flex flex-row justify-between">
-            <Button title="Delete" classname="lg:text-2xl md:text-2xl w-40 py-3 bg-(--red-button) hover:bg-(--red-button-hover)"/>
-            <Button title="Update" classname="lg:text-2xl md:text-2xl w-40 py-3 bg-(--blue-button) hover:bg-(--blue-button-hover)"/>
-          </div>
-          <div>
-
-          </div>
-        </Container>
+        <h1 className="font-bold lg:text-5xl text-left">Daftar Ruangan</h1>
+          <Container>
+            <div className="flex flex-row">
+              <input type="text" className="mx-auto bg-gray-100 rounded-md px-5 py-3 lg:text-2xl md:text-xl" placeholder="Search..." />
+              <Button title="Add" classname="lg:text-2xl md:text-2xl w-30"/>
+            </div>
+          </Container>
       </div>
       <div className="flex flex-col gap-15">
         <h1 className="font-bold lg:text-5xl text-left">Daftar Fasilitas</h1>
@@ -111,6 +121,11 @@ function RuangDanFasilitas() {
             <input type="text" className="mx-auto bg-gray-100 rounded-md px-5 py-3 lg:text-2xl md:text-xl" placeholder="Search..." />
             <Button title="Add" classname="lg:text-2xl md:text-2xl w-30"/>
           </div>
+          {
+            fasilitas.map((s, i) => {
+              return <FasilitasCard {...s} key={'fasilitas' + i} />
+            })
+          }
         </Container>
       </div>
     </div>

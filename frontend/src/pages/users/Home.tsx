@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import assets from '../../assets/assets';
 import Caraousal from '../../components/Caraousal';
 import BuildingList from '../../components/BuildingList';
@@ -7,7 +7,26 @@ import TimePicker from '../../components/TimePicker';
 import Button from '../../components/Button';
 import RoomCard from '../../components/RoomCard';
 
+import api from '../../services/api';
+import { AuthContext } from '../../context/AuthContext';
+
 const Home: React.FC = () => {
+
+  const authContext = useContext(AuthContext);
+
+  if(!authContext) {
+    throw new Error("AuthContext must be used within an AuthProvider");
+  }
+
+  const { isAuthenticated } = authContext;
+
+  type Fakultas = {
+    id_fakultas: number;
+    nama_fakultas: string;
+  }
+
+  const [ fakultas, setFakultas ] = useState<Fakultas[]>([]);
+
   const slides = [
     {
       img: assets.gedungFEB,
@@ -44,15 +63,26 @@ const Home: React.FC = () => {
     alt: string
   }
 
-  const buildingList = [
-    "Fakultas Ilmu Komputer",
-    "Fakultas Ekonomi dan Bisnis",
-    "Fakultas Kedokteran",
-    "Fakultas Hukum",
-    "Fakultas Ilmu Kesehatan",
-    "Fakultas Teknik",
-    "Fakultas Ilmu Sosial dan Ilmu Politik"
-  ]
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
+    const fetchFakultas = async () => {
+      try {
+        const response = await api.get('/api/fakultas');
+    
+        if(response.data?.success && response.data?.fakultas) {
+          setFakultas(response.data.fakultas);
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+      }
+    } 
+
+    fetchFakultas();
+  }, [isAuthenticated])
 
   const rooms = [
     {
@@ -88,7 +118,7 @@ const Home: React.FC = () => {
   return (
     <div className="w-full h-full mx-auto bg-gray-100">
       <Caraousal slides={slides} />
-      <BuildingList building={buildingList} />
+      <BuildingList building={fakultas} />
       <div className='lg:py-10 md:py-7 py-5'>
         <form className='flex flex-row flex-wrap justify-between lg:text-2xl md:text-xl text-sm font-medium lg:px-10 md:px-7 px-5'>
           <DatePicker title='Tanggal Awal' classname='lg:basis-3/14 md:basis-1/2 basis-full' />
