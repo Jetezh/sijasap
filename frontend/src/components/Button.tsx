@@ -4,7 +4,7 @@ type ButtonProps = { title: string, classname?: string }
 
 function Button({ title, classname }: ButtonProps) {
   return (
-      <button type='submit' className={cn('lg:text-3xl md:text-2xl text-lg font-medium bg-(--green-button) text-white rounded-sm hover:cursor-pointer hover:bg-(--green-button-hover) duration-300', classname)}>{title}</button>
+      <button type='submit' className={cn(' font-medium bg-(--green-button) text-white rounded-sm hover:cursor-pointer hover:bg-(--green-button-hover) duration-300', classname)}>{title}</button>
   )
 }
 

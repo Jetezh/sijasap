@@ -1,10 +1,15 @@
 import React from 'react'
 import cn from 'clsx'
 
-function Container({children, className}: {children?: React.ReactNode, className?: string}) {
+type containerProps = {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+function Container(props: containerProps) {
   return (
-    <div className={cn("flex flex-col bg-white p-6 rounded-md shadow-(--card-shadow) gap-0 mt-3", className)}>
-        {children}
+    <div className={cn("flex flex-col bg-white p-6 rounded-md shadow-(--card-shadow) gap-0 mt-3", props.className)}>
+        {props.children}
     </div>
   )
 }

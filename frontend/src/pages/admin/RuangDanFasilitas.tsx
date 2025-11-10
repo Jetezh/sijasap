@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import FasilitasCard from "../../components/FasilitasCard"
+import RoomCardAdmin from "../../components/RoomCardAdmin"
 
 function RuangDanFasilitas() {
 
@@ -31,6 +32,7 @@ function RuangDanFasilitas() {
           
           if(response.data?.success && response.data?.ruangan){
             setRuangan(response.data.ruangan);
+            console.log(response.data.ruangan)
           } else {
             throw new Error('Invalid response format');
           }
@@ -48,7 +50,6 @@ function RuangDanFasilitas() {
 
         if(response.data?.success && response.data?.fasilitas) {
           setFasilitas(response.data.fasilitas);
-          console.log(response.data.fasilitas);
         } else {
           throw new Error('Invalid response format');
         }
@@ -113,20 +114,31 @@ function RuangDanFasilitas() {
               <Button title="Add" classname="lg:text-2xl md:text-2xl w-30"/>
             </div>
           </Container>
+          <div className="grid grid-cols-2 gap-5">
+            {
+              ruangan.map((s, i) => {
+                return <RoomCardAdmin className="" {...s} key={'ruangan' + i} />
+              })
+            }
+          </div>
       </div>
       <div className="flex flex-col gap-15">
         <h1 className="font-bold lg:text-5xl text-left">Daftar Fasilitas</h1>
-        <Container>
-          <div className="flex flex-row">
-            <input type="text" className="mx-auto bg-gray-100 rounded-md px-5 py-3 lg:text-2xl md:text-xl" placeholder="Search..." />
-            <Button title="Add" classname="lg:text-2xl md:text-2xl w-30"/>
+        <div className="flex flex-col gap-10">
+          <Container>
+            <div className="flex flex-row">
+              <input type="text" className="mx-auto bg-gray-100 rounded-md px-5 py-3 lg:text-2xl md:text-xl" placeholder="Search..." />
+              <Button title="Add" classname="lg:text-2xl md:text-2xl w-30"/>
+            </div>
+          </Container>
+          <div className="grid grid-cols-3 gap-5">
+            {
+              fasilitas.map((s, i) => {
+                return <FasilitasCard className="lg:basis-1/3 " {...s} key={'fasilitas' + i} />
+              })
+            }
           </div>
-          {
-            fasilitas.map((s, i) => {
-              return <FasilitasCard {...s} key={'fasilitas' + i} />
-            })
-          }
-        </Container>
+        </div>
       </div>
     </div>
   )
