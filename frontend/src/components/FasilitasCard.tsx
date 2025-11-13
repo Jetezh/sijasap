@@ -1,25 +1,7 @@
-import cn from 'clsx';
-import { IoTvSharp } from "react-icons/io5";
-import { FaWifi, FaTools } from "react-icons/fa";
-import { MdOutlineChair, MdTableRestaurant } from "react-icons/md";
-import { FaComputer } from "react-icons/fa6";
-import { BsProjector } from "react-icons/bs";
-import { PiChalkboardSimple } from "react-icons/pi";
-
-const icons = [
-  {id: "tv led android", icon: IoTvSharp},
-  {id: "wifi", icon: FaWifi},
-  {id: "Kursi", icon: MdOutlineChair},
-  {id: "meja", icon: MdTableRestaurant},
-  {id: "komputer", icon: FaComputer},
-  {id: "proyektor", icon: BsProjector},
-  {id: "papan tulis", icon: PiChalkboardSimple},
-]
-
-type fasilitasProps = {
-    className?: string;
-    nama_fasilitas: string;
-}
+import { cn } from '../lib/utils';
+import { FaTools } from "react-icons/fa";
+import { icons } from '../lib/data';
+import type { fasilitasProps } from '../types';
 
 function FasilitasCard(props: fasilitasProps) {
 

@@ -1,10 +1,5 @@
-import React from 'react'
-import cn from 'clsx'
-
-type containerProps = {
-  children?: React.ReactNode;
-  className?: string;
-}
+import { cn } from '../lib/utils'
+import type { containerProps } from '../types'
 
 function Container(props: containerProps) {
   return (

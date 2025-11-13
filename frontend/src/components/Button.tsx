@@ -1,10 +1,9 @@
-import cn from 'clsx'
+import { cn } from '../lib/utils'
+import type { ButtonProps } from '../types'
 
-type ButtonProps = { title: string, classname?: string }
-
-function Button({ title, classname }: ButtonProps) {
+function Button( props: ButtonProps) {
   return (
-      <button type='submit' className={cn(' font-medium bg-(--green-button) text-white rounded-sm hover:cursor-pointer hover:bg-(--green-button-hover) duration-300', classname)}>{title}</button>
+      <button type='submit' className={cn(' font-medium bg-(--green-button) text-white rounded-sm hover:cursor-pointer hover:bg-(--green-button-hover) duration-300', props.classname)}>{props.title}</button>
   )
 }
 

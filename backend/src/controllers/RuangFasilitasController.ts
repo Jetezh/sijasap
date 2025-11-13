@@ -42,3 +42,55 @@ export const FasilitasController = async (req: Request, res:Response) => {
         return res.status(500).json({ success: false, message: 'Internal Server Error' })
     }
 }
+
+export const RuanganFasilitasController = async (req: Request, res: Response) => {
+    try {
+      
+      if (!req.user?.id) {
+        return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+  
+      const fakultasId = req.user.fakultas_id ?? null;
+      const unitUniversitasId = req.user.unit_Universitas_Id ?? null;
+  
+      const ruanganFasilitas = await prisma.ruanganFasilitas.findMany({
+        where: {
+          ruangan: {
+            ...(fakultasId && { fakultas_id: fakultasId }),
+            ...(unitUniversitasId && { unit_universitas_id: unitUniversitasId }),
+          },
+        },
+        include: {
+          ruangan: {
+            select: {
+              id_ruangan: true,
+              nama_ruangan: true,
+              gedung: true,
+              lantai: true,
+              kapasitas: true,
+            },
+          },
+          fasilitas: {
+            select: {
+              id_fasilitas: true,
+              nama_fasilitas: true,
+            },
+          },
+        },
+      });
+  
+      if (!ruanganFasilitas.length) {
+        return res.status(404).json({
+          success: false,
+          message: "Data Ruangan/Fasilitas tidak ditemukan",
+        });
+      }
+  
+      return res.json({ success: true, ruanganFasilitas });
+    } catch (err) {
+      console.error("Error fetching fasilitas data:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  };  

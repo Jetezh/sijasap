@@ -7,7 +7,7 @@ import DropdownItem from './DropdownItems'
 import Cookies from 'js-cookie'
 import { AuthContext } from '../context/AuthContext'
 import { useContext } from 'react'
-import cn from 'clsx'
+import { cn } from '../lib/utils'
 
 type NavbarProps = {
   className?: string

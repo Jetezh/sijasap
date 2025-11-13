@@ -1,16 +1,7 @@
 import type React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-
-
-type Fakultas = {
-  id_fakultas: number;
-  nama_fakultas: string;
-}
-
-type BuildingListProps = {
-  building: Fakultas[];
-}
+import type { BuildingListProps } from "../types";
 
 const BuildingList: React.FC<BuildingListProps> = ({ building }) => {
   return (

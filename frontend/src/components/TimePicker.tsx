@@ -1,4 +1,4 @@
-import cn from 'clsx'
+import { cn } from '../lib/utils'
 
 type TimePickerProps = { title: string, classname?: string }
 

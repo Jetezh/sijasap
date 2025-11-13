@@ -59,6 +59,7 @@ function RuangDanFasilitas() {
     }
 
     fetchDataFasilitas();
+
   }, [isAuthenticated]);
 
   return (
@@ -114,7 +115,7 @@ function RuangDanFasilitas() {
               <Button title="Add" classname="lg:text-2xl md:text-2xl w-30"/>
             </div>
           </Container>
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 gap-15">
             {
               ruangan.map((s, i) => {
                 return <RoomCardAdmin className="" {...s} key={'ruangan' + i} />

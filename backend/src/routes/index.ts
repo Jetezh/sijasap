@@ -4,6 +4,7 @@ import { ProfileController } from '../controllers/ProfileController';
 import { verifyToken } from '../middlewares/auth';
 import { FasilitasController, RuangController } from '../controllers/RuangFasilitasController';
 import { FakultasController } from '../controllers/FakultasController';
+import { RuanganFasilitasController } from '../controllers/RuangFasilitasController';
 
 const router = express.Router();
 
@@ -21,5 +22,8 @@ router.get('/fasilitas',verifyToken, FasilitasController);
 
 // route untuk fetch data fakultas
 router.get('/fakultas', verifyToken, FakultasController);
+
+// route untuk fetch data ruangan memiliki fasilitas apa saja
+router.get('/ruangan-fasilitas/:id_ruangan', verifyToken, RuanganFasilitasController);
 
 export default router;

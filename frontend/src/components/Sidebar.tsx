@@ -1,4 +1,4 @@
-import cn from 'clsx'
+import { cn } from '../lib/utils'
 import { NavLink } from 'react-router-dom'
 
 type LeftSidebarProps = {
