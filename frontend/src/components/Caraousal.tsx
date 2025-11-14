@@ -54,7 +54,7 @@ function Caraousal({ slides }: {slides: {img: string, alt: string}[]}) {
         </div>
         <div className="absolute bottom-0 flex justify-center w-full lg:py-5 md:py-3 py-1 lg:gap-3 md:gap-2 gap-1">
             {
-                slides.map((s, i) => {
+                slides.map((item, i) => {
                     return <div 
                     onClick={() => setCurrent(i)}
                     key={"circle" + i} 

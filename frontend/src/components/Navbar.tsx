@@ -8,12 +8,11 @@ import Cookies from 'js-cookie'
 import { AuthContext } from '../context/AuthContext'
 import { useContext } from 'react'
 import { cn } from '../lib/utils'
+import type { NavbarProps } from '../types'
 
-type NavbarProps = {
-  className?: string
-}
+function Navbar(props: NavbarProps) {
+  const { className } = props;
 
-function Navbar({ className }: NavbarProps) {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   if (!authContext) {

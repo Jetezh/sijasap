@@ -62,6 +62,28 @@ export type RuanganProps = {
   id_ruangan: number;
 }
 
+// type untuk component Modal
+export type ModalProps = {
+  isOpen: boolean;
+  children?: React.ReactNode;
+  className?: string;
+  contentClassName?: string;
+}
+
+// type untuk component Navbar
+export type NavbarProps = {
+  className?: string
+}
+
+// type untuk component RoomCard
+export type RoomCardProps = {
+  img: string,
+  tag: string,
+  lokasi: string,
+  lantai: number,
+  antrianPinjaman: number
+}
+
 // type untuk Data entitas RuanganFasilitas
 export interface RuanganFasilitasType {
   id_ruangan: number;

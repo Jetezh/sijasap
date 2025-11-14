@@ -32,7 +32,6 @@ function RuangDanFasilitas() {
           
           if(response.data?.success && response.data?.ruangan){
             setRuangan(response.data.ruangan);
-            console.log(response.data.ruangan)
           } else {
             throw new Error('Invalid response format');
           }
@@ -82,7 +81,7 @@ function RuangDanFasilitas() {
               loop
               autoplay
             />
-            <div className="font-bold text-">{0}</div>
+            <div className="font-bold text-[#41A67E]">{0}</div>
             <p className="lg:text-2xl text-gray-400">Tersedia</p>
           </Container>
           <Container className="flex-1 justify-center items-center lg:text-5xl font-medium gap-5 flex py-10">
@@ -92,7 +91,7 @@ function RuangDanFasilitas() {
               loop
               autoplay
             />
-            {0}
+            <div className="font-bold text-[#FF6C0C]">{0}</div>
             <p className="lg:text-2xl text-gray-400">Terpakai</p>
           </Container>
           <Container className="flex-1 justify-center items-center lg:text-5xl font-medium gap-5 flex py-10">
@@ -102,7 +101,7 @@ function RuangDanFasilitas() {
               loop
               autoplay
             />
-            {0}
+            <div className="font-bold text-[#000000]">{0}</div>
             <p className="lg:text-2xl text-gray-400">Maintenance</p>
           </Container>
         </div>

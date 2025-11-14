@@ -37,13 +37,13 @@ function RoomCardAdmin( props: RuanganProps) {
     }, [id_ruangan])
 
   return (
-    <div className={cn("flex flex-col bg-white p-6 rounded-md shadow-(--card-shadow) gap-5", className)}>
-      <div className='flex flex-col gap-3'>
+    <div className={cn("flex flex-col bg-white p-10 rounded-md shadow-(--card-shadow) gap-10", className)}>
+      <div className='flex flex-col gap-10'>
         <div className='text-left'>
           <h1 className='text-3xl font-bold'>{nama_ruangan}</h1>
           <h2>{}</h2>
         </div>
-        <div className='flex flex-row gap-5 text-2xl font-medium'>
+        <div className='flex flex-row gap-5 text-2xl font-medium text-gray-400'>
           <div className='flex flex-row gap-3 items-center'>
             <FontAwesomeIcon icon={faUserGroup} />
             <p>{kapasitas} Orang</p>
@@ -54,7 +54,7 @@ function RoomCardAdmin( props: RuanganProps) {
           </div>
         </div>
         <div className='flex flex-col'>
-          <p className='text-left'>Fasilitas</p>
+          <p className='text-left text-2xl font-medium'>Fasilitas :</p>
           <div className='flex flex-row justify-start gap-3 flex-wrap'>
             {
               ruanganFasiltias.filter(item => item.id_ruangan === id_ruangan).map((item) => {
@@ -65,8 +65,8 @@ function RoomCardAdmin( props: RuanganProps) {
         </div>
       </div>
       <div className='flex flex-row gap-5 text-2xl'>
-        <Button classname='py-5 flex-3/8' title='Detail' />
-        <Button classname='py-5 flex-3/8' title='Edit' />
+        <Button classname='py-5 flex-3/8 bg-(--button-gray) border-[#CBCBCB] border-2 text-black hover:text-white' title='Detail' />
+        <Button classname='py-5 flex-3/8 bg-(--button-gray) border-[#CBCBCB] border-2 text-black hover:text-white' title='Edit' />
         <Button classname='py-5 flex-2/8' title='Booking' />
       </div>
     </div>
