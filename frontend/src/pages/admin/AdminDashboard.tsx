@@ -6,7 +6,8 @@ import Cookies from 'js-cookie';
 
 import Modal from '../../components/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faBars, faUser, faCalendarDays, faFile, faPersonShelter, faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons';
+import { faBars,  faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons';
+import { sidebarItems } from '../../lib/data';
 
 const AdminDashboard: React.FC = () => {
   const authContext = React.useContext(AuthContext);
@@ -19,14 +20,6 @@ const AdminDashboard: React.FC = () => {
   const [ sidebarCollapsed,  setSidebarCollapsed ] = React.useState(false);
 
   const navigate = useNavigate();
-
-  const sidebarItems = [
-    { name: 'Home', icon: faHouse, path: 'home' },
-    { name: 'Profile', icon: faUser, path: 'profile' },
-    { name: 'Kalender Akademik', icon: faCalendarDays, path: 'kalender-akademik' },
-    { name: 'Laporan', icon: faFile, path: 'laporan' },
-    { name: 'Ruang & Fasilitas', icon: faPersonShelter, path: 'ruang-fasilitas' },
-  ];
 
   const logout = () => {
     setIsAuthenticated(false);

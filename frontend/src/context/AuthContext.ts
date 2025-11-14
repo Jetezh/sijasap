@@ -4,11 +4,11 @@ export type User = {
     id: string;
     username: string;
     role: 'ADMIN' | 'SUPERADMIN' | 'MAHASISWA' | 'DOSEN';
-    fullName?: string;
-    email?: string;
-    fakultasId?: number,
-    unitUniversitasId?: number, 
-    namaFakultas?: string;
+    nama_lengkap?: string;
+    email_upnvj?: string;
+    fakultas_id?: number,
+    unit_universitas_id?: number, 
+    nama_fakultas?: string;
     // Add other user properties as needed
 }
 

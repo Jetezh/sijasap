@@ -1,6 +1,9 @@
 import { useContext } from "react"
 import Container from "../../components/Container"
 import { AuthContext } from "../../context/AuthContext";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { MdEmail } from "react-icons/md";
 
 function Profile() {
 
@@ -26,33 +29,49 @@ function Profile() {
   }
 
   return (
-    <div className="flex flex-col gap-5 px-5 py-5">
-      <h1>Halo {user.fullName || 'User'}</h1>
-      <p>Informasi Profil Pengguna</p>
-      <Container>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Username:</label>
-            <p className="mt-1 text-sm text-gray-900">{user.username}</p>
+    <div className="flex flex-col gap-5 p-15">
+      <div className="text-left flex flex-col gap-3">
+        <h1 className="font-bold lg:text-5xl">Halo, {user?.nama_lengkap || 'User'}</h1>
+        <p className="md:text-2xl text-text-green font-medium">Bagaimana kabarmu hari ini?</p>
+      </div>
+      <div className="flex flex-row gap-15">
+        <Container className="flex-1 items-center gap-5">
+          <div className="w-full flex flex-col gap-5 text-left">
+            <div className="flex flex-row gap-5 items-center">
+              <FontAwesomeIcon icon={faUser} className="text-primary-color text-3xl"/>
+              <h1 className="text-4xl font-semibold">Informasi Personal</h1>
+            </div>
+            <div>
+              <label className="block text-lg font-medium text-text-green">NIP:</label>
+              <p className="text-2xl font-semibold text-black">{user?.username || '-'}</p>
+            </div>
+            <div>
+              <label className="block text-lg font-medium text-text-green">Role:</label>
+              <p className="text-2xl font-semibold text-black">{user?.role || '-'}</p>
+            </div>
+            <div>
+              <label className="block text-lg font-medium text-text-green">Full Name:</label>
+              <p className="text-2xl font-semibold text-black">{user?.nama_lengkap || '-'}</p>
+            </div>
+            <div>
+              <label className="block text-lg font-medium text-text-green">User ID:</label>
+              <p className="text-2xl font-semibold text-black">{user?.id || '-'}</p>
+            </div>
+            <div>
+              <label className="block text-lg font-medium text-text-green">Fakultas:</label>
+              <p className="text-2xl font-semibold text-black">{user?.nama_fakultas || '-'}</p>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Role:</label>
-            <p className="mt-1 text-sm text-gray-900">{user.role}</p>
+        </Container>
+        <Container className="flex-1 justify-center items-center lg:text-5xl font-medium gap-5">
+          <div className="w-full flex flex-col gap-5 text-left">
+            <div className="flex flex-row gap-5 items-center">
+              <MdEmail className="text-primary-color text-4xl"/>
+              <h1 className="text-4xl font-semibold">Informasi Kontak</h1>
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Full Name:</label>
-            <p className="mt-1 text-sm text-gray-900">{user.fullName}</p>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">User ID:</label>
-            <p className="mt-1 text-sm text-gray-900">{user.id}</p>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Fakultas:</label>
-            <p className="mt-1 text-sm text-gray-900">{user.namaFakultas}</p>
-          </div>
-        </div>
-      </Container>
+        </Container>
+      </div>
     </div>
   )
 }

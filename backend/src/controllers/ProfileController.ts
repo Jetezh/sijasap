@@ -15,6 +15,7 @@ export const ProfileController = async (req: Request, res: Response) => {
                 role: true,
                 nama_lengkap: true,
                 fakultas_id: true,
+                email_upnvj: true,
                 unit_universitas_id: true,
                 fakultas: {
                     select: {
@@ -28,15 +29,7 @@ export const ProfileController = async (req: Request, res: Response) => {
 
         return res.json({
             success: true,
-            user: {
-                id: user.id_user,
-                username: user.username,
-                role: user.role,
-                fullName: user.nama_lengkap,
-                fakultasId: user?.fakultas_id,
-                unitUniversitasId: user?.unit_universitas_id,
-                namaFakultas: user.fakultas?.nama_fakultas,
-            }
+            user: user
         });
     } catch (err) {
         return res.status(500).json({ success: false, message: 'Internal server error' });

@@ -35,11 +35,14 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
             .then((res) => {
                 if(res.data?.success && res.data?.user) {
                     const freshUser: User = {
-                        id: String(res.data.user.id),
+                        id: String(res.data.user.id_user),
                         username: res.data.user.username,
                         role: res.data.user.role,
-                        fullName: res.data.user.fullName,
-                        namaFakultas: res.data.user.namaFakultas,
+                        email_upnvj: res.data.user.email_upnvj,
+                        nama_lengkap: res.data.user.nama_lengkap,
+                        nama_fakultas: res.data.user.fakultas?.nama_fakultas,
+                        fakultas_id: res.data.user.fakultas_id,
+                        unit_universitas_id: res.data.user.unit_universitas_id,
                     };
                     setUser(freshUser);
                     setIsAuthenticated(true);

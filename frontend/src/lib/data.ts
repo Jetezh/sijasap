@@ -4,6 +4,7 @@ import { MdOutlineChair, MdTableRestaurant } from "react-icons/md";
 import { FaComputer } from "react-icons/fa6";
 import { BsProjector } from "react-icons/bs";
 import { PiChalkboardSimple } from "react-icons/pi";
+import { faHouse, faUser, faCalendarDays, faFile, faPersonShelter } from "@fortawesome/free-solid-svg-icons";
 
 // Data component FasilitasCard
 export const icons = [
@@ -25,3 +26,12 @@ export const sosmed = [
   { id: "youtube", url: "https://www.youtube.com/channel/UCMw_GH6YVHMSHKcSA2WJjhw/videos", color:"text-red-400"},
   { id: "tiktok", url: "https://www.tiktok.com/@upnveteranjakarta", color: "text-amber-200"},
 ]
+
+// Data component sideBarItems 
+export const sidebarItems = [
+  { name: 'Home', icon: faHouse, path: 'home' },
+  { name: 'Profile', icon: faUser, path: 'profile' },
+  { name: 'Kalender Akademik', icon: faCalendarDays, path: 'kalender-akademik' },
+  { name: 'Laporan', icon: faFile, path: 'laporan' },
+  { name: 'Ruang & Fasilitas', icon: faPersonShelter, path: 'ruang-fasilitas' },
+];
