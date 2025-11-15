@@ -36,7 +36,7 @@ const AdminDashboard: React.FC = () => {
         <div className='fixed flex flex-col justify-between h-screen'>
           <div>
             <div className="px-5 py-4 border-b-5 border-b-(--primary-color) mb-2 flex gap-5 items-center font-bold duration-300" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}>
-              <FontAwesomeIcon icon={faBars} className='hover:cursor-pointer w-10' />{!sidebarCollapsed && <span>{ !user?.namaFakultas ? 'Fakultas UPNVJ' : user.namaFakultas}</span>}
+              <FontAwesomeIcon icon={faBars} className='hover:cursor-pointer w-10' />{!sidebarCollapsed && <span>{ !user?.nama_fakultas ? 'Fakultas UPNVJ' : user.nama_fakultas}</span>}
             </div>
             <div>
               {

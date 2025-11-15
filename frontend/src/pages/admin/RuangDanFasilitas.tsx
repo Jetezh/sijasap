@@ -3,11 +3,13 @@ import Button from "../../components/Button"
 import Container from "../../components/Container"
 import { faBuilding } from "@fortawesome/free-solid-svg-icons"
 import api from "../../services/api"
-import { useContext, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import FasilitasCard from "../../components/FasilitasCard"
 import RoomCardAdmin from "../../components/RoomCardAdmin"
+import Pagination from "../../components/Pagination"
+import type { RuanganProps } from "../../types"
 
 function RuangDanFasilitas() {
 
@@ -19,8 +21,10 @@ function RuangDanFasilitas() {
 
   const { isAuthenticated } = authContext;
 
-  const [ ruangan, setRuangan ] = useState([]);
+  const [ ruangan, setRuangan ] = useState<RuanganProps[]>([]);
   const [ fasilitas, setFasilitas ] = useState([]);
+  const [ currentPage, setCurrentPage ] = useState(1);
+  const pageSize = 4;
 
   useEffect(() => {
     if(!isAuthenticated) return;
@@ -60,6 +64,27 @@ function RuangDanFasilitas() {
     fetchDataFasilitas();
 
   }, [isAuthenticated]);
+
+  // Keep current page within bounds when data changes
+  const totalItems = ruangan.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
+  const paginatedRuangan = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    return ruangan.slice(start, end);
+  }, [ruangan, currentPage]);
+
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   return (
     <div className="flex flex-col gap-15 px-15 py-15">
@@ -116,11 +141,17 @@ function RuangDanFasilitas() {
           </Container>
           <div className="grid grid-cols-2 gap-15">
             {
-              ruangan.map((s, i) => {
-                return <RoomCardAdmin className="" {...s} key={'ruangan' + i} />
+              paginatedRuangan.map((s: RuanganProps) => {
+                return <RoomCardAdmin className="" {...s} key={`ruangan-${s.id_ruangan}`} />
               })
             }
           </div>
+          <Pagination
+            totalItems={totalItems}
+            currentPage={currentPage}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+          />
       </div>
       <div className="flex flex-col gap-15">
         <h1 className="font-bold lg:text-5xl text-left">Daftar Fasilitas</h1>
