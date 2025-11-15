@@ -97,3 +97,16 @@ export interface RuanganFasilitasType {
     nama_fasilitas: string;
   };
 }
+
+// type untuk component LeftSidebar
+export type LeftSidebarProps = {
+  children?: React.ReactNode,
+  className?: string,
+}
+
+export type SidebarItemProps = {
+  children?: React.ReactNode,
+  className?: string,
+  to?: string
+  onClick?: () => void
+}

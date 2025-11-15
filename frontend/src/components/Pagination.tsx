@@ -1,6 +1,6 @@
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import Container from "./Container";
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 
 type PaginationProps = {
   totalItems: number;
@@ -47,6 +47,15 @@ function Pagination({
   const canPrev = currentPage > 1;
   const canNext = currentPage < totalPages;
 
+  // local input for go-to-page (must be before any return)
+  const [pageInput, setPageInput] = useState<string>("");
+  const goToPage = useCallback(() => {
+    const parsed = parseInt(pageInput, 10);
+    if (Number.isNaN(parsed)) return;
+    const target = Math.min(totalPages, Math.max(1, parsed));
+    if (target !== currentPage) onPageChange(target);
+  }, [pageInput, totalPages, currentPage, onPageChange]);
+
   if (totalItems === 0) return null;
 
   return (
@@ -69,14 +78,36 @@ function Pagination({
           Next
         </button>
       </div>
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+      <div className="hidden sm:flex sm:relative sm:flex-1 sm:items-center sm:justify-start">
         <div>
           <p className="text-2xl text-gray-700">
             Showing <span className="font-medium">{startIndex}</span> to <span className="font-medium">{endIndex}</span> of{' '}
             <span className="font-medium">{totalItems}</span> results
           </p>
         </div>
-        <div>
+        {/* Go to page (center, absolute) */}
+        <div className="hidden sm:flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+          <label className="text-xl text-gray-700">Go to page</label>
+          <input
+            value={pageInput}
+            onChange={(e) => setPageInput(e.target.value.replace(/[^0-9]/g, ""))}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") goToPage();
+            }}
+            placeholder={String(currentPage)}
+            className="w-20 rounded-md inset-ring inset-ring-gray-300 px-3 py-2 text-xl"
+            inputMode="numeric"
+            aria-label="Go to page"
+          />
+          <button
+            type="button"
+            onClick={goToPage}
+            className="px-4 py-2 rounded-md bg-(--primary-color) text-white text-xl hover:cursor-pointer hover:bg-(--green-button-hover) duration-300 "
+          >
+            Go
+          </button>
+        </div>
+        <div className="ml-auto">
           <nav aria-label="Pagination" className="isolate inline-flex -space-x-px rounded-md shadow-xs">
             <button
               type="button"

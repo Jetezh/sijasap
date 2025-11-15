@@ -54,3 +54,24 @@
     background-color: #ffffff;
   }
 }
+
+/* Page slide animations for pagination content */
+@keyframes slide-in-left {
+  from { transform: translateX(40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(-40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.animate-slide-left {
+  animation: slide-in-left 500ms ease-out;
+  will-change: transform, opacity;
+}
+
+.animate-slide-right {
+  animation: slide-in-right 500ms ease-out;
+  will-change: transform, opacity;
+}

@@ -1,12 +1,12 @@
 import { cn } from '../lib/utils'
 import { NavLink } from 'react-router-dom'
+import type { LeftSidebarProps, SidebarItemProps } from '../types'
 
-type LeftSidebarProps = {
-  children?: React.ReactNode,
-  className?: string,
-}
 
-function LeftSidebar({children, className}: LeftSidebarProps) {
+function LeftSidebar(props: LeftSidebarProps) {
+
+  const { children, className } = props;
+
   return (
     <div className={cn("text-left text-3xl font-medium px-4 py-2 bg-white border-r border-gray-200", className)}>
       {children}
@@ -14,14 +14,10 @@ function LeftSidebar({children, className}: LeftSidebarProps) {
   )
 }
 
-type SidebarItemProps = {
-  children?: React.ReactNode,
-  className?: string,
-  to?: string
-  onClick?: () => void
-}
+function SidebarItem(props: SidebarItemProps) {
 
-function SidebarItem({children, className, to, onClick}: SidebarItemProps) {
+  const {children, className, to, onClick} = props;
+
   if(to) {
     return (
       <NavLink
@@ -29,7 +25,7 @@ function SidebarItem({children, className, to, onClick}: SidebarItemProps) {
         end
         className={({ isActive }) =>
           cn(
-            "flex items-center mb-2 px-5 py-4 rounded hover:bg-green-100 hover:text-black cursor-pointer duration-300",
+            "flex items-center mb-2 px-5 rounded hover:bg-green-100 hover:text-black cursor-pointer duration-300",
             isActive && "bg-[var(--primary-color)] text-white",
             className
           )
@@ -44,7 +40,7 @@ function SidebarItem({children, className, to, onClick}: SidebarItemProps) {
   return (
     <div
       className={cn(
-        "flex items-center mb-2 px-5 py-4 rounded hover:bg-green-100 hover:text-black cursor-pointer duration-300",
+        "flex items-center mb-2 px-5 rounded hover:bg-green-100 hover:text-black cursor-pointer duration-300",
         className
       )}
       onClick={onClick}

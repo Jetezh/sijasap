@@ -3,13 +3,13 @@ import Button from "../../components/Button"
 import Container from "../../components/Container"
 import { faBuilding } from "@fortawesome/free-solid-svg-icons"
 import api from "../../services/api"
-import { useCallback, useContext, useEffect, useMemo, useState } from "react"
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { AuthContext } from "../../context/AuthContext"
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import FasilitasCard from "../../components/FasilitasCard"
 import RoomCardAdmin from "../../components/RoomCardAdmin"
 import Pagination from "../../components/Pagination"
-import type { RuanganProps } from "../../types"
+import type { RuanganProps, RuanganFasilitasType } from "../../types"
 
 function RuangDanFasilitas() {
 
@@ -24,7 +24,13 @@ function RuangDanFasilitas() {
   const [ ruangan, setRuangan ] = useState<RuanganProps[]>([]);
   const [ fasilitas, setFasilitas ] = useState([]);
   const [ currentPage, setCurrentPage ] = useState(1);
+  const [ lastPage, setLastPage ] = useState(1);
   const pageSize = 4;
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const animationMs = 500;
+  const fasilitasCache = useRef<Map<number, RuanganFasilitasType[]>>(new Map());
+  const [pageFasilitas, setPageFasilitas] = useState<Record<number, RuanganFasilitasType[]>>({});
+  const [loadingFasilitasIds, setLoadingFasilitasIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if(!isAuthenticated) return;
@@ -82,9 +88,115 @@ function RuangDanFasilitas() {
   }, [ruangan, currentPage]);
 
   const handlePageChange = useCallback((page: number) => {
+    if (gridRef.current) {
+      const h = gridRef.current.clientHeight;
+      gridRef.current.style.minHeight = `${h}px`;
+    }
+    setLastPage(currentPage);
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+    // Keep viewport position to emphasize slide transition
+  }, [currentPage]);
+
+  // Clear min-height after the slide animation completes
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (gridRef.current) gridRef.current.style.minHeight = "";
+    }, animationMs + 50);
+    return () => clearTimeout(t);
+  }, [currentPage]);
+
+  // Fetch fasilitas for rooms on the current page with caching to prevent per-card flicker
+  useEffect(() => {
+    const ids = paginatedRuangan.map((r) => r.id_ruangan);
+    const missing = ids.filter((id) => !fasilitasCache.current.has(id));
+
+    // mark loading for missing ids
+    setLoadingFasilitasIds((prev) => new Set([...Array.from(prev), ...missing]));
+
+    if (missing.length === 0) {
+      const mapObj: Record<number, RuanganFasilitasType[]> = {};
+      ids.forEach((id) => {
+        mapObj[id] = fasilitasCache.current.get(id) ?? [];
+      });
+      setPageFasilitas(mapObj);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const results = await Promise.all(missing.map(async (id) => {
+          const res = await api.get(`/api/ruangan-fasilitas/${id}`);
+          const data: RuanganFasilitasType[] = res.data?.ruanganFasilitas ?? [];
+          return { id, data };
+        }));
+        if (cancelled) return;
+        results.forEach(({ id, data }) => {
+          fasilitasCache.current.set(id, data);
+        });
+        const mapObj: Record<number, RuanganFasilitasType[]> = {};
+        ids.forEach((id) => {
+          mapObj[id] = fasilitasCache.current.get(id) ?? [];
+        });
+        setPageFasilitas(mapObj);
+      } catch (e) {
+        console.error('Error fetching fasilitas per page:', e);
+      } finally {
+        if (!cancelled) {
+          setLoadingFasilitasIds((prev) => {
+            const next = new Set(prev);
+            missing.forEach((id) => next.delete(id));
+            return next;
+          });
+        }
+      }
+    })();
+
+    return () => { cancelled = true };
+  }, [paginatedRuangan]);
+
+  // Prefetch fasilitas for adjacent pages (next and previous) to warm the cache
+  useEffect(() => {
+    const nextStart = currentPage * pageSize;
+    const nextEnd = nextStart + pageSize;
+    const prevStart = Math.max(0, (currentPage - 2) * pageSize);
+    const prevEnd = prevStart + pageSize;
+
+    const nextIds = ruangan.slice(nextStart, nextEnd).map((r) => r.id_ruangan);
+    const prevIds = ruangan.slice(prevStart, prevEnd).map((r) => r.id_ruangan);
+    const candidates = Array.from(new Set([...nextIds, ...prevIds]));
+    const missing = candidates.filter((id) => !fasilitasCache.current.has(id));
+    if (missing.length === 0) return;
+
+    let cancelled = false;
+    setLoadingFasilitasIds((prev) => new Set([...Array.from(prev), ...missing]));
+
+    (async () => {
+      try {
+        const results = await Promise.all(missing.map(async (id) => {
+          const res = await api.get(`/api/ruangan-fasilitas/${id}`);
+          const data: RuanganFasilitasType[] = res.data?.ruanganFasilitas ?? [];
+          return { id, data };
+        }));
+        if (cancelled) return;
+        results.forEach(({ id, data }) => {
+          fasilitasCache.current.set(id, data);
+        });
+      } catch (e) {
+        console.error('Error prefetching fasilitas:', e);
+      } finally {
+        if (!cancelled) {
+          setLoadingFasilitasIds((prev) => {
+            const next = new Set(prev);
+            missing.forEach((id) => next.delete(id));
+            return next;
+          });
+        }
+      }
+    })();
+
+    return () => { cancelled = true };
+  }, [ruangan, currentPage, pageSize]);
 
   return (
     <div className="flex flex-col gap-15 px-15 py-15">
@@ -139,10 +251,20 @@ function RuangDanFasilitas() {
               <Button title="Add" classname="lg:text-2xl md:text-2xl w-30"/>
             </div>
           </Container>
-          <div className="grid grid-cols-2 gap-15">
+          <div ref={gridRef} className={`grid grid-cols-2 gap-15 ${currentPage > lastPage ? 'animate-slide-left' : currentPage < lastPage ? 'animate-slide-right' : ''}`}>
             {
               paginatedRuangan.map((s: RuanganProps) => {
-                return <RoomCardAdmin className="" {...s} key={`ruangan-${s.id_ruangan}`} />
+                const fasilitasList = pageFasilitas[s.id_ruangan] ?? [];
+                const fasilitasLoading = loadingFasilitasIds.has(s.id_ruangan);
+                return (
+                  <RoomCardAdmin
+                    className=""
+                    {...s}
+                    fasilitasList={fasilitasList}
+                    fasilitasLoading={fasilitasLoading}
+                    key={`ruangan-${s.id_ruangan}`}
+                  />
+                )
               })
             }
           </div>
