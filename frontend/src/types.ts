@@ -1,66 +1,74 @@
-
-import React from 'react'
+import React from "react";
 
 // type untuk component Alerts
 export type AlertsProps = {
-    children: React.ReactNode, 
-    className?: string
-}
+  children: React.ReactNode;
+  className?: string;
+};
 
 // type untuk component BuildingList
-type Fakultas = {
+export type Fakultas = {
   id_fakultas: number;
   nama_fakultas: string;
-}
+};
 
+// type untuk component BuildingList
+export type Ruangan = {
+  id_ruangan: number;
+  nama_ruangan: string;
+  kapasitas: number;
+  gedung: string;
+};
+
+// type untuk component BuildingList
 export type BuildingListProps = {
   building: Fakultas[];
-}
+};
 
 // type untuk component Button
-export type ButtonProps = { 
-    title: string, 
-    classname?: string 
-}
+export type ButtonProps = {
+  title: string;
+  classname?: string;
+};
 
 // type untuk component Container
 export type containerProps = {
   children?: React.ReactNode;
   className?: string;
-}
+};
 
 // type untuk component DatePicker
-export type DatePickerProps = { 
-    title: string, 
-    classname?: string 
-}
+export type DatePickerProps = {
+  title: string;
+  classname?: string;
+};
 
 // type untuk component Dropdown
 export type DropdownProps = {
-    children : React.ReactNode,
-    trigger: React.ReactNode
-}
+  children: React.ReactNode;
+  trigger: React.ReactNode;
+};
 
 // type untuk component DropdownItem
 export type DropdownItemProps = {
-    children: React.ReactNode, 
-    callbackFn?: React.MouseEventHandler<HTMLElement> 
-}
+  children: React.ReactNode;
+  callbackFn?: React.MouseEventHandler<HTMLElement>;
+};
 
 // type untuk component FasilitasCard
 export type fasilitasProps = {
-    className?: string;
-    nama_fasilitas: string;
-}
+  className?: string;
+  nama_fasilitas: string;
+};
 
-// type untuk component RoomCardAdmin 
+// type untuk component RoomCardAdmin
 export type RuanganProps = {
   className?: string;
   nama_ruangan: string;
   kapasitas: number;
   gedung: string;
   id_ruangan: number;
-}
+};
 
 // type untuk component Modal
 export type ModalProps = {
@@ -68,21 +76,26 @@ export type ModalProps = {
   children?: React.ReactNode;
   className?: string;
   contentClassName?: string;
-}
+};
 
 // type untuk component Navbar
 export type NavbarProps = {
-  className?: string
-}
+  className?: string;
+};
 
 // type untuk component RoomCard
 export type RoomCardProps = {
-  img: string,
-  tag: string,
-  lokasi: string,
-  lantai: number,
-  antrianPinjaman: number
-}
+  img: string;
+  tag: string;
+  lokasi: string;
+  lantai: number;
+  antrianPinjaman: number;
+};
+
+export type RoomCardAdminProps = RuanganProps & {
+  fasilitasList?: RuanganFasilitasType[];
+  fasilitasLoading?: boolean;
+};
 
 // type untuk Data entitas RuanganFasilitas
 export interface RuanganFasilitasType {
@@ -100,13 +113,21 @@ export interface RuanganFasilitasType {
 
 // type untuk component LeftSidebar
 export type LeftSidebarProps = {
-  children?: React.ReactNode,
-  className?: string,
-}
+  children?: React.ReactNode;
+  className?: string;
+};
 
+// type untuk component SidebarItem
 export type SidebarItemProps = {
-  children?: React.ReactNode,
-  className?: string,
-  to?: string
-  onClick?: () => void
-}
+  children?: React.ReactNode;
+  className?: string;
+  to?: string;
+  onClick?: () => void;
+};
+
+// type untuk fasilitasItem di RuangDanFasilitas
+export type FasilitasItem = {
+  id_fasilitas?: number;
+  nama_fasilitas: string;
+  [key: string]: unknown;
+};

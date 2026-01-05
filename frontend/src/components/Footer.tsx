@@ -1,7 +1,6 @@
 import { sosmed } from "../lib/data";
 
 function Footer() {
-  
   const currentYear = new Date().getFullYear();
 
   return (
@@ -11,19 +10,24 @@ function Footer() {
           {/* Social Media Links */}
           <div className="flex flex-wrap justify-center space-x-6 mb-4 md:mb-0">
             {sosmed.map((item) => {
-              return <a href={item.url} className={`hover:${item.color} transition-colors`}>{item.id}</a>
+              return (
+                <a
+                  href={item.url}
+                  className={`hover:${item.color} transition-colors`}
+                >
+                  {item.id}
+                </a>
+              );
             })}
           </div>
-          
-          <div className="lg:hidden md:hidden border-1 border-gray-300 rounded-xl w-full mb-2"/>
+
+          <div className="lg:hidden md:hidden border-1 border-gray-300 rounded-xl w-full mb-2" />
           {/* Copyright */}
-          <div>
-            Copyright UPNVJ ${currentYear}
-          </div>
+          <div>Copyright UPNVJ {currentYear}</div>
         </div>
       </div>
     </footer>
-  )
+  );
 }
 
-export default Footer 
+export default Footer;
