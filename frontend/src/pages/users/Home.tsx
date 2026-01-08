@@ -191,6 +191,7 @@ const Home: React.FC = () => {
           {(isMobile ? mobileRooms : paginatedRooms).map((item) => {
             return (
               <RoomCard
+                id={item.id_ruangan}
                 img={placeholderImg}
                 tag={item.nama_ruangan}
                 lokasi={`Gedung ${item.gedung}`}

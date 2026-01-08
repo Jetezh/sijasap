@@ -1,40 +1,52 @@
-import bannerUpnvj from './banner-upnvj.png';
-import logoUpnvj from './logo-upnvj.png';
-import highSchoolAmico from './High-School-amico.svg';
-import upnvjLogoWithName from './upnvj-logo-with-name.png';
-import gedungFEB from './Gedung-FEB.webp';
-import gedungFH from './Gedung-FH.webp';
-import gedungFIK from './Gedung-FIK.webp';
-import gedungFIKES from './Gedung-FIKES.webp';
-import gedungFISIP from './Gedung-FISIP.webp';
-import gedungFK from './Gedung-FK.webp';
-import gedungFT from './Gedung-FT.webp';
-import badgeUPNVJ from './badge-upnvj.png';
-import badgeBLU from './badge-BLU.png';
-import badgeTutwuri from './badge-tutwuri.png';
+import bannerUpnvj from "./banner-upnvj.png";
+import logoUpnvj from "./logo-upnvj.png";
+import highSchoolAmico from "./High-School-amico.svg";
+import upnvjLogoWithName from "./upnvj-logo-with-name.png";
 
-// Ruangan FIK
-// FIKLAB
-import fiklab301 from './fiklab-301.jpg'
+// gedung dan ruangan Fakultas Ekonomi dan Bisnis
+import gedungFEB from "./Gedung-FEB.webp";
 
-// FIK
+// gedung dan ruangan Fakultas Hukum
+import gedungFH from "./Gedung-FH.webp";
+
+// gedung dan ruangan Fakultas Ilmu Komputer
+import gedungFIK from "./Gedung-FIK.webp";
+
+// gedung dan ruangan Fakultas Ilmu Kesehatan
+import gedungFIKES from "./Gedung-FIKES.webp";
+
+// gedung dan ruangan Fakultas Ilmu Sosial dan Ilmu Politik
+import gedungFISIP from "./Gedung-FISIP.webp";
+
+// gedung dan ruangan Fakultas Kedokteran
+import gedungFK from "./Gedung-FK.webp";
+
+// gedung dan ruangan Fakultas Teknik
+import gedungFT from "./Gedung-FT.webp";
+
+// gambar placeholder ruangan kelas
+import fiklab301 from "./fiklab-301.jpg";
+
+import badgeUPNVJ from "./badge-upnvj.png";
+import badgeBLU from "./badge-BLU.png";
+import badgeTutwuri from "./badge-tutwuri.png";
 
 const assets = {
-    bannerUpnvj,
-    logoUpnvj,
-    highSchoolAmico,
-    upnvjLogoWithName,
-    gedungFEB,
-    gedungFH,
-    gedungFIK,
-    gedungFIKES,
-    gedungFISIP,
-    gedungFK,
-    gedungFT,
-    badgeUPNVJ,
-    badgeBLU,
-    badgeTutwuri,
-    fiklab301
-}
+  bannerUpnvj,
+  logoUpnvj,
+  highSchoolAmico,
+  upnvjLogoWithName,
+  gedungFEB,
+  gedungFH,
+  gedungFIK,
+  gedungFIKES,
+  gedungFISIP,
+  gedungFK,
+  gedungFT,
+  badgeUPNVJ,
+  badgeBLU,
+  badgeTutwuri,
+  fiklab301,
+};
 
 export default assets;

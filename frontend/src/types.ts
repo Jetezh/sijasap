@@ -18,6 +18,7 @@ export type Ruangan = {
   nama_ruangan: string;
   kapasitas: number;
   gedung: string;
+  lantai: number;
 };
 
 // type untuk component BuildingList
@@ -85,6 +86,7 @@ export type NavbarProps = {
 
 // type untuk component RoomCard
 export type RoomCardProps = {
+  id: number;
   img: string;
   tag: string;
   lokasi: string;
