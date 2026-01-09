@@ -1,12 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "./node_modules/.prisma/client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -14,172 +8,157 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id_user             Int              @id @default(autoincrement())
+  username            String
+  password            String
+  nama_lengkap        String?
+  fakultas_id         Int?
+  unit_universitas_id Int?
+  email_upnvj         String?          @unique(map: "email")
+  role                Role
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  program_studi       String?
+  peminjaman          peminjaman[]
+  fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas])
+  unitUniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
+
+  @@index([fakultas_id], map: "user_fakultas_id_fkey")
+  @@index([unit_universitas_id], map: "user_unit_universitas_id_fkey")
+  @@map("user")
+}
+
+model alasanpenolakan {
+  id_alasan_penolakan Int          @id @default(autoincrement())
+  deskripsi_alasan    String
+  peminjaman          peminjaman[]
+}
+
+model fakultas {
+  id_fakultas      Int                @id @default(autoincrement())
+  nama_fakultas    String
+  harilibur        harilibur[]
+  kalenderakademik kalenderakademik[]
+  ruangan          ruangan[]
+  user             User[]
+}
+
+model fasilitas {
+  id_fasilitas     Int                @id @default(autoincrement())
+  nama_fasilitas   String
+  ruanganfasilitas ruanganfasilitas[]
+}
+
+model harilibur {
+  id_hari_libur       Int              @id @default(autoincrement())
+  tanggal_libur       DateTime
+  jenis_libur         String
+  fakultas_id         Int?
+  unit_universitas_id Int?
+  fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas], map: "HariLibur_fakultas_id_fkey")
+  unituniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas], map: "HariLibur_unit_universitas_id_fkey")
+
+  @@index([fakultas_id], map: "HariLibur_fakultas_id_fkey")
+  @@index([unit_universitas_id], map: "HariLibur_unit_universitas_id_fkey")
+}
+
+model jadwalkuliah {
+  id_jadwal  Int     @id @default(autoincrement())
+  id_ruangan Int
+  hari       String
+  jam        String
+  semester   Int
+  ruangan    ruangan @relation(fields: [id_ruangan], references: [id_ruangan], map: "JadwalKuliah_id_ruangan_fkey")
+
+  @@index([id_ruangan], map: "JadwalKuliah_id_ruangan_fkey")
+}
+
+model kalenderakademik {
+  id_event            Int              @id @default(autoincrement())
+  nama_event          String
+  tanggal_mulai       DateTime
+  tanggal_selesai     DateTime
+  fakultas_id         Int?
+  unit_universitas_id Int?
+  fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas], map: "KalenderAkademik_fakultas_id_fkey")
+  unituniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas], map: "KalenderAkademik_unit_universitas_id_fkey")
+
+  @@index([fakultas_id], map: "KalenderAkademik_fakultas_id_fkey")
+  @@index([unit_universitas_id], map: "KalenderAkademik_unit_universitas_id_fkey")
+}
+
+model peminjaman {
+  id_peminjaman        Int              @id @default(autoincrement())
+  id_user              Int
+  id_ruangan           Int
+  tujuan               String
+  jumlah_peserta       Int
+  status_peminjaman_id Int
+  alasan_ditolak_id    Int
+  waktu_mulai          DateTime
+  waktu_selesai        DateTime
+  alasanpenolakan      alasanpenolakan  @relation(fields: [alasan_ditolak_id], references: [id_alasan_penolakan], map: "Peminjaman_alasan_ditolak_id_fkey")
+  ruangan              ruangan          @relation(fields: [id_ruangan], references: [id_ruangan], map: "Peminjaman_id_ruangan_fkey")
+  user                 User             @relation(fields: [id_user], references: [id_user], map: "Peminjaman_id_user_fkey")
+  statuspeminjaman     statuspeminjaman @relation(fields: [status_peminjaman_id], references: [id_status_peminjaman], map: "Peminjaman_status_peminjaman_id_fkey")
+
+  @@index([alasan_ditolak_id], map: "Peminjaman_alasan_ditolak_id_fkey")
+  @@index([id_ruangan], map: "Peminjaman_id_ruangan_fkey")
+  @@index([id_user], map: "Peminjaman_id_user_fkey")
+  @@index([status_peminjaman_id], map: "Peminjaman_status_peminjaman_id_fkey")
+}
+
+model ruangan {
+  id_ruangan          Int                @id @default(autoincrement())
+  nama_ruangan        String
+  gedung              String
+  lantai              Int
+  kapasitas           Int
+  tipe_ruangan        String
+  fakultas_id         Int?
+  unit_universitas_id Int?
+  createdAt           DateTime           @default(now())
+  imgUrl              String?
+  updatedAt           DateTime
+  jadwalkuliah        jadwalkuliah[]
+  peminjaman          peminjaman[]
+  fakultas            fakultas?          @relation(fields: [fakultas_id], references: [id_fakultas], map: "Ruangan_fakultas_id_fkey")
+  unituniversitas     unituniversitas?   @relation(fields: [unit_universitas_id], references: [id_unit_univesitas], map: "Ruangan_unit_universitas_id_fkey")
+  ruanganfasilitas    ruanganfasilitas[]
+
+  @@index([fakultas_id], map: "Ruangan_fakultas_id_fkey")
+  @@index([unit_universitas_id], map: "Ruangan_unit_universitas_id_fkey")
+}
+
+model ruanganfasilitas {
+  id_ruangan   Int
+  id_fasilitas Int
+  fasilitas    fasilitas @relation(fields: [id_fasilitas], references: [id_fasilitas], map: "RuanganFasilitas_id_fasilitas_fkey")
+  ruangan      ruangan   @relation(fields: [id_ruangan], references: [id_ruangan], map: "RuanganFasilitas_id_ruangan_fkey")
+
+  @@id([id_ruangan, id_fasilitas])
+  @@index([id_fasilitas], map: "RuanganFasilitas_id_fasilitas_fkey")
+}
+
+model statuspeminjaman {
+  id_status_peminjaman Int          @id @default(autoincrement())
+  nama_status          String       @unique(map: "StatusPeminjaman_nama_status_key")
+  peminjaman           peminjaman[]
+}
+
+model unituniversitas {
+  id_unit_univesitas Int                @id @default(autoincrement())
+  nama_unit          String
+  harilibur          harilibur[]
+  kalenderakademik   kalenderakademik[]
+  ruangan            ruangan[]
+  user               User[]
+}
+
 enum Role {
   ADMIN
   SUPERADMIN
   DOSEN
   MAHASISWA
-}
-
-model User {
-  id_user Int @id @default(autoincrement())
-  email_upnvj String? @unique(map: "email")
-  username String
-  password String
-  nama_lengkap String?
-  role Role
-  fakultas_id Int?
-  unit_universitas_id Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  fakultas Fakultas? @relation(fields: [fakultas_id], references: [id_fakultas])
-  unitUniversitas UnitUniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
-
-  peminjaman  Peminjaman[]
-
-  @@map("user")
-}
-
-model Fakultas {
-  id_fakultas Int @id @default(autoincrement())
-  nama_fakultas String
-
-  user User[]
-  ruangan Ruangan[]
-  kalenderAkademik KalenderAkademik[]
-  hariLibur HariLibur[]
-
-  @@map("Fakultas")
-}
-
-model UnitUniversitas {
-  id_unit_univesitas Int @id @default(autoincrement())
-  nama_unit String
-
-  user User[]
-  ruangan Ruangan[]
-  kalenderAkademik KalenderAkademik[]
-  hariLibur HariLibur[]
-
-  @@map("UnitUniversitas")
-}
-
-model Ruangan {
-  id_ruangan Int @id @default(autoincrement())
-  nama_ruangan String
-  gedung String
-  lantai Int
-  kapasitas Int
-  tipe_ruangan String
-  fakultas_id Int?
-  unit_universitas_id Int?
-  imgUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  fakultas Fakultas? @relation(fields: [fakultas_id], references: [id_fakultas])
-  unitUniversitas UnitUniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
-
-  peminjaman Peminjaman[]
-  jadwalKuliah JadwalKuliah[]
-  ruanganFasilitas RuanganFasilitas[]
-
-  @@map("Ruangan")
-}
-
-model Fasilitas {
-  id_fasilitas Int @id @default(autoincrement())
-  nama_fasilitas String
-
-  ruanganFasilitas RuanganFasilitas[]
-
-  @@map("Fasilitas")
-}
-
-model RuanganFasilitas {
-  id_ruangan Int
-  id_fasilitas Int
-
-  ruangan Ruangan @relation(fields: [id_ruangan], references: [id_ruangan])
-  fasilitas Fasilitas @relation(fields: [id_fasilitas], references: [id_fasilitas])
-
-  @@id([id_ruangan, id_fasilitas])
-  @@map("RuanganFasilitas")
-}
-
-model Peminjaman  {
-  id_peminjaman Int @id @default(autoincrement())
-  id_user Int
-  id_ruangan  Int
-  waktu_mulai DateTime
-  waktu_selesai DateTime
-  tujuan String
-  jumlah_peserta  Int
-  status_peminjaman_id  Int
-  alasan_ditolak_id Int
-
-  user User @relation(fields: [id_user], references: [id_user])
-  ruangan Ruangan @relation(fields: [id_ruangan], references: [id_ruangan])
-  statusPeminjaman  StatusPeminjaman  @relation(fields: [status_peminjaman_id], references: [id_status_peminjaman])
-  alasanDitolak AlasanPenolakan @relation(fields: [alasan_ditolak_id], references: [id_alasan_penolakan])
-
-  @@map("Peminjaman")
-}
-
-model StatusPeminjaman {
-  id_status_peminjaman Int @id @default(autoincrement())
-  nama_status String @unique
-
-  peminjaman Peminjaman[]
-
-  @@map("StatusPeminjaman")
-}
-
-model AlasanPenolakan {
-  id_alasan_penolakan Int @id @default(autoincrement())
-  deskripsi_alasan String
-
-  peminjaman Peminjaman[]
-
-  @@map("AlasanPenolakan")
-}
-
-model JadwalKuliah {
-  id_jadwal Int @id @default(autoincrement())
-  id_ruangan Int
-  hari String
-  jam String
-  semester Int
-
-  ruangan Ruangan @relation(fields: [id_ruangan], references: [id_ruangan])
-
-  @@map("JadwalKuliah")
-}
-
-model KalenderAkademik {
-  id_event Int @id @default(autoincrement())
-  nama_event String
-  tanggal_mulai DateTime
-  tanggal_selesai DateTime
-  fakultas_id Int?
-  unit_universitas_id Int?
-
-  fakultas Fakultas? @relation(fields: [fakultas_id], references: [id_fakultas])
-  unitUniversitas UnitUniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
-
-  @@map("KalenderAkademik")
-}
-
-model HariLibur {
-  id_hari_libur Int @id @default(autoincrement())
-  tanggal_libur DateTime
-  jenis_libur String
-  fakultas_id Int?
-  unit_universitas_id Int?
-
-  fakultas Fakultas? @relation(fields: [fakultas_id], references: [id_fakultas])
-  unitUniversitas UnitUniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
-
-  @@map("HariLibur")
 }

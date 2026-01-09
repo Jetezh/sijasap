@@ -100,7 +100,7 @@ export const RuanganFasilitasController = async (
     const fakultasId = req.user.fakultas_id ?? null;
     const unitUniversitasId = req.user.unit_Universitas_Id ?? null;
 
-    const ruanganFasilitas = await prisma.ruanganFasilitas.findMany({
+    const ruanganFasilitas = await prisma.ruanganfasilitas.findMany({
       where: {
         ruangan: {
           ...(fakultasId && { fakultas_id: fakultasId }),
