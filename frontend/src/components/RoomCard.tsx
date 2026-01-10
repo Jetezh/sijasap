@@ -7,7 +7,7 @@ function RoomCard(props: RoomCardProps) {
   const { id, img, tag, lokasi, lantai, antrianPinjaman } = props;
 
   return (
-    <div className="px-2 py-2 lg:basis-1/4 md:basis-1/2 basis-full">
+    <div className="lg:basis-1/4 md:basis-1/2 basis-full">
       <div className="flex flex-col text-left lg:gap-5 md:gap-3 gap-2 bg-white p-4 rounded-lg shadow-md">
         <img src={img} className="object-cover rounded-sm" />
         <Tag

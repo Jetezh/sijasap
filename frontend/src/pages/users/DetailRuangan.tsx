@@ -75,7 +75,10 @@ function DetailRuangan() {
         <h1 className="absolute bottom-4 left-4 text-white font-bold lg:text-5xl md:text-3xl text-xl">
           {title}
         </h1>
-        <Link to={"/reserving-form"}>
+        <Link
+          to={`/reserving-form/${ruangan?.id_ruangan ?? id_ruangan ?? ""}`}
+          state={{ ruangan }}
+        >
           <Button
             title="Pinjam Ruangan"
             classname="absolute bottom-4 right-4 lg:py-4 lg:px-10 md:py-3 md:px-7 py-2 px-5"

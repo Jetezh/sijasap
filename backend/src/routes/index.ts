@@ -20,6 +20,7 @@ router.get("/profile", verifyToken, ProfileController);
 
 // route untuk fetch data ruangan
 router.get("/ruangan", verifyToken, RuangController);
+
 // route untuk fetch detail ruangan
 router.get("/ruangan/:id_ruangan", verifyToken, RuanganDetailController);
 

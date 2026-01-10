@@ -127,7 +127,7 @@ export default function AppRoutes() {
         <Route path="fasilitas" element={<Fasilitas />} />
         <Route path="notifikasi" element={<Notifications />} />
         <Route path="detail-ruangan/:id_ruangan" element={<DetailRuangan />} />
-        <Route path="reserving-form" element={<ReservingForm />} />
+        <Route path="reserving-form/:id_ruangan" element={<ReservingForm />} />
       </Route>
 
       {/* Catch all route - redirect to login */}

@@ -160,6 +160,7 @@ const Home: React.FC = () => {
   return (
     <div className="w-full h-full mx-auto bg-gray-100">
       <Caraousal slides={slides} />
+      <div className="pt-5" />
       <BuildingList building={fakultas} />
       <div className="lg:py-10 md:py-7 py-5">
         <form className="flex flex-row flex-wrap justify-between lg:text-2xl md:text-xl text-sm font-medium lg:px-10 md:px-7 px-5">
@@ -187,7 +188,7 @@ const Home: React.FC = () => {
       </div>
       <div className="lg:mt-15 md:mt-10 mt-5 lg:px-9 md:px-6 px-5 flex flex-col gap-10">
         <span className="text-3xl font-medium">Informasi Ruangan</span>
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4">
+        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-10">
           {(isMobile ? mobileRooms : paginatedRooms).map((item) => {
             return (
               <RoomCard
@@ -195,7 +196,7 @@ const Home: React.FC = () => {
                 img={placeholderImg}
                 tag={item.nama_ruangan}
                 lokasi={`Gedung ${item.gedung}`}
-                lantai={0}
+                lantai={item.lantai}
                 antrianPinjaman={0}
                 key={`room-${item.id_ruangan}`}
               />
