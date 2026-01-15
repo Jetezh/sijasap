@@ -1,10 +1,13 @@
 import assets from "../../assets/assets";
 import Button from "../../components/Button";
 import Container from "../../components/Container";
+import Modal from "../../components/Modal";
+
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import type { Ruangan } from "../../types";
 import { useLocation, useParams } from "react-router-dom";
+
+import type { Ruangan } from "../../types";
 import api from "../../services/api";
 
 function ReservingForm() {
@@ -22,6 +25,7 @@ function ReservingForm() {
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { user } = authContext;
 
@@ -61,8 +65,6 @@ function ReservingForm() {
 
     fetchRuangan();
   }, [id_ruangan, ruangan?.id_ruangan]);
-
-  console.log(user);
 
   const title = ruangan?.nama_ruangan ?? "Nama Ruangan";
 
@@ -221,10 +223,19 @@ function ReservingForm() {
                   <p className="font-semibold">Pernyataan & Persetujuan</p>
                   <label className="flex items-start gap-2">
                     <input
-                      className="mt-1 hover:cursor-pointer lg:w-5 lg:h-5 md:w-4 md:h-4 w-3 h-3 duration-300"
+                      className="mt-1 hover:cursor-pointer lg:w-5 lg:h-5 md:w-4 md:h-5 w-3 h-3 duration-300"
                       type="checkbox"
                     />
-                    <span>Menyetujui aturan penggunaan laboratorium</span>
+                    <span>
+                      Menyetujui{" "}
+                      <span
+                        onClick={() => setIsModalOpen(true)}
+                        className="italic text-(--link-color) hover:text-(--link-hover-color) hover:cursor-pointer"
+                      >
+                        syarat dan aturan
+                      </span>{" "}
+                      penggunaan ruangan
+                    </span>
                   </label>
                   <label className="flex items-start gap-2">
                     <input
@@ -276,12 +287,9 @@ function ReservingForm() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                 <label className="flex flex-col gap-2">
                   <span>Nama Lengkap</span>
-                  <input
-                    className="border rounded-md p-2"
-                    type="text"
-                    placeholder="Nama lengkap"
-                    defaultValue={user?.nama_lengkap}
-                  />
+                  <div className="border rounded-md p-2">
+                    {user?.nama_lengkap}
+                  </div>
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>NIM</span>
@@ -407,12 +415,25 @@ function ReservingForm() {
 
               <div className="flex flex-col gap-3">
                 <p className="font-semibold">Pernyataan & Persetujuan</p>
+                <Modal
+                  isOpen={isModalOpen}
+                  onClose={() => setIsModalOpen(false)}
+                ></Modal>
                 <label className="flex items-start gap-2">
                   <input
                     className="mt-1 hover:cursor-pointer lg:w-5 lg:h-5 md:w-4 md:h-5 w-3 h-3 duration-300"
                     type="checkbox"
                   />
-                  <span>Menyetujui aturan penggunaan laboratorium</span>
+                  <span>
+                    Menyetujui{" "}
+                    <span
+                      onClick={() => setIsModalOpen(true)}
+                      className="italic text-(--link-color) hover:text-(--link-hover-color) hover:cursor-pointer"
+                    >
+                      syarat dan aturan
+                    </span>{" "}
+                    penggunaan ruangan
+                  </span>
                 </label>
                 <label className="flex items-start gap-2">
                   <input

@@ -74,9 +74,11 @@ export type RuanganProps = {
 // type untuk component Modal
 export type ModalProps = {
   isOpen: boolean;
+  onClose?: () => void;
   children?: React.ReactNode;
   className?: string;
   contentClassName?: string;
+  showCloseButton?: boolean;
 };
 
 // type untuk component Navbar

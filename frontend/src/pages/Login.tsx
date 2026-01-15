@@ -159,7 +159,7 @@ const Login: React.FC = () => {
             >
               Ketentuan Peminjaman
             </button>
-            <Modal isOpen={isModalOpen}>
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
               <h2>Ketentuan Peminjaman</h2>
               <p>Berikut adalah ketentuan peminjaman ruang:</p>
               <ul className="flex flex-col gap-2 list-decimal list-inside text-left">
@@ -167,12 +167,6 @@ const Login: React.FC = () => {
                 <li>Ruang yang dipinjam harus sesuai dengan kebutuhan.</li>
                 <li>Peminjam bertanggung jawab atas kebersihan ruang.</li>
               </ul>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="bg-(--red-button) hover:bg-(--red-button-hover) hover:cursor-pointer duration-300 text-white px-4 py-2 rounded-md w-full"
-              >
-                Close
-              </button>
             </Modal>
           </div>
         </div>

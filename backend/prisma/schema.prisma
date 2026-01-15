@@ -14,19 +14,29 @@ model User {
   password            String
   nama_lengkap        String?
   fakultas_id         Int?
+  program_studi_id    Int?
   unit_universitas_id Int?
   email_upnvj         String?          @unique(map: "email")
   role                Role
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
-  program_studi       String?
+
+  program_studi       programstudi?    @relation(fields: [program_studi_id], references: [id_program_studi])
   peminjaman          peminjaman[]
   fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas])
   unitUniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
 
   @@index([fakultas_id], map: "user_fakultas_id_fkey")
+  @@index([program_studi_id], map: "user_program_studi_id_fkey")
   @@index([unit_universitas_id], map: "user_unit_universitas_id_fkey")
   @@map("user")
+}
+
+model programstudi {
+  id_program_studi    Int                @id @default(autoincrement())
+  nama_program_studi  String
+
+  user                User[]
 }
 
 model alasanpenolakan {
@@ -56,8 +66,8 @@ model harilibur {
   jenis_libur         String
   fakultas_id         Int?
   unit_universitas_id Int?
-  fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas], map: "HariLibur_fakultas_id_fkey")
-  unituniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas], map: "HariLibur_unit_universitas_id_fkey")
+  fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas])
+  unituniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
 
   @@index([fakultas_id], map: "HariLibur_fakultas_id_fkey")
   @@index([unit_universitas_id], map: "HariLibur_unit_universitas_id_fkey")
@@ -69,7 +79,7 @@ model jadwalkuliah {
   hari       String
   jam        String
   semester   Int
-  ruangan    ruangan @relation(fields: [id_ruangan], references: [id_ruangan], map: "JadwalKuliah_id_ruangan_fkey")
+  ruangan    ruangan @relation(fields: [id_ruangan], references: [id_ruangan])
 
   @@index([id_ruangan], map: "JadwalKuliah_id_ruangan_fkey")
 }
@@ -81,8 +91,8 @@ model kalenderakademik {
   tanggal_selesai     DateTime
   fakultas_id         Int?
   unit_universitas_id Int?
-  fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas], map: "KalenderAkademik_fakultas_id_fkey")
-  unituniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas], map: "KalenderAkademik_unit_universitas_id_fkey")
+  fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas])
+  unituniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
 
   @@index([fakultas_id], map: "KalenderAkademik_fakultas_id_fkey")
   @@index([unit_universitas_id], map: "KalenderAkademik_unit_universitas_id_fkey")
@@ -92,16 +102,27 @@ model peminjaman {
   id_peminjaman        Int              @id @default(autoincrement())
   id_user              Int
   id_ruangan           Int
-  tujuan               String
+
+  nama_kegiatan        String @db.VarChar(255)
+  jenis_kegiatan       JenisKegiatan
+  nomor_telepon        Int
+
+  dosen_penanggung_jawab String? @db.VarChar(255)
+  path_file_surat String? @db.VarChar(255)
+  mata_kuliah String? @db.VarChar(255)
+  keterangan_tambahan String? @db.VarChar(255)
+  kebutuhan_alat String? @db.VarChar(255)
+
   jumlah_peserta       Int
   status_peminjaman_id Int
-  alasan_ditolak_id    Int
+  alasan_ditolak_id    Int?
   waktu_mulai          DateTime
   waktu_selesai        DateTime
-  alasanpenolakan      alasanpenolakan  @relation(fields: [alasan_ditolak_id], references: [id_alasan_penolakan], map: "Peminjaman_alasan_ditolak_id_fkey")
-  ruangan              ruangan          @relation(fields: [id_ruangan], references: [id_ruangan], map: "Peminjaman_id_ruangan_fkey")
-  user                 User             @relation(fields: [id_user], references: [id_user], map: "Peminjaman_id_user_fkey")
-  statuspeminjaman     statuspeminjaman @relation(fields: [status_peminjaman_id], references: [id_status_peminjaman], map: "Peminjaman_status_peminjaman_id_fkey")
+
+  alasanpenolakan      alasanpenolakan? @relation(fields: [alasan_ditolak_id], references: [id_alasan_penolakan])
+  ruangan              ruangan          @relation(fields: [id_ruangan], references: [id_ruangan])
+  user                 User             @relation(fields: [id_user], references: [id_user])
+  statuspeminjaman     statuspeminjaman @relation(fields: [status_peminjaman_id], references: [id_status_peminjaman])
 
   @@index([alasan_ditolak_id], map: "Peminjaman_alasan_ditolak_id_fkey")
   @@index([id_ruangan], map: "Peminjaman_id_ruangan_fkey")
@@ -123,8 +144,8 @@ model ruangan {
   updatedAt           DateTime
   jadwalkuliah        jadwalkuliah[]
   peminjaman          peminjaman[]
-  fakultas            fakultas?          @relation(fields: [fakultas_id], references: [id_fakultas], map: "Ruangan_fakultas_id_fkey")
-  unituniversitas     unituniversitas?   @relation(fields: [unit_universitas_id], references: [id_unit_univesitas], map: "Ruangan_unit_universitas_id_fkey")
+  fakultas            fakultas?          @relation(fields: [fakultas_id], references: [id_fakultas])
+  unituniversitas     unituniversitas?   @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
   ruanganfasilitas    ruanganfasilitas[]
 
   @@index([fakultas_id], map: "Ruangan_fakultas_id_fkey")
@@ -134,8 +155,8 @@ model ruangan {
 model ruanganfasilitas {
   id_ruangan   Int
   id_fasilitas Int
-  fasilitas    fasilitas @relation(fields: [id_fasilitas], references: [id_fasilitas], map: "RuanganFasilitas_id_fasilitas_fkey")
-  ruangan      ruangan   @relation(fields: [id_ruangan], references: [id_ruangan], map: "RuanganFasilitas_id_ruangan_fkey")
+  fasilitas    fasilitas @relation(fields: [id_fasilitas], references: [id_fasilitas])
+  ruangan      ruangan   @relation(fields: [id_ruangan], references: [id_ruangan])
 
   @@id([id_ruangan, id_fasilitas])
   @@index([id_fasilitas], map: "RuanganFasilitas_id_fasilitas_fkey")
@@ -161,4 +182,12 @@ enum Role {
   SUPERADMIN
   DOSEN
   MAHASISWA
+}
+
+enum JenisKegiatan {
+  PERKULIAHAN
+  PRAKTIKUM
+  PENELITIAN
+  SIDANG_SKRIPSI
+  LAINNYA
 }
