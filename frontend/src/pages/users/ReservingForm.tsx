@@ -293,41 +293,25 @@ function ReservingForm() {
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>NIM</span>
-                  <input
-                    className="border rounded-md p-2"
-                    type="text"
-                    placeholder="NIM"
-                    defaultValue={user?.username}
-                  />
+                  <div className="border rounded-md p-2">{user?.username}</div>
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Program Studi</span>
-                  <input
-                    className="border rounded-md p-2"
-                    type="text"
-                    placeholder="Program studi"
-                    defaultValue={user?.program_studi}
-                  />
+                  <div className="border rounded-md p-2">
+                    {user?.nama_program_studi}
+                  </div>
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Angkatan</span>
-                  <input
-                    className="border rounded-md p-2"
-                    type="text"
-                    placeholder="Angkatan"
-                    defaultValue={
-                      user?.username ? `20${user.username.slice(0, 2)}` : "-"
-                    }
-                  />
+                  <div className="border rounded-md p-2">
+                    {user?.username ? `20${user.username.slice(0, 2)}` : "-"}
+                  </div>
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Email</span>
-                  <input
-                    className="border rounded-md p-2"
-                    type="email"
-                    placeholder="email@domain.com"
-                    defaultValue={user?.email_upnvj ? user.email_upnvj : ""}
-                  />
+                  <div className="border rounded-md p-2">
+                    {user?.email_upnvj}
+                  </div>
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Nomor Telepon/WhatsApp</span>
@@ -352,10 +336,11 @@ function ReservingForm() {
                   <span>Jenis Kegiatan</span>
                   <select className="border rounded-md p-2">
                     <option value="">Pilih jenis kegiatan</option>
-                    <option value="perkuliahan">Perkuliahan</option>
-                    <option value="praktikum">Praktikum</option>
-                    <option value="penelitian">Penelitian</option>
-                    <option value="lainnya">Lainnya</option>
+                    <option value="PERKULIAHAN">Perkuliahan</option>
+                    <option value="PRAKTIKUM">Praktikum</option>
+                    <option value="PENELITIAN">Penelitian</option>
+                    <option value="SIDANG_SKRIPSI">Sidang Skripsi</option>
+                    <option value="LAINNYA">Lainnya</option>
                   </select>
                 </label>
                 <label className="flex flex-col gap-2">

@@ -17,10 +17,15 @@ export const ProfileController = async (req: Request, res: Response) => {
         fakultas_id: true,
         email_upnvj: true,
         unit_universitas_id: true,
-        program_studi: true,
+        program_studi_id: true,
         fakultas: {
           select: {
             nama_fakultas: true,
+          },
+        },
+        programstudi: {
+          select: {
+            nama_program_studi: true,
           },
         },
       },

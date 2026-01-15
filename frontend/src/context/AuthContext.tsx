@@ -42,9 +42,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             email_upnvj: res.data.user.email_upnvj,
             nama_lengkap: res.data.user.nama_lengkap,
             nama_fakultas: res.data.user.fakultas?.nama_fakultas,
+            nama_program_studi: res.data.user.programstudi?.nama_program_studi,
             fakultas_id: res.data.user.fakultas_id,
             unit_universitas_id: res.data.user.unit_universitas_id,
-            program_studi: res.data.user.program_studi,
+            program_studi_id: res.data.user.program_studi_id,
           };
           setUser(freshUser);
           setIsAuthenticated(true);

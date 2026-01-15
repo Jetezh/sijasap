@@ -21,7 +21,7 @@ model User {
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
 
-  program_studi       programstudi?    @relation(fields: [program_studi_id], references: [id_program_studi])
+  programstudi        programstudi?    @relation(fields: [program_studi_id], references: [id_program_studi])
   peminjaman          peminjaman[]
   fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas])
   unitUniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])

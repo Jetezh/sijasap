@@ -37,7 +37,7 @@ export const RuanganDetailController = async (req: Request, res: Response) => {
     }
 
     const fakultasId = req.user.fakultas_id ?? null;
-    const unitUniversitasId = req.user.unit_Universitas_Id ?? null;
+    const unitUniversitasId = req.user.unit_universitas_id ?? null;
 
     const ruangan = await prisma.ruangan.findFirst({
       where: {
@@ -98,7 +98,7 @@ export const RuanganFasilitasController = async (
     }
 
     const fakultasId = req.user.fakultas_id ?? null;
-    const unitUniversitasId = req.user.unit_Universitas_Id ?? null;
+    const unitUniversitasId = req.user.unit_universitas_id ?? null;
 
     const ruanganFasilitas = await prisma.ruanganfasilitas.findMany({
       where: {
@@ -125,13 +125,6 @@ export const RuanganFasilitasController = async (
         },
       },
     });
-
-    if (!ruanganFasilitas.length) {
-      return res.status(404).json({
-        success: false,
-        message: "Data Ruangan/Fasilitas tidak ditemukan",
-      });
-    }
 
     return res.json({ success: true, ruanganFasilitas });
   } catch (err) {

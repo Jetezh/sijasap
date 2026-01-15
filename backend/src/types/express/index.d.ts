@@ -11,8 +11,8 @@ declare global {
         nama_lengkap?: string;
         email_upnvj?: string;
         fakultas_id?: number;
-        unit_Universitas_Id?: number;
-        program_studi?: string;
+        unit_universitas_id?: number;
+        program_studi_id?: number;
       };
     }
   }

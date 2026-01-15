@@ -7,9 +7,10 @@ export type User = {
   nama_lengkap?: string;
   email_upnvj?: string;
   fakultas_id?: number;
+  program_studi_id?: number;
   unit_universitas_id?: number;
   nama_fakultas?: string;
-  program_studi?: string;
+  nama_program_studi?: string;
 };
 
 export type AuthContextType = {
