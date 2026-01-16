@@ -163,8 +163,8 @@ model ruanganfasilitas {
 }
 
 model statuspeminjaman {
-  id_status_peminjaman Int          @id @default(autoincrement())
-  nama_status          String       @unique(map: "StatusPeminjaman_nama_status_key")
+  id_status_peminjaman Int                @id @default(autoincrement())
+  keterangan_status    StatusPeminjaman
   peminjaman           peminjaman[]
 }
 
@@ -190,4 +190,11 @@ enum JenisKegiatan {
   PENELITIAN
   SIDANG_SKRIPSI
   LAINNYA
+}
+
+enum StatusPeminjaman {
+  DIPROSES
+  DITERIMA
+  DITOLAK
+  SELESAI
 }

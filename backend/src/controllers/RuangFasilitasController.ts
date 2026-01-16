@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../../prisma/client";
+import { JenisKegiatan } from "../generated/prisma";
 
 export const RuangController = async (req: Request, res: Response) => {
   try {
@@ -129,6 +130,195 @@ export const RuanganFasilitasController = async (
     return res.json({ success: true, ruanganFasilitas });
   } catch (err) {
     console.error("Error fetching fasilitas data:", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const RuanganReservationController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const {
+      id_ruangan,
+      waktu_mulai,
+      waktu_selesai,
+      nama_kegiatan,
+      jenis_kegiatan,
+      nomor_telepon,
+      jumlah_peserta,
+      dosen_penanggung_jawab,
+      path_file_surat,
+      mata_kuliah,
+      kebutuhan_alat,
+      keterangan_tambahan,
+    } = req.body ?? {};
+
+    const ruanganId = Number(id_ruangan);
+    if (!ruanganId || Number.isNaN(ruanganId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid ruangan id" });
+    }
+
+    if (!waktu_mulai || !waktu_selesai) {
+      return res.status(400).json({
+        success: false,
+        message: "Waktu mulai dan waktu selesai wajib diisi.",
+      });
+    }
+
+    const waktuMulai = new Date(waktu_mulai);
+    const waktuSelesai = new Date(waktu_selesai);
+    if (
+      Number.isNaN(waktuMulai.getTime()) ||
+      Number.isNaN(waktuSelesai.getTime())
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Format waktu tidak valid.",
+      });
+    }
+
+    if (waktuMulai >= waktuSelesai) {
+      return res.status(400).json({
+        success: false,
+        message: "Waktu selesai harus lebih besar dari waktu mulai.",
+      });
+    }
+
+    if (!nama_kegiatan || !jenis_kegiatan) {
+      return res.status(400).json({
+        success: false,
+        message: "Nama kegiatan dan jenis kegiatan wajib diisi.",
+      });
+    }
+
+    const nomorTelepon = Number(nomor_telepon);
+    if (!nomorTelepon || Number.isNaN(nomorTelepon)) {
+      return res.status(400).json({
+        success: false,
+        message: "Nomor telepon wajib diisi dan harus berupa angka.",
+      });
+    }
+
+    const jumlahPeserta = Number(jumlah_peserta);
+    if (!jumlahPeserta || Number.isNaN(jumlahPeserta)) {
+      return res.status(400).json({
+        success: false,
+        message: "Jumlah peserta wajib diisi dan harus berupa angka.",
+      });
+    }
+
+    const normalizedJenisKegiatan = String(jenis_kegiatan).toUpperCase();
+    if (
+      !Object.values(JenisKegiatan).includes(
+        normalizedJenisKegiatan as JenisKegiatan,
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Jenis kegiatan tidak valid.",
+      });
+    }
+
+    const fakultasId = req.user.fakultas_id ?? null;
+    const unitUniversitasId = req.user.unit_universitas_id ?? null;
+
+    const ruangan = await prisma.ruangan.findFirst({
+      where: {
+        id_ruangan: ruanganId,
+        ...(fakultasId && { fakultas_id: fakultasId }),
+        ...(unitUniversitasId && { unit_universitas_id: unitUniversitasId }),
+      },
+      select: {
+        id_ruangan: true,
+      },
+    });
+
+    if (!ruangan) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Ruangan not found" });
+    }
+
+    const konflikPeminjaman = await prisma.peminjaman.findFirst({
+      where: {
+        id_ruangan: ruanganId,
+        statuspeminjaman: {
+          keterangan_status: {
+            not: "DITOLAK",
+          },
+        },
+        AND: [
+          {
+            waktu_mulai: {
+              lt: waktuSelesai,
+            },
+          },
+          {
+            waktu_selesai: {
+              gt: waktuMulai,
+            },
+          },
+        ],
+      },
+      select: {
+        id_peminjaman: true,
+      },
+    });
+
+    if (konflikPeminjaman) {
+      return res.status(409).json({
+        success: false,
+        message: "Ruangan sedang dipinjam.",
+      });
+    }
+
+    const statusDiproses = await prisma.statuspeminjaman.findFirst({
+      where: { keterangan_status: "DIPROSES" },
+      select: { id_status_peminjaman: true },
+    });
+
+    if (!statusDiproses) {
+      return res.status(500).json({
+        success: false,
+        message: "Status peminjaman belum tersedia.",
+      });
+    }
+
+    const peminjaman = await prisma.peminjaman.create({
+      data: {
+        id_user: req.user.id,
+        id_ruangan: ruanganId,
+        nama_kegiatan: String(nama_kegiatan),
+        jenis_kegiatan: normalizedJenisKegiatan as JenisKegiatan,
+        nomor_telepon: nomorTelepon,
+        jumlah_peserta: jumlahPeserta,
+        dosen_penanggung_jawab: dosen_penanggung_jawab ?? null,
+        path_file_surat: path_file_surat ?? null,
+        mata_kuliah: mata_kuliah ?? null,
+        keterangan_tambahan: keterangan_tambahan ?? null,
+        kebutuhan_alat: kebutuhan_alat ?? null,
+        waktu_mulai: waktuMulai,
+        waktu_selesai: waktuSelesai,
+        status_peminjaman_id: statusDiproses.id_status_peminjaman,
+      },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Peminjaman berhasil dibuat.",
+      data: peminjaman,
+    });
+  } catch (err) {
+    console.log("Error ", err);
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });

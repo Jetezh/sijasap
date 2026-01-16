@@ -3,7 +3,13 @@ import Button from "../../components/Button";
 import Container from "../../components/Container";
 import Modal from "../../components/Modal";
 
-import { useContext, useEffect, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useLocation, useParams } from "react-router-dom";
 
@@ -25,6 +31,22 @@ function ReservingForm() {
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    nomor_telepon: "",
+    nama_kegiatan: "",
+    jenis_kegiatan: "",
+    tanggal_peminjaman: "",
+    waktu_mulai: "",
+    waktu_selesai: "",
+    jumlah_peserta: "",
+    mata_kuliah: "",
+    kebutuhan_alat: "",
+    keterangan_tambahan: "",
+    dosen_penanggung_jawab: "",
+    path_file_surat: "",
+  });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { user } = authContext;
@@ -68,6 +90,102 @@ function ReservingForm() {
 
   const title = ruangan?.nama_ruangan ?? "Nama Ruangan";
 
+  const combineDateTime = (dateValue: string, timeValue: string) => {
+    if (!dateValue || !timeValue) {
+      return null;
+    }
+
+    const parsedDate = new Date(`${dateValue}T${timeValue}`);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return null;
+    }
+
+    return parsedDate.toISOString();
+  };
+
+  const handleInputChange = (
+    event:
+      | ChangeEvent<HTMLInputElement>
+      | ChangeEvent<HTMLTextAreaElement>
+      | ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const target = event.target;
+    const { name, value } = target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    setFormData((prev) => ({
+      ...prev,
+      path_file_surat: selectedFile?.name ?? "",
+    }));
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!ruangan?.id_ruangan) {
+      setErrorMessage("Data ruangan belum tersedia.");
+      return;
+    }
+
+    const waktuMulai = combineDateTime(
+      formData.tanggal_peminjaman,
+      formData.waktu_mulai,
+    );
+    const waktuSelesai = combineDateTime(
+      formData.tanggal_peminjaman,
+      formData.waktu_selesai,
+    );
+
+    if (!waktuMulai || !waktuSelesai) {
+      setErrorMessage("Tanggal dan waktu peminjaman wajib diisi.");
+      return;
+    }
+
+    if (new Date(waktuMulai) >= new Date(waktuSelesai)) {
+      setErrorMessage("Waktu selesai harus lebih besar dari waktu mulai.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setErrorMessage(null);
+      setSuccessMessage(null);
+
+      const payload = {
+        id_ruangan: ruangan.id_ruangan,
+        nama_kegiatan: formData.nama_kegiatan,
+        jenis_kegiatan: formData.jenis_kegiatan,
+        nomor_telepon: formData.nomor_telepon,
+        jumlah_peserta: formData.jumlah_peserta,
+        dosen_penanggung_jawab: formData.dosen_penanggung_jawab,
+        path_file_surat: formData.path_file_surat,
+        mata_kuliah: formData.mata_kuliah,
+        kebutuhan_alat: formData.kebutuhan_alat,
+        keterangan_tambahan: formData.keterangan_tambahan,
+        waktu_mulai: waktuMulai,
+        waktu_selesai: waktuSelesai,
+      };
+
+      const response = await api.post("/api/peminjaman-fasilitas", payload);
+
+      if (response.data?.success) {
+        setSuccessMessage("Pengajuan peminjaman berhasil dikirim.");
+      } else {
+        setErrorMessage("Pengajuan peminjaman gagal diproses.");
+      }
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ??
+        "Terjadi kesalahan saat mengirim pengajuan.";
+      setErrorMessage(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (user?.role === "DOSEN") {
     return (
       <div className="flex flex-col gap-5 mb-10">
@@ -89,53 +207,47 @@ function ReservingForm() {
             {errorMessage && (
               <p className="text-sm text-red-500">{errorMessage}</p>
             )}
+            {successMessage && (
+              <p className="text-sm text-green-600">{successMessage}</p>
+            )}
             {loading && (
               <p className="text-sm text-gray-500">Memuat data ruangan...</p>
             )}
-            <form className="flex flex-col gap-5">
+            <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
               <div className="bg-gray-100 p-5 lg:text-2xl md:text-2xl font-medium rounded-md flex flex-col gap-5 text-left">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   <label className="flex flex-col gap-2">
                     <span>Nama Dosen</span>
-                    <input
-                      className="border rounded-md p-2"
-                      type="text"
-                      placeholder="Nama dosen"
-                      defaultValue={user?.nama_lengkap || "-"}
-                    />
+                    <div className="border rounded-md p-2">
+                      {user?.nama_lengkap || "-"}
+                    </div>
                   </label>
                   <label className="flex flex-col gap-2">
                     <span>NIP</span>
-                    <input
-                      className="border rounded-md p-2"
-                      type="text"
-                      placeholder="NIP"
-                      defaultValue={user?.username || "-"}
-                    />
+                    <div className="border rounded-md p-2">
+                      {user?.username || "-"}
+                    </div>
                   </label>
                   <label className="flex flex-col gap-2">
                     <span>Fakultas / Unit</span>
-                    <input
-                      className="border rounded-md p-2"
-                      type="text"
-                      placeholder="Program studi atau unit"
-                      defaultValue={user?.nama_fakultas || "-"}
-                    />
+                    <div className="border rounded-md p-2">
+                      {user?.nama_fakultas || "-"}
+                    </div>
                   </label>
                   <label className="flex flex-col gap-2">
                     <span>Email Institusi</span>
-                    <input
-                      className="border rounded-md p-2"
-                      type="email"
-                      placeholder="email@institusi.ac.id"
-                      defaultValue={user?.email_upnvj || "-"}
-                    />
+                    <div className="border rounded-md p-2">
+                      {user?.email_upnvj || "-"}
+                    </div>
                   </label>
                   <label className="flex flex-col gap-2">
                     <span>Nomor Telepon/WhatsApp</span>
                     <input
                       className="border rounded-md p-2"
                       type="tel"
+                      name="nomor_telepon"
+                      value={formData.nomor_telepon}
+                      onChange={handleInputChange}
                       placeholder="08xxxxxxxxxx"
                     />
                   </label>
@@ -147,17 +259,26 @@ function ReservingForm() {
                     <input
                       className="border rounded-md p-2"
                       type="text"
+                      name="nama_kegiatan"
+                      value={formData.nama_kegiatan}
+                      onChange={handleInputChange}
                       placeholder="Nama kegiatan"
                     />
                   </label>
                   <label className="flex flex-col gap-2">
                     <span>Jenis Kegiatan</span>
-                    <select className="border rounded-md p-2">
+                    <select
+                      className="border rounded-md p-2"
+                      name="jenis_kegiatan"
+                      value={formData.jenis_kegiatan}
+                      onChange={handleInputChange}
+                    >
                       <option value="">Pilih jenis kegiatan</option>
-                      <option value="perkuliahan">Perkuliahan</option>
-                      <option value="praktikum">Praktikum</option>
-                      <option value="penelitian">Penelitian</option>
-                      <option value="lainnya">Lainnya</option>
+                      <option value="PERKULIAHAN">Perkuliahan</option>
+                      <option value="PRAKTIKUM">Praktikum</option>
+                      <option value="PENELITIAN">Penelitian</option>
+                      <option value="SIDANG_SKRIPSI">Sidang Skripsi</option>
+                      <option value="LAINNYA">Lainnya</option>
                     </select>
                   </label>
                   <label className="flex flex-col gap-2">
@@ -167,19 +288,38 @@ function ReservingForm() {
                       type="text"
                       placeholder="Nama laboratorium"
                       defaultValue={ruangan?.nama_ruangan}
+                      readOnly
                     />
                   </label>
                   <label className="flex flex-col gap-2">
                     <span>Tanggal Peminjaman</span>
-                    <input className="border rounded-md p-2" type="date" />
+                    <input
+                      className="border rounded-md p-2"
+                      type="date"
+                      name="tanggal_peminjaman"
+                      value={formData.tanggal_peminjaman}
+                      onChange={handleInputChange}
+                    />
                   </label>
                   <label className="flex flex-col gap-2">
                     <span>Waktu Mulai</span>
-                    <input className="border rounded-md p-2" type="time" />
+                    <input
+                      className="border rounded-md p-2"
+                      type="time"
+                      name="waktu_mulai"
+                      value={formData.waktu_mulai}
+                      onChange={handleInputChange}
+                    />
                   </label>
                   <label className="flex flex-col gap-2">
                     <span>Waktu Selesai</span>
-                    <input className="border rounded-md p-2" type="time" />
+                    <input
+                      className="border rounded-md p-2"
+                      type="time"
+                      name="waktu_selesai"
+                      value={formData.waktu_selesai}
+                      onChange={handleInputChange}
+                    />
                   </label>
                 </div>
 
@@ -189,7 +329,11 @@ function ReservingForm() {
                     <input
                       className="border rounded-md p-2"
                       type="number"
+                      name="jumlah_peserta"
+                      value={formData.jumlah_peserta}
+                      onChange={handleInputChange}
                       min="1"
+                      max={ruangan?.kapasitas}
                       placeholder="Jumlah peserta"
                     />
                   </label>
@@ -198,6 +342,9 @@ function ReservingForm() {
                     <input
                       className="border rounded-md p-2"
                       type="text"
+                      name="mata_kuliah"
+                      value={formData.mata_kuliah}
+                      onChange={handleInputChange}
                       placeholder="Nama mata kuliah"
                     />
                   </label>
@@ -205,6 +352,9 @@ function ReservingForm() {
                     <span>Kebutuhan Peralatan Tambahan (Opsional)</span>
                     <textarea
                       className="border rounded-md p-2"
+                      name="kebutuhan_alat"
+                      value={formData.kebutuhan_alat}
+                      onChange={handleInputChange}
                       rows={3}
                       placeholder="Tuliskan kebutuhan peralatan"
                     />
@@ -213,6 +363,9 @@ function ReservingForm() {
                     <span>Keterangan Tambahan (Opsional)</span>
                     <textarea
                       className="border rounded-md p-2"
+                      name="keterangan_tambahan"
+                      value={formData.keterangan_tambahan}
+                      onChange={handleInputChange}
                       rows={3}
                       placeholder="Keterangan tambahan"
                     />
@@ -249,7 +402,7 @@ function ReservingForm() {
                 </div>
               </div>
               <Button
-                title="Submit"
+                title={isSubmitting ? "Mengirim..." : "Submit"}
                 classname="lg:text-2xl md:text-2xl w-full py-3"
               />
             </form>
@@ -279,10 +432,13 @@ function ReservingForm() {
           {errorMessage && (
             <p className="text-sm text-red-500">{errorMessage}</p>
           )}
+          {successMessage && (
+            <p className="text-sm text-green-600">{successMessage}</p>
+          )}
           {loading && (
             <p className="text-sm text-gray-500">Memuat data ruangan...</p>
           )}
-          <form className="flex flex-col gap-5">
+          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
             <div className="bg-gray-100 p-5 lg:text-2xl md:text-2xl font-medium rounded-md flex flex-col gap-5 text-left">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                 <label className="flex flex-col gap-2">
@@ -318,6 +474,9 @@ function ReservingForm() {
                   <input
                     className="border rounded-md p-2"
                     type="tel"
+                    name="nomor_telepon"
+                    value={formData.nomor_telepon}
+                    onChange={handleInputChange}
                     placeholder="08xxxxxxxxxx"
                   />
                 </label>
@@ -329,12 +488,20 @@ function ReservingForm() {
                   <input
                     className="border rounded-md p-2"
                     type="text"
+                    name="nama_kegiatan"
+                    value={formData.nama_kegiatan}
+                    onChange={handleInputChange}
                     placeholder="Nama kegiatan"
                   />
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Jenis Kegiatan</span>
-                  <select className="border rounded-md p-2">
+                  <select
+                    className="border rounded-md p-2"
+                    name="jenis_kegiatan"
+                    value={formData.jenis_kegiatan}
+                    onChange={handleInputChange}
+                  >
                     <option value="">Pilih jenis kegiatan</option>
                     <option value="PERKULIAHAN">Perkuliahan</option>
                     <option value="PRAKTIKUM">Praktikum</option>
@@ -354,15 +521,33 @@ function ReservingForm() {
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Tanggal Peminjaman</span>
-                  <input className="border rounded-md p-2" type="date" />
+                  <input
+                    className="border rounded-md p-2"
+                    type="date"
+                    name="tanggal_peminjaman"
+                    value={formData.tanggal_peminjaman}
+                    onChange={handleInputChange}
+                  />
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Waktu Mulai</span>
-                  <input className="border rounded-md p-2" type="time" />
+                  <input
+                    className="border rounded-md p-2"
+                    type="time"
+                    name="waktu_mulai"
+                    value={formData.waktu_mulai}
+                    onChange={handleInputChange}
+                  />
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Waktu Selesai</span>
-                  <input className="border rounded-md p-2" type="time" />
+                  <input
+                    className="border rounded-md p-2"
+                    type="time"
+                    name="waktu_selesai"
+                    value={formData.waktu_selesai}
+                    onChange={handleInputChange}
+                  />
                 </label>
               </div>
 
@@ -372,18 +557,28 @@ function ReservingForm() {
                   <input
                     className="border rounded-md p-2"
                     type="text"
+                    name="dosen_penanggung_jawab"
+                    value={formData.dosen_penanggung_jawab}
+                    onChange={handleInputChange}
                     placeholder="Nama dosen"
                   />
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Upload Surat Permohonan (jika diminta)</span>
-                  <input className="border rounded-md p-2" type="file" />
+                  <input
+                    className="border rounded-md p-2"
+                    type="file"
+                    onChange={handleFileChange}
+                  />
                 </label>
                 <label className="flex flex-col gap-2">
                   <span>Jumlah Peserta</span>
                   <input
                     className="border rounded-md p-2"
                     type="number"
+                    name="jumlah_peserta"
+                    value={formData.jumlah_peserta}
+                    onChange={handleInputChange}
                     min="1"
                     placeholder="Jumlah peserta"
                   />
@@ -392,6 +587,9 @@ function ReservingForm() {
                   <span>Kebutuhan Tambahan (Opsional)</span>
                   <textarea
                     className="border rounded-md p-2"
+                    name="kebutuhan_alat"
+                    value={formData.kebutuhan_alat}
+                    onChange={handleInputChange}
                     rows={3}
                     placeholder="Tuliskan kebutuhan tambahan"
                   />
@@ -432,7 +630,7 @@ function ReservingForm() {
               </div>
             </div>
             <Button
-              title="Submit"
+              title={isSubmitting ? "Mengirim..." : "Submit"}
               classname="lg:text-2xl md:text-2xl w-full py-3"
             />
           </form>

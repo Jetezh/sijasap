@@ -6,9 +6,10 @@ import {
   FasilitasController,
   RuangController,
   RuanganDetailController,
+  RuanganReservationController,
+  RuanganFasilitasController,
 } from "../controllers/RuangFasilitasController";
 import { FakultasController } from "../controllers/FakultasController";
-import { RuanganFasilitasController } from "../controllers/RuangFasilitasController";
 
 const router = express.Router();
 
@@ -36,5 +37,7 @@ router.get(
   verifyToken,
   RuanganFasilitasController,
 );
+
+router.post("/peminjaman-fasilitas", verifyToken, RuanganReservationController);
 
 export default router;
