@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../../prisma/client";
 import { JenisKegiatan } from "../generated/prisma";
+import { StatusPeminjaman } from "../generated/prisma";
 
 export const RuangController = async (req: Request, res: Response) => {
   try {
@@ -193,6 +194,39 @@ export const RuanganReservationController = async (
       });
     }
 
+    const wibOffsetMinutes = 7 * 60;
+    const minutesInDay = 24 * 60;
+    const toWibMinutes = (value: Date) => {
+      const utcMinutes = value.getUTCHours() * 60 + value.getUTCMinutes();
+      const totalMinutes = utcMinutes + wibOffsetMinutes;
+      return ((totalMinutes % minutesInDay) + minutesInDay) % minutesInDay;
+    };
+    const minTimeMinutes = 7 * 60;
+    const maxTimeMinutes = 17 * 60 + 20;
+    const waktuMulaiMinutes = toWibMinutes(waktuMulai);
+    const waktuSelesaiMinutes = toWibMinutes(waktuSelesai);
+
+    if (waktuMulaiMinutes < minTimeMinutes) {
+      return res.status(400).json({
+        success: false,
+        message: "Waktu mulai harus antara 07:00 sampai 17:20 WIB.",
+      });
+    }
+
+    if (waktuSelesaiMinutes > maxTimeMinutes) {
+      return res.status(400).json({
+        success: false,
+        message: "Waktu selesai harus antara 07:00 sampai 17:20 WIB.",
+      });
+    }
+
+    if (waktuSelesaiMinutes - waktuMulaiMinutes < 40) {
+      return res.status(400).json({
+        success: false,
+        message: "Durasi peminjaman minimal 40 menit.",
+      });
+    }
+
     if (!nama_kegiatan || !jenis_kegiatan) {
       return res.status(400).json({
         success: false,
@@ -251,10 +285,8 @@ export const RuanganReservationController = async (
     const konflikPeminjaman = await prisma.peminjaman.findFirst({
       where: {
         id_ruangan: ruanganId,
-        statuspeminjaman: {
-          keterangan_status: {
-            not: "DITOLAK",
-          },
+        status_peminjaman: {
+          not: "DITOLAK",
         },
         AND: [
           {
@@ -281,17 +313,9 @@ export const RuanganReservationController = async (
       });
     }
 
-    const statusDiproses = await prisma.statuspeminjaman.findFirst({
-      where: { keterangan_status: "DIPROSES" },
-      select: { id_status_peminjaman: true },
-    });
-
-    if (!statusDiproses) {
-      return res.status(500).json({
-        success: false,
-        message: "Status peminjaman belum tersedia.",
-      });
-    }
+    const normalizedStatusPeminjaman = String(
+      StatusPeminjaman.DIPROSES,
+    ).toUpperCase();
 
     const peminjaman = await prisma.peminjaman.create({
       data: {
@@ -299,7 +323,7 @@ export const RuanganReservationController = async (
         id_ruangan: ruanganId,
         nama_kegiatan: String(nama_kegiatan),
         jenis_kegiatan: normalizedJenisKegiatan as JenisKegiatan,
-        nomor_telepon: nomorTelepon,
+        nomor_telepon: String(nomorTelepon),
         jumlah_peserta: jumlahPeserta,
         dosen_penanggung_jawab: dosen_penanggung_jawab ?? null,
         path_file_surat: path_file_surat ?? null,
@@ -308,13 +332,40 @@ export const RuanganReservationController = async (
         kebutuhan_alat: kebutuhan_alat ?? null,
         waktu_mulai: waktuMulai,
         waktu_selesai: waktuSelesai,
-        status_peminjaman_id: statusDiproses.id_status_peminjaman,
+        status_peminjaman: normalizedStatusPeminjaman as StatusPeminjaman,
       },
     });
 
     return res.status(201).json({
       success: true,
       message: "Peminjaman berhasil dibuat.",
+      data: peminjaman,
+    });
+  } catch (err) {
+    console.log("Error ", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const PeminjamanController = async (req: Request, res: Response) => {
+  try {
+    if (!req.user?.id)
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+
+    const peminjaman = await prisma.peminjaman.findFirst({
+      where: {
+        id_user: req.user.id,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Peminjaman berhasil ditemukan.",
       data: peminjaman,
     });
   } catch (err) {

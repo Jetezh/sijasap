@@ -30,6 +30,7 @@ export type BuildingListProps = {
 export type ButtonProps = {
   title: string;
   classname?: string;
+  onClick?: () => void;
 };
 
 // type untuk component Container
@@ -79,6 +80,22 @@ export type ModalProps = {
   className?: string;
   contentClassName?: string;
   showCloseButton?: boolean;
+};
+
+// type untuk component Dialog
+export type DialogProps = {
+  isOpen: boolean;
+  title?: string;
+  message?: string;
+  variant?: "info" | "success" | "warning" | "error";
+  onClose?: () => void;
+  onConfirm?: () => void;
+  confirmText?: string;
+  cancelText?: string;
+  showCancel?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+  contentClassName?: string;
 };
 
 // type untuk component Navbar
@@ -134,4 +151,15 @@ export type FasilitasItem = {
   id_fasilitas?: number;
   nama_fasilitas: string;
   [key: string]: unknown;
+};
+
+// type untuk component Notification
+export type NotificationProps = {
+  id: string;
+  room: string;
+  status: string;
+  time: string;
+  date: string;
+  location: string;
+  message?: string;
 };

@@ -105,7 +105,7 @@ model peminjaman {
 
   nama_kegiatan        String @db.VarChar(255)
   jenis_kegiatan       JenisKegiatan
-  nomor_telepon        Int
+  nomor_telepon        String?
 
   dosen_penanggung_jawab String? @db.VarChar(255)
   path_file_surat String? @db.VarChar(255)
@@ -114,7 +114,7 @@ model peminjaman {
   kebutuhan_alat String? @db.VarChar(255)
 
   jumlah_peserta       Int
-  status_peminjaman_id Int
+  status_peminjaman    StatusPeminjaman @default(DIPROSES)
   alasan_ditolak_id    Int?
   waktu_mulai          DateTime
   waktu_selesai        DateTime
@@ -122,12 +122,10 @@ model peminjaman {
   alasanpenolakan      alasanpenolakan? @relation(fields: [alasan_ditolak_id], references: [id_alasan_penolakan])
   ruangan              ruangan          @relation(fields: [id_ruangan], references: [id_ruangan])
   user                 User             @relation(fields: [id_user], references: [id_user])
-  statuspeminjaman     statuspeminjaman @relation(fields: [status_peminjaman_id], references: [id_status_peminjaman])
 
   @@index([alasan_ditolak_id], map: "Peminjaman_alasan_ditolak_id_fkey")
   @@index([id_ruangan], map: "Peminjaman_id_ruangan_fkey")
   @@index([id_user], map: "Peminjaman_id_user_fkey")
-  @@index([status_peminjaman_id], map: "Peminjaman_status_peminjaman_id_fkey")
 }
 
 model ruangan {
@@ -160,12 +158,6 @@ model ruanganfasilitas {
 
   @@id([id_ruangan, id_fasilitas])
   @@index([id_fasilitas], map: "RuanganFasilitas_id_fasilitas_fkey")
-}
-
-model statuspeminjaman {
-  id_status_peminjaman Int                @id @default(autoincrement())
-  keterangan_status    StatusPeminjaman
-  peminjaman           peminjaman[]
 }
 
 model unituniversitas {

@@ -8,6 +8,7 @@ import {
   RuanganDetailController,
   RuanganReservationController,
   RuanganFasilitasController,
+  PeminjamanController,
 } from "../controllers/RuangFasilitasController";
 import { FakultasController } from "../controllers/FakultasController";
 
@@ -37,6 +38,8 @@ router.get(
   verifyToken,
   RuanganFasilitasController,
 );
+
+router.get("/notifikasi-peminjaman", verifyToken, PeminjamanController);
 
 router.post("/peminjaman-fasilitas", verifyToken, RuanganReservationController);
 
