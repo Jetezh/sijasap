@@ -9,6 +9,7 @@ import {
   RuanganReservationController,
   RuanganFasilitasController,
   PeminjamanController,
+  CancelPeminjamanController,
 } from "../controllers/RuangFasilitasController";
 import { FakultasController } from "../controllers/FakultasController";
 
@@ -42,5 +43,11 @@ router.get(
 router.get("/notifikasi-peminjaman", verifyToken, PeminjamanController);
 
 router.post("/peminjaman-fasilitas", verifyToken, RuanganReservationController);
+
+router.patch(
+  "/peminjaman/:id_peminjaman/cancel",
+  verifyToken,
+  CancelPeminjamanController,
+);
 
 export default router;

@@ -393,3 +393,78 @@ export const PeminjamanController = async (req: Request, res: Response) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
+
+export const CancelPeminjamanController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const peminjamanId = Number(req.params.id_peminjaman);
+    if (!peminjamanId || Number.isNaN(peminjamanId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid peminjaman id",
+      });
+    }
+
+    const peminjaman = await prisma.peminjaman.findFirst({
+      where: {
+        id_peminjaman: peminjamanId,
+        id_user: req.user.id,
+      },
+      select: {
+        id_peminjaman: true,
+        status_peminjaman: true,
+      },
+    });
+
+    if (!peminjaman) {
+      return res.status(404).json({
+        success: false,
+        message: "Peminjaman not found",
+      });
+    }
+
+    if (
+      peminjaman.status_peminjaman === StatusPeminjaman.DITOLAK ||
+      peminjaman.status_peminjaman === StatusPeminjaman.SELESAI ||
+      peminjaman.status_peminjaman === StatusPeminjaman.DIBATALKAN
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Peminjaman tidak dapat dibatalkan.",
+      });
+    }
+
+    const updated = await prisma.peminjaman.update({
+      where: {
+        id_peminjaman: peminjamanId,
+      },
+      data: {
+        status_peminjaman: StatusPeminjaman.DIBATALKAN,
+      },
+      select: {
+        id_peminjaman: true,
+        status_peminjaman: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Peminjaman berhasil dibatalkan.",
+      data: updated,
+    });
+  } catch (err) {
+    console.log("Error ", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
