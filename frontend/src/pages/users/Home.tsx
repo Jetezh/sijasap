@@ -3,7 +3,7 @@ import assets from "../../assets/assets";
 import Caraousal from "../../components/Caraousal";
 import BuildingList from "../../components/BuildingList";
 import DatePicker from "../../components/DatePicker";
-import TimePicker from "../../components/TimePicker";
+import WibTimePicker from "../../components/WibTimePicker";
 import Button from "../../components/Button";
 import RoomCard from "../../components/RoomCard";
 import Pagination from "../../components/Pagination";
@@ -25,6 +25,10 @@ const Home: React.FC = () => {
   const [ruangan, setRuangan] = useState<Ruangan[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [visibleCount, setVisibleCount] = useState(0);
+  const [filterTimes, setFilterTimes] = useState({
+    waktu_mulai: "",
+    waktu_selesai: "",
+  });
   const [viewportWidth, setViewportWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1024,
   );
@@ -111,6 +115,14 @@ const Home: React.FC = () => {
   const isLg = viewportWidth >= 1024;
   const isMobile = !isLg;
   const pageSize = isLg ? 8 : mobileBatchSize;
+  const minTime = "07:00";
+  const maxTime = "17:20";
+
+  type TimeFieldName = "waktu_mulai" | "waktu_selesai";
+
+  const handleTimeChange = (name: TimeFieldName, value: string) => {
+    setFilterTimes((prev) => ({ ...prev, [name]: value }));
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -172,13 +184,27 @@ const Home: React.FC = () => {
             title="Tanggal Akhir"
             classname="lg:basis-3/14 md:basis-1/2 basis-full"
           />
-          <TimePicker
-            title="Waktu Mulai"
-            classname="lg:basis-2/14 md:basis-1/3 basis-1/2"
+          <WibTimePicker
+            label="Waktu Mulai"
+            name="waktu_mulai"
+            value={filterTimes.waktu_mulai}
+            onChange={handleTimeChange}
+            minTime={minTime}
+            maxTime={maxTime}
+            showHelperText={false}
+            showTimezoneLabel={false}
+            className="text-left lg:p-0 md:p-1.5 p-1 lg:basis-2/14 md:basis-1/3 basis-1/2"
           />
-          <TimePicker
-            title="Waktu Akhir"
-            classname="lg:basis-2/14 md:basis-1/3 basis-1/2"
+          <WibTimePicker
+            label="Waktu Akhir"
+            name="waktu_selesai"
+            value={filterTimes.waktu_selesai}
+            onChange={handleTimeChange}
+            minTime={minTime}
+            maxTime={maxTime}
+            showHelperText={false}
+            showTimezoneLabel={false}
+            className="text-left lg:p-0 md:p-1.5 p-1 lg:basis-2/14 md:basis-1/3 basis-1/2"
           />
           <Button
             title="Check"

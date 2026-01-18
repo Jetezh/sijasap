@@ -115,6 +115,8 @@ model peminjaman {
 
   jumlah_peserta       Int
   status_peminjaman    StatusPeminjaman @default(DIPROSES)
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @default(now()) @updatedAt
   alasan_ditolak_id    Int?
   waktu_mulai          DateTime
   waktu_selesai        DateTime
@@ -139,7 +141,7 @@ model ruangan {
   unit_universitas_id Int?
   createdAt           DateTime           @default(now())
   imgUrl              String?
-  updatedAt           DateTime
+  updatedAt           DateTime           @default(now()) @updatedAt
   jadwalkuliah        jadwalkuliah[]
   peminjaman          peminjaman[]
   fakultas            fakultas?          @relation(fields: [fakultas_id], references: [id_fakultas])
@@ -189,4 +191,5 @@ enum StatusPeminjaman {
   DITERIMA
   DITOLAK
   SELESAI
+  DIBATALKAN
 }

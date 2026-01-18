@@ -3,6 +3,7 @@ import Button from "../../components/Button";
 import Container from "../../components/Container";
 import Dialog from "../../components/Dialog";
 import Modal from "../../components/Modal";
+import WibTimePicker from "../../components/WibTimePicker";
 
 import {
   useContext,
@@ -16,6 +17,10 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import type { Ruangan } from "../../types";
 import api from "../../services/api";
+
+const WIB_OFFSET = "+07:00";
+
+type TimeFieldName = "waktu_mulai" | "waktu_selesai";
 
 function ReservingForm() {
   const authContext = useContext(AuthContext);
@@ -119,12 +124,21 @@ function ReservingForm() {
       return null;
     }
 
-    const parsedDate = new Date(`${dateValue}T${timeValue}`);
-    if (Number.isNaN(parsedDate.getTime())) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
       return null;
     }
 
-    return parsedDate.toISOString();
+    if (timeToMinutes(timeValue) === null) {
+      return null;
+    }
+
+    return `${dateValue}T${timeValue}:00${WIB_OFFSET}`;
+  };
+
+  const handleTimeChange = (name: TimeFieldName, value: string) => {
+    setFormData((prev) => {
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleInputChange = (
@@ -384,30 +398,22 @@ function ReservingForm() {
                         onChange={handleInputChange}
                       />
                     </label>
-                    <label className="flex flex-col gap-2">
-                      <span>Waktu Mulai</span>
-                      <input
-                        className="border rounded-md p-2"
-                        type="time"
-                        name="waktu_mulai"
-                        value={formData.waktu_mulai}
-                        onChange={handleInputChange}
-                        min={minTime}
-                        max={maxTime}
-                      />
-                    </label>
-                    <label className="flex flex-col gap-2">
-                      <span>Waktu Selesai</span>
-                      <input
-                        className="border rounded-md p-2"
-                        type="time"
-                        name="waktu_selesai"
-                        value={formData.waktu_selesai}
-                        onChange={handleInputChange}
-                        min={minTime}
-                        max={maxTime}
-                      />
-                    </label>
+                    <WibTimePicker
+                      label="Waktu Mulai"
+                      name="waktu_mulai"
+                      value={formData.waktu_mulai}
+                      onChange={handleTimeChange}
+                      minTime={minTime}
+                      maxTime={maxTime}
+                    />
+                    <WibTimePicker
+                      label="Waktu Selesai"
+                      name="waktu_selesai"
+                      value={formData.waktu_selesai}
+                      onChange={handleTimeChange}
+                      minTime={minTime}
+                      maxTime={maxTime}
+                    />
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -646,30 +652,22 @@ function ReservingForm() {
                       onChange={handleInputChange}
                     />
                   </label>
-                  <label className="flex flex-col gap-2">
-                    <span>Waktu Mulai</span>
-                    <input
-                      className="border rounded-md p-2"
-                      type="time"
-                      name="waktu_mulai"
-                      value={formData.waktu_mulai}
-                      onChange={handleInputChange}
-                      min={minTime}
-                      max={maxTime}
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2">
-                    <span>Waktu Selesai</span>
-                    <input
-                      className="border rounded-md p-2"
-                      type="time"
-                      name="waktu_selesai"
-                      value={formData.waktu_selesai}
-                      onChange={handleInputChange}
-                      min={minTime}
-                      max={maxTime}
-                    />
-                  </label>
+                  <WibTimePicker
+                    label="Waktu Mulai"
+                    name="waktu_mulai"
+                    value={formData.waktu_mulai}
+                    onChange={handleTimeChange}
+                    minTime={minTime}
+                    maxTime={maxTime}
+                  />
+                  <WibTimePicker
+                    label="Waktu Selesai"
+                    name="waktu_selesai"
+                    value={formData.waktu_selesai}
+                    onChange={handleTimeChange}
+                    minTime={minTime}
+                    maxTime={maxTime}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
