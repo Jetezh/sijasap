@@ -357,9 +357,27 @@ export const PeminjamanController = async (req: Request, res: Response) => {
         message: "Unauthorized",
       });
 
-    const peminjaman = await prisma.peminjaman.findFirst({
+    const peminjaman = await prisma.peminjaman.findMany({
       where: {
         id_user: req.user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id_peminjaman: true,
+        status_peminjaman: true,
+        waktu_mulai: true,
+        waktu_selesai: true,
+        createdAt: true,
+        ruangan: {
+          select: {
+            id_ruangan: true,
+            nama_ruangan: true,
+            gedung: true,
+            lantai: true,
+          },
+        },
       },
     });
 
