@@ -24,13 +24,14 @@ export type Ruangan = {
 // type untuk component BuildingList
 export type BuildingListProps = {
   building: Fakultas[];
+  onFakultasChange: (fakultasName: string | null) => void;
 };
 
 // type untuk component Button
 export type ButtonProps = {
   title: string;
   classname?: string;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 // type untuk component Container
@@ -43,12 +44,16 @@ export type containerProps = {
 export type DatePickerProps = {
   title: string;
   classname?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 // type untuk component Dropdown
 export type DropdownProps = {
   children: React.ReactNode;
   trigger: React.ReactNode;
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 // type untuk component DropdownItem

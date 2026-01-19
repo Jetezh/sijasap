@@ -23,6 +23,10 @@ const Home: React.FC = () => {
 
   const [fakultas, setFakultas] = useState<Fakultas[]>([]);
   const [ruangan, setRuangan] = useState<Ruangan[]>([]);
+  const [selectedFakultas, setSelectedFakultas] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   const [currentPage, setCurrentPage] = useState(1);
   const [visibleCount, setVisibleCount] = useState(0);
   const [filterTimes, setFilterTimes] = useState({
@@ -68,6 +72,48 @@ const Home: React.FC = () => {
   type slides = {
     img: string;
     alt: string;
+  };
+
+  const handleFilterCheck = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
+
+    if (
+      !startDate ||
+      !endDate ||
+      !filterTimes.waktu_mulai ||
+      !filterTimes.waktu_selesai
+    ) {
+      alert("Tolong pilih tanggal dan waktu mulai dan selesai");
+
+      return;
+    }
+
+    const startDateTime = new Date(`${startDate}T${filterTimes.waktu_mulai}`);
+    const endDateTime = new Date(`${endDate}T${filterTimes.waktu_selesai}`);
+
+    const selectedFakultasObj = fakultas.find(
+      (f) => f.nama_fakultas === selectedFakultas,
+    );
+
+    try {
+      const response = await api.get("/api/ruangan-tersedia", {
+        params: {
+          waktu_mulai: startDateTime.toISOString(),
+          waktu_selesai: endDateTime.toISOString(),
+          fakultas_id: selectedFakultasObj?.id_fakultas,
+        },
+      });
+
+      if (response.data?.success) {
+        setRuangan(response.data.ruangan);
+      } else {
+        throw new Error("Invalid response format");
+      }
+    } catch (err) {
+      console.error("Error fetching available rooms:", err);
+    }
   };
 
   useEffect(() => {
@@ -173,16 +219,26 @@ const Home: React.FC = () => {
     <div className="w-full h-full mx-auto bg-gray-100">
       <Caraousal slides={slides} />
       <div className="pt-5" />
-      <BuildingList building={fakultas} />
+      <BuildingList
+        building={fakultas}
+        onFakultasChange={setSelectedFakultas}
+      />
       <div className="lg:py-10 md:py-7 py-5">
-        <form className="flex flex-row flex-wrap justify-between lg:text-2xl md:text-xl text-sm font-medium lg:px-10 md:px-7 px-5">
+        <form
+          name="search-room-filter"
+          className="flex flex-row flex-wrap justify-between lg:text-2xl md:text-xl text-sm font-medium lg:px-10 md:px-7 px-5"
+        >
           <DatePicker
             title="Tanggal Awal"
             classname="lg:basis-3/14 md:basis-1/2 basis-full"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
           />
           <DatePicker
             title="Tanggal Akhir"
             classname="lg:basis-3/14 md:basis-1/2 basis-full"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
           />
           <WibTimePicker
             label="Waktu Mulai"
@@ -209,6 +265,7 @@ const Home: React.FC = () => {
           <Button
             title="Check"
             classname="lg:basis-3/14 md:basis-1/3 basis-full lg:text-3xl md:text-2xl text-xl lg:h-34 md:h-25 md:mt-4 lg:mt-0 mt-2 lg:mx-0 md:mx-0 mx-1 py-4"
+            onClick={handleFilterCheck}
           />
         </form>
       </div>

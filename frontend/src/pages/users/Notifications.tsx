@@ -202,7 +202,7 @@ function Notifications() {
               </div>
               <button
                 type="button"
-                className="self-start bg-red-600 text-white text-sm px-3 py-1 rounded-md disabled:opacity-60"
+                className="self-start bg-red-600 text-white text-sm px-3 py-1 rounded-md hover:cursor-pointer disabled:opacity-60"
                 disabled={cancelingId === item.id_peminjaman}
                 onClick={() => handleCancel(item)}
               >

@@ -11,6 +11,7 @@ function Ruangan() {
   const [ruangan, setRuangan] = useState<RuanganType[]>([]);
   const [ruanganSearch, setRuanganSearch] = useState("");
   const [fakultas, setFakultas] = useState<Fakultas[]>([]);
+  const [selectedFakultas, setSelectedFakultas] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -51,18 +52,25 @@ function Ruangan() {
 
   const ruanganSearchTerm = ruanganSearch.trim().toLowerCase();
   const filteredRuangan = useMemo(() => {
-    if (!ruanganSearchTerm) return ruangan;
-    return ruangan.filter((item) => {
-      const namaMatch = item.nama_ruangan
-        .toLowerCase()
-        .includes(ruanganSearchTerm);
-      const kapasitasMatch = String(item.kapasitas)
-        .toLowerCase()
-        .includes(ruanganSearchTerm);
-      const gedungMatch = item.gedung.toLowerCase().includes(ruanganSearchTerm);
-      return namaMatch || kapasitasMatch || gedungMatch;
-    });
-  }, [ruangan, ruanganSearchTerm]);
+    return ruangan
+      .filter((item) => {
+        if (!selectedFakultas) return true;
+        return item.gedung === selectedFakultas;
+      })
+      .filter((item) => {
+        if (!ruanganSearchTerm) return true;
+        const namaMatch = item.nama_ruangan
+          .toLowerCase()
+          .includes(ruanganSearchTerm);
+        const kapasitasMatch = String(item.kapasitas)
+          .toLowerCase()
+          .includes(ruanganSearchTerm);
+        const gedungMatch = item.gedung
+          .toLowerCase()
+          .includes(ruanganSearchTerm);
+        return namaMatch || kapasitasMatch || gedungMatch;
+      });
+  }, [ruangan, ruanganSearchTerm, selectedFakultas]);
 
   const totalItems = filteredRuangan.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
@@ -118,7 +126,10 @@ function Ruangan() {
           />
         </div>
         <div className="mb-6 basis-1/9">
-          <BuildingList building={fakultas} />
+          <BuildingList
+            building={fakultas}
+            onFakultasChange={setSelectedFakultas}
+          />
         </div>
       </div>
       <div

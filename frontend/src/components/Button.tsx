@@ -6,7 +6,7 @@ function Button(props: ButtonProps) {
 
   return (
     <button
-      type="submit"
+      type="button"
       onClick={onClick}
       className={cn(
         " font-medium bg-(--green-button) text-white rounded-sm hover:cursor-pointer hover:bg-(--green-button-hover) duration-300",

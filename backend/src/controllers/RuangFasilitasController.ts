@@ -3,6 +3,73 @@ import prisma from "../../prisma/client";
 import { JenisKegiatan } from "../generated/prisma";
 import { StatusPeminjaman } from "../generated/prisma";
 
+export const AvailableRoomsController = async (req: Request, res: Response) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const { waktu_mulai, waktu_selesai, fakultas_id } = req.query;
+
+    if (!waktu_mulai || !waktu_selesai) {
+      return res.status(400).json({
+        success: false,
+        message: "Waktu mulai dan waktu selesai wajib diisi.",
+      });
+    }
+
+    const waktuMulai = new Date(waktu_mulai as string);
+    const waktuSelesai = new Date(waktu_selesai as string);
+
+    if (
+      Number.isNaN(waktuMulai.getTime()) ||
+      Number.isNaN(waktuSelesai.getTime())
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Format waktu tidak valid.",
+      });
+    }
+
+    const conflictingRoomIds = (
+      await prisma.peminjaman.findMany({
+        where: {
+          status_peminjaman: {
+            in: ["DIPROSES", "DITERIMA"],
+          },
+          waktu_mulai: {
+            lt: waktuSelesai,
+          },
+          waktu_selesai: {
+            gt: waktuMulai,
+          },
+        },
+        select: {
+          id_ruangan: true,
+        },
+      })
+    ).map((p) => p.id_ruangan);
+
+    const uniqueConflictingRoomIds = [...new Set(conflictingRoomIds)];
+
+    const availableRooms = await prisma.ruangan.findMany({
+      where: {
+        id_ruangan: {
+          notIn: uniqueConflictingRoomIds,
+        },
+        ...(fakultas_id && { fakultas_id: Number(fakultas_id) }),
+      },
+    });
+
+    return res.json({ success: true, ruangan: availableRooms });
+  } catch (err) {
+    console.error("Error fetching ruangan tersedia:", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 export const RuangController = async (req: Request, res: Response) => {
   try {
     if (!req.user?.id) {

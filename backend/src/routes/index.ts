@@ -10,6 +10,7 @@ import {
   RuanganFasilitasController,
   PeminjamanController,
   CancelPeminjamanController,
+  AvailableRoomsController,
 } from "../controllers/RuangFasilitasController";
 import { FakultasController } from "../controllers/FakultasController";
 
@@ -23,6 +24,9 @@ router.get("/profile", verifyToken, ProfileController);
 
 // route untuk fetch data ruangan
 router.get("/ruangan", verifyToken, RuangController);
+
+// route untuk search ruangan
+router.get("/ruangan-tersedia", verifyToken, AvailableRoomsController);
 
 // route untuk fetch detail ruangan
 router.get("/ruangan/:id_ruangan", verifyToken, RuanganDetailController);
@@ -40,6 +44,7 @@ router.get(
   RuanganFasilitasController,
 );
 
+//
 router.get("/notifikasi-peminjaman", verifyToken, PeminjamanController);
 
 router.post("/peminjaman-fasilitas", verifyToken, RuanganReservationController);

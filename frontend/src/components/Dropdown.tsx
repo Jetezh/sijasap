@@ -1,24 +1,21 @@
-import useClickOutside from '../hooks/useClickOutside';
-import { useState } from 'react';
-import type { DropdownProps } from '../types';
+import useClickOutside from "../hooks/useClickOutside";
+import type { DropdownProps } from "../types";
 
 function Dropdown(props: DropdownProps) {
-    const { trigger, children } = props
+  const { trigger, children, show, setShow } = props;
 
-    const [ show, setShow ] = useState(false);
-    const dropRef = useClickOutside(() => setShow(false));
+  const dropRef = useClickOutside(() => setShow(false));
 
-    return (
-        <div 
-        onClick={() => setShow((curr) => !curr)}
-        className='w-fit relative z-17'
-        ref={dropRef}>
-            <div>{trigger}</div>
-            {show && <ul className='min-w-max absolute right-0 lg:mt-12 md:mt-8 mt-5 bg-white divide-y divide-gray-100 shadow-xl overflow-hidden'>{children}</ul>}
-        </div>
-    )
+  return (
+    <div className="w-fit relative z-17" ref={dropRef}>
+      <div onClick={() => setShow((curr) => !curr)}>{trigger}</div>
+      {show && (
+        <ul className="min-w-max absolute right-0 lg:mt-12 md:mt-8 mt-5 bg-white divide-y divide-gray-100 shadow-xl overflow-hidden">
+          {children}
+        </ul>
+      )}
+    </div>
+  );
 }
-
-
 
 export default Dropdown;
