@@ -25,7 +25,6 @@ const Home: React.FC = () => {
   const [ruangan, setRuangan] = useState<Ruangan[]>([]);
   const [selectedFakultas, setSelectedFakultas] = useState<string | null>(null);
   const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [visibleCount, setVisibleCount] = useState(0);
@@ -79,19 +78,14 @@ const Home: React.FC = () => {
   ) => {
     event.preventDefault();
 
-    if (
-      !startDate ||
-      !endDate ||
-      !filterTimes.waktu_mulai ||
-      !filterTimes.waktu_selesai
-    ) {
+    if (!startDate || !filterTimes.waktu_mulai || !filterTimes.waktu_selesai) {
       alert("Tolong pilih tanggal dan waktu mulai dan selesai");
 
       return;
     }
 
     const startDateTime = new Date(`${startDate}T${filterTimes.waktu_mulai}`);
-    const endDateTime = new Date(`${endDate}T${filterTimes.waktu_selesai}`);
+    const endDateTime = new Date(`${startDate}T${filterTimes.waktu_selesai}`);
 
     const selectedFakultasObj = fakultas.find(
       (f) => f.nama_fakultas === selectedFakultas,
@@ -226,19 +220,13 @@ const Home: React.FC = () => {
       <div className="lg:py-10 md:py-7 py-5">
         <form
           name="search-room-filter"
-          className="flex flex-row flex-wrap justify-between lg:text-2xl md:text-xl text-sm font-medium lg:px-10 md:px-7 px-5"
+          className="flex flex-row flex-wrap justify-center lg:text-2xl md:text-xl text-sm font-medium lg:px-10 md:px-7 px-5 md:gap-10 sm:gap-7 gap-5"
         >
           <DatePicker
-            title="Tanggal Awal"
+            title="Tanggal Peminjaman"
             classname="lg:basis-3/14 md:basis-1/2 basis-full"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-          />
-          <DatePicker
-            title="Tanggal Akhir"
-            classname="lg:basis-3/14 md:basis-1/2 basis-full"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
           />
           <WibTimePicker
             label="Waktu Mulai"
