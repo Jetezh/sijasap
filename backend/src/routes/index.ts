@@ -11,6 +11,7 @@ import {
   PeminjamanController,
   CancelPeminjamanController,
   AvailableRoomsController,
+  getPeminjamanByRuangan,
 } from "../controllers/RuangFasilitasController";
 import { FakultasController } from "../controllers/FakultasController";
 
@@ -44,7 +45,6 @@ router.get(
   RuanganFasilitasController,
 );
 
-//
 router.get("/notifikasi-peminjaman", verifyToken, PeminjamanController);
 
 router.post("/peminjaman-fasilitas", verifyToken, RuanganReservationController);
@@ -54,5 +54,7 @@ router.patch(
   verifyToken,
   CancelPeminjamanController,
 );
+
+router.get("/peminjaman/:id_ruangan", verifyToken, getPeminjamanByRuangan);
 
 export default router;

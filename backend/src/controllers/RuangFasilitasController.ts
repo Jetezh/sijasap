@@ -535,3 +535,49 @@ export const CancelPeminjamanController = async (
       .json({ success: false, message: "Internal Server Error" });
   }
 };
+
+export const getPeminjamanByRuangan = async (req: Request, res: Response) => {
+  try {
+    const ruanganId = Number(req.params.id_ruangan);
+    if (!ruanganId || Number.isNaN(ruanganId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ruangan id",
+      });
+    }
+
+    const peminjaman = await prisma.peminjaman.findMany({
+      where: {
+        id_ruangan: ruanganId,
+        status_peminjaman: {
+          in: [StatusPeminjaman.DITERIMA, StatusPeminjaman.DIPROSES],
+        },
+      },
+      orderBy: {
+        waktu_mulai: "desc",
+      },
+      select: {
+        id_peminjaman: true,
+        waktu_mulai: true,
+        waktu_selesai: true,
+        status_peminjaman: true,
+        user: {
+          select: {
+            nama_lengkap: true,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Peminjaman berhasil ditemukan.",
+      data: peminjaman,
+    });
+  } catch (err) {
+    console.log("Error ", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};

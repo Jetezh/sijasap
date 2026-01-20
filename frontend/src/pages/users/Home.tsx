@@ -227,6 +227,7 @@ const Home: React.FC = () => {
             classname="lg:basis-3/14 md:basis-1/2 basis-full"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            min={new Date().toISOString().split("T")[0]}
           />
           <WibTimePicker
             label="Waktu Mulai"

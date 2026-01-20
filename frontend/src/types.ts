@@ -32,6 +32,7 @@ export type ButtonProps = {
   title: string;
   classname?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: string;
 };
 
 // type untuk component Container
@@ -46,6 +47,7 @@ export type DatePickerProps = {
   classname?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  min?: string;
 };
 
 // type untuk component Dropdown
@@ -167,4 +169,12 @@ export type NotificationProps = {
   date: string;
   location: string;
   message?: string;
+};
+
+export type PeminjamanByRuanganProps = {
+  id_ruangan: number;
+  waktu_mulai: string;
+  waktu_selesai: string;
+  status_peminjaman: string;
+  nama_peminjam: string;
 };

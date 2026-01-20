@@ -177,6 +177,14 @@ function ReservingForm() {
       formData.waktu_selesai,
     );
 
+    if (
+      new Date(formData.tanggal_peminjaman) <
+      new Date(new Date().toISOString().split("T")[0])
+    ) {
+      setErrorMessage("Tidak dapat meminjam pada tanggal yang sudah lampau.");
+      return;
+    }
+
     if (!waktuMulai || !waktuSelesai) {
       setErrorMessage("Tanggal dan waktu peminjaman wajib diisi.");
       return;
@@ -396,6 +404,7 @@ function ReservingForm() {
                         name="tanggal_peminjaman"
                         value={formData.tanggal_peminjaman}
                         onChange={handleInputChange}
+                        min={new Date().toISOString().split("T")[0]}
                       />
                     </label>
                     <WibTimePicker
@@ -497,6 +506,7 @@ function ReservingForm() {
                   </div>
                 </div>
                 <Button
+                  type="submit"
                   title={isSubmitting ? "Mengirim..." : "Submit"}
                   classname="lg:text-2xl md:text-2xl w-full py-3"
                 />
@@ -650,6 +660,7 @@ function ReservingForm() {
                       name="tanggal_peminjaman"
                       value={formData.tanggal_peminjaman}
                       onChange={handleInputChange}
+                      min={new Date().toISOString().split("T")[0]}
                     />
                   </label>
                   <WibTimePicker
@@ -762,6 +773,7 @@ function ReservingForm() {
                 </div>
               </div>
               <Button
+                type="submit"
                 title={isSubmitting ? "Mengirim..." : "Submit"}
                 classname="lg:text-2xl md:text-2xl w-full py-3"
               />

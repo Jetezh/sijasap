@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../../components/Button";
+import Table, { type Column } from "../../components/Table";
+import Tag from "../../components/Tag";
 import assets from "../../assets/assets";
 import api from "../../services/api";
-import type { Ruangan, RuanganFasilitasType } from "../../types";
+import type {
+  Ruangan,
+  RuanganFasilitasType,
+  PeminjamanByRuanganProps,
+} from "../../types";
 
 function DetailRuangan() {
   const { id_ruangan } = useParams();
   const [ruangan, setRuangan] = useState<Ruangan | null>(null);
   const [fasilitas, setFasilitas] = useState<RuanganFasilitasType[]>([]);
+  const [daftarPeminjaman, setDaftarPeminjaman] = useState<
+    PeminjamanByRuanganProps[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -26,7 +35,7 @@ function DetailRuangan() {
       return;
     }
 
-    const fetchDetail = async () => {
+    const fetchRuanganDanFasilitas = async () => {
       try {
         setLoading(true);
         setErrorMessage("");
@@ -59,10 +68,81 @@ function DetailRuangan() {
       }
     };
 
-    fetchDetail();
+    fetchRuanganDanFasilitas();
+
+    const fetchDaftarPeminjaman = async () => {
+      try {
+        if (!id_ruangan) {
+          setErrorMessage("ID ruangan tidak ditemukan.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await api.get(`/api/peminjaman/${id_ruangan}`);
+        if (response.data?.success && response.data?.data) {
+          setDaftarPeminjaman(response.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching peminjaman:", err);
+        setErrorMessage("Gagal memuat daftar peminjaman.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDaftarPeminjaman();
   }, [id_ruangan]);
 
   const title = ruangan?.nama_ruangan ?? "Detail Ruangan";
+
+  type TableRow = {
+    no: number;
+    tanggal: string;
+    waktu: string;
+    status: React.ReactNode;
+    namaPeminjam: string;
+  };
+
+  const columns: Column<TableRow>[] = [
+    { header: "No", accessor: "no" },
+    { header: "Tanggal", accessor: "tanggal" },
+    { header: "Waktu", accessor: "waktu" },
+    { header: "Status", accessor: "status" },
+    { header: "Nama Peminjam", accessor: "namaPeminjam" },
+  ];
+
+  const tableData: TableRow[] = daftarPeminjaman.map((peminjaman, index) => {
+    const waktuMulai = new Date(peminjaman.waktu_mulai);
+    const waktuSelesai = new Date(peminjaman.waktu_selesai);
+
+    return {
+      no: index + 1,
+      tanggal: waktuMulai.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+      }),
+      waktu: `${waktuMulai.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })} - ${waktuSelesai.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`,
+      status: (
+        <Tag
+          title={peminjaman.status_peminjaman}
+          classname={
+            peminjaman.status_peminjaman === "DITERIMA"
+              ? "green"
+              : peminjaman.status_peminjaman === "DIPROSES"
+                ? "yellow"
+                : "red"
+          }
+        />
+      ),
+      namaPeminjam: peminjaman.nama_peminjam,
+    };
+  });
 
   return (
     <div className="flex flex-col lg:gap-5 md:gap-3 gap-4 bg-white">
@@ -158,6 +238,7 @@ function DetailRuangan() {
           <h1 className="text-2xl text-left">
             Ruangan ini telah direservasi pada:
           </h1>
+          <Table data={tableData} columns={columns} />
         </div>
       </section>
     </div>

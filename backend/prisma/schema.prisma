@@ -14,16 +14,15 @@ model User {
   password            String
   nama_lengkap        String?
   fakultas_id         Int?
-  program_studi_id    Int?
   unit_universitas_id Int?
   email_upnvj         String?          @unique(map: "email")
   role                Role
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
-
-  programstudi        programstudi?    @relation(fields: [program_studi_id], references: [id_program_studi])
+  program_studi_id    Int?
   peminjaman          peminjaman[]
   fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas])
+  programstudi        programstudi?    @relation(fields: [program_studi_id], references: [id_program_studi])
   unitUniversitas     unituniversitas? @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
 
   @@index([fakultas_id], map: "user_fakultas_id_fkey")
@@ -33,10 +32,9 @@ model User {
 }
 
 model programstudi {
-  id_program_studi    Int                @id @default(autoincrement())
-  nama_program_studi  String
-
-  user                User[]
+  id_program_studi   Int    @id @default(autoincrement())
+  nama_program_studi String
+  user               User[]
 }
 
 model alasanpenolakan {
@@ -99,31 +97,27 @@ model kalenderakademik {
 }
 
 model peminjaman {
-  id_peminjaman        Int              @id @default(autoincrement())
-  id_user              Int
-  id_ruangan           Int
-
-  nama_kegiatan        String @db.VarChar(255)
-  jenis_kegiatan       JenisKegiatan
-  nomor_telepon        String?
-
-  dosen_penanggung_jawab String? @db.VarChar(255)
-  path_file_surat String? @db.VarChar(255)
-  mata_kuliah String? @db.VarChar(255)
-  keterangan_tambahan String? @db.VarChar(255)
-  kebutuhan_alat String? @db.VarChar(255)
-
-  jumlah_peserta       Int
-  status_peminjaman    StatusPeminjaman @default(DIPROSES)
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @default(now()) @updatedAt
-  alasan_ditolak_id    Int?
-  waktu_mulai          DateTime
-  waktu_selesai        DateTime
-
-  alasanpenolakan      alasanpenolakan? @relation(fields: [alasan_ditolak_id], references: [id_alasan_penolakan])
-  ruangan              ruangan          @relation(fields: [id_ruangan], references: [id_ruangan])
-  user                 User             @relation(fields: [id_user], references: [id_user])
+  id_peminjaman          Int              @id @default(autoincrement())
+  id_user                Int
+  id_ruangan             Int
+  jumlah_peserta         Int
+  alasan_ditolak_id      Int?
+  waktu_mulai            DateTime
+  waktu_selesai          DateTime
+  jenis_kegiatan         JenisKegiatan
+  kebutuhan_alat         String?          @db.VarChar(255)
+  keterangan_tambahan    String?          @db.VarChar(255)
+  mata_kuliah            String?          @db.VarChar(255)
+  nama_kegiatan          String           @db.VarChar(255)
+  path_file_surat        String?          @db.VarChar(255)
+  dosen_penanggung_jawab String?          @db.VarChar(255)
+  nomor_telepon          String?
+  status_peminjaman      StatusPeminjaman @default(DIPROSES)
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @default(now()) @updatedAt
+  alasanpenolakan        alasanpenolakan? @relation(fields: [alasan_ditolak_id], references: [id_alasan_penolakan])
+  ruangan                ruangan          @relation(fields: [id_ruangan], references: [id_ruangan])
+  user                   User             @relation(fields: [id_user], references: [id_user])
 
   @@index([alasan_ditolak_id], map: "Peminjaman_alasan_ditolak_id_fkey")
   @@index([id_ruangan], map: "Peminjaman_id_ruangan_fkey")

@@ -2,7 +2,7 @@ import { cn } from "../lib/utils";
 import type { DatePickerProps } from "../types";
 
 function DatePicker(props: DatePickerProps) {
-  const { title, classname, value, onChange } = props;
+  const { title, classname, value, onChange, min } = props;
 
   return (
     <div
@@ -17,6 +17,7 @@ function DatePicker(props: DatePickerProps) {
         id={title}
         value={value}
         onChange={onChange}
+        min={min}
         className="bg-white lg:p-7 md:p-5 p-3 shadow-md"
       />
     </div>

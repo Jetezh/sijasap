@@ -61,15 +61,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       })
       .catch((error) => {
         console.error("Auth verification failed:", error);
-        // Only clear auth if we don't have saved user data
-        if (!savedUser) {
-          setIsAuthenticated(false);
-          setUser(null);
-          Cookies.remove("token");
-          Cookies.remove("user");
-        }
-        // If we have saved user data, keep the user logged in
-        // but mark as not verified
+        // If token verification fails, always clear auth state
+        setIsAuthenticated(false);
+        setUser(null);
+        Cookies.remove("token");
+        Cookies.remove("user");
       })
       .finally(() => {
         setIsLoading(false);
