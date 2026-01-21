@@ -119,6 +119,42 @@ function ReservingForm() {
     return hours * 60 + minutes;
   };
 
+  const formatWibDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const getWibNow = () => {
+    const now = new Date();
+    return new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+  };
+
+  const roundUpMinutes = (totalMinutes: number, step: number) => {
+    if (step <= 0) {
+      return totalMinutes;
+    }
+    return Math.ceil(totalMinutes / step) * step;
+  };
+
+  const minutesToTimeString = (totalMinutes: number) => {
+    const clamped = Math.max(0, Math.min(23 * 60 + 59, totalMinutes));
+    const hours = String(Math.floor(clamped / 60)).padStart(2, "0");
+    const minutes = String(clamped % 60).padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  const wibNow = getWibNow();
+  const todayWib = formatWibDate(wibNow);
+  const nowMinutes = wibNow.getHours() * 60 + wibNow.getMinutes();
+  const roundedNowMinutes = roundUpMinutes(nowMinutes, 10);
+  const minTimeMinutes = timeToMinutes(minTime) ?? 0;
+  const minSelectableTime =
+    formData.tanggal_peminjaman === todayWib
+      ? minutesToTimeString(Math.max(minTimeMinutes, roundedNowMinutes))
+      : minTime;
+
   const combineDateTime = (dateValue: string, timeValue: string) => {
     if (!dateValue || !timeValue) {
       return null;
@@ -222,6 +258,19 @@ function ReservingForm() {
         `Waktu selesai harus antara ${minTime} sampai ${maxTime} WIB.`,
       );
       return;
+    }
+
+    const submitWibNow = getWibNow();
+    const submitTodayWib = formatWibDate(submitWibNow);
+    const submitNowMinutes =
+      submitWibNow.getHours() * 60 + submitWibNow.getMinutes();
+
+    if (formData.tanggal_peminjaman === submitTodayWib) {
+      const roundedNowMinutes = roundUpMinutes(submitNowMinutes, 10);
+      if (waktuMulaiMinutes < roundedNowMinutes) {
+        setErrorMessage("Waktu mulai tidak boleh di waktu yang sudah lewat.");
+        return;
+      }
     }
 
     if (waktuSelesaiMinutes - waktuMulaiMinutes < 40) {
@@ -412,7 +461,7 @@ function ReservingForm() {
                       name="waktu_mulai"
                       value={formData.waktu_mulai}
                       onChange={handleTimeChange}
-                      minTime={minTime}
+                      minTime={minSelectableTime}
                       maxTime={maxTime}
                     />
                     <WibTimePicker
@@ -420,7 +469,7 @@ function ReservingForm() {
                       name="waktu_selesai"
                       value={formData.waktu_selesai}
                       onChange={handleTimeChange}
-                      minTime={minTime}
+                      minTime={minSelectableTime}
                       maxTime={maxTime}
                     />
                   </div>
@@ -668,7 +717,7 @@ function ReservingForm() {
                     name="waktu_mulai"
                     value={formData.waktu_mulai}
                     onChange={handleTimeChange}
-                    minTime={minTime}
+                    minTime={minSelectableTime}
                     maxTime={maxTime}
                   />
                   <WibTimePicker
@@ -676,7 +725,7 @@ function ReservingForm() {
                     name="waktu_selesai"
                     value={formData.waktu_selesai}
                     onChange={handleTimeChange}
-                    minTime={minTime}
+                    minTime={minSelectableTime}
                     maxTime={maxTime}
                   />
                 </div>

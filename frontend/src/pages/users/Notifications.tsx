@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import Dialog from "../../components/Dialog";
 import api from "../../services/api";
 
 type PeminjamanItem = {
@@ -66,6 +67,9 @@ function Notifications() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cancelingId, setCancelingId] = useState<number | null>(null);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [pendingCancelItem, setPendingCancelItem] =
+    useState<PeminjamanItem | null>(null);
 
   const fetchPeminjaman = async () => {
     try {
@@ -92,22 +96,32 @@ function Notifications() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleCancel = async (item: PeminjamanItem) => {
+  const handleCancel = (item: PeminjamanItem) => {
     if (cancelingId) {
       return;
     }
 
-    const confirmed = window.confirm(
-      `Batalkan peminjaman ${item.ruangan.nama_ruangan}?`,
-    );
-    if (!confirmed) {
+    setPendingCancelItem(item);
+    setIsCancelDialogOpen(true);
+  };
+
+  const handleCloseCancelDialog = () => {
+    if (cancelingId) {
+      return;
+    }
+    setIsCancelDialogOpen(false);
+    setPendingCancelItem(null);
+  };
+
+  const handleConfirmCancel = async () => {
+    if (!pendingCancelItem || cancelingId) {
       return;
     }
 
     try {
-      setCancelingId(item.id_peminjaman);
+      setCancelingId(pendingCancelItem.id_peminjaman);
       const response = await api.patch(
-        `/api/peminjaman/${item.id_peminjaman}/cancel`,
+        `/api/peminjaman/${pendingCancelItem.id_peminjaman}/cancel`,
       );
       if (!response.data?.success) {
         throw new Error("Cancel failed");
@@ -118,6 +132,8 @@ function Notifications() {
       setErrorMessage("Gagal membatalkan peminjaman.");
     } finally {
       setCancelingId(null);
+      setIsCancelDialogOpen(false);
+      setPendingCancelItem(null);
     }
   };
 
@@ -161,6 +177,21 @@ function Notifications() {
 
   return (
     <div className="flex flex-col gap-3">
+      <Dialog
+        isOpen={isCancelDialogOpen}
+        title="Konfirmasi Pembatalan"
+        message={
+          pendingCancelItem
+            ? `Batalkan peminjaman ${pendingCancelItem.ruangan.nama_ruangan}?`
+            : ""
+        }
+        variant="warning"
+        showCancel
+        confirmText={cancelingId ? "Membatalkan..." : "Batalkan"}
+        cancelText="Tidak"
+        onClose={handleCloseCancelDialog}
+        onConfirm={handleConfirmCancel}
+      />
       {errorMessage && (
         <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-md">
           {errorMessage}

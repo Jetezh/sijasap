@@ -63,13 +63,21 @@ function WibTimePicker<TName extends string = string>({
   const maxParts = parseTimeToNumbers(maxTime);
   const minHour = minParts?.hours ?? 0;
   const maxHour = maxParts?.hours ?? 23;
-  const hasValidRange =
-    minParts !== null && maxParts !== null && minHour <= maxHour;
-  const hourOptions = hasValidRange ? HOURS.slice(minHour, maxHour + 1) : HOURS;
+  const hasParsedRange = minParts !== null && maxParts !== null;
+  const isRangeValid = hasParsedRange && minHour <= maxHour;
+  const hourOptions = !hasParsedRange
+    ? HOURS
+    : isRangeValid
+      ? HOURS.slice(minHour, maxHour + 1)
+      : [];
 
   const getMinuteOptions = (selectedHour: string) => {
-    if (!hasValidRange) {
+    if (!hasParsedRange) {
       return MINUTES;
+    }
+
+    if (!isRangeValid) {
+      return [];
     }
 
     const parsedHour = Number(selectedHour);
