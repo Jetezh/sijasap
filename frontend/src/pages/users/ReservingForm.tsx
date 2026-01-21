@@ -3,7 +3,16 @@ import Button from "../../components/Button";
 import Container from "../../components/Container";
 import Dialog from "../../components/Dialog";
 import Modal from "../../components/Modal";
+import ReactDatePicker from "../../components/ReactDatePicker";
 import WibTimePicker from "../../components/WibTimePicker";
+import {
+  SERVICE_TIME,
+  formatWibDate,
+  getWibNow,
+  minutesToTimeString,
+  roundUpMinutes,
+  timeToMinutes,
+} from "../../lib/time";
 
 import {
   useContext,
@@ -97,63 +106,24 @@ function ReservingForm() {
   }, [id_ruangan, ruangan?.id_ruangan]);
 
   const title = ruangan?.nama_ruangan ?? "Nama Ruangan";
-  const minTime = "07:00";
-  const maxTime = "17:20";
+  const { minTime, maxStartTime, maxEndTime, minDurationMinutes, minuteStep } =
+    SERVICE_TIME;
   const isErrorOpen = Boolean(errorMessage);
-
-  const timeToMinutes = (timeValue: string) => {
-    if (!timeValue) {
-      return null;
-    }
-    const [hours, minutes] = timeValue.split(":").map(Number);
-    if (
-      Number.isNaN(hours) ||
-      Number.isNaN(minutes) ||
-      hours < 0 ||
-      hours > 23 ||
-      minutes < 0 ||
-      minutes > 59
-    ) {
-      return null;
-    }
-    return hours * 60 + minutes;
-  };
-
-  const formatWibDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
-  const getWibNow = () => {
-    const now = new Date();
-    return new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
-  };
-
-  const roundUpMinutes = (totalMinutes: number, step: number) => {
-    if (step <= 0) {
-      return totalMinutes;
-    }
-    return Math.ceil(totalMinutes / step) * step;
-  };
-
-  const minutesToTimeString = (totalMinutes: number) => {
-    const clamped = Math.max(0, Math.min(23 * 60 + 59, totalMinutes));
-    const hours = String(Math.floor(clamped / 60)).padStart(2, "0");
-    const minutes = String(clamped % 60).padStart(2, "0");
-    return `${hours}:${minutes}`;
-  };
 
   const wibNow = getWibNow();
   const todayWib = formatWibDate(wibNow);
   const nowMinutes = wibNow.getHours() * 60 + wibNow.getMinutes();
-  const roundedNowMinutes = roundUpMinutes(nowMinutes, 10);
+  const roundedNowMinutes = roundUpMinutes(nowMinutes, minuteStep);
   const minTimeMinutes = timeToMinutes(minTime) ?? 0;
   const minSelectableTime =
     formData.tanggal_peminjaman === todayWib
       ? minutesToTimeString(Math.max(minTimeMinutes, roundedNowMinutes))
       : minTime;
+  const minEndBaseMinutes = minTimeMinutes + minDurationMinutes;
+  const minEndSelectableTime =
+    formData.tanggal_peminjaman === todayWib
+      ? minutesToTimeString(Math.max(minEndBaseMinutes, roundedNowMinutes))
+      : minutesToTimeString(minEndBaseMinutes);
 
   const combineDateTime = (dateValue: string, timeValue: string) => {
     if (!dateValue || !timeValue) {
@@ -175,6 +145,10 @@ function ReservingForm() {
     setFormData((prev) => {
       return { ...prev, [name]: value };
     });
+  };
+
+  const handleDateChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, tanggal_peminjaman: value }));
   };
 
   const handleInputChange = (
@@ -234,13 +208,15 @@ function ReservingForm() {
     const waktuMulaiMinutes = timeToMinutes(formData.waktu_mulai);
     const waktuSelesaiMinutes = timeToMinutes(formData.waktu_selesai);
     const minTimeMinutes = timeToMinutes(minTime);
-    const maxTimeMinutes = timeToMinutes(maxTime);
+    const maxStartMinutes = timeToMinutes(maxStartTime);
+    const maxEndMinutes = timeToMinutes(maxEndTime);
 
     if (
       waktuMulaiMinutes === null ||
       waktuSelesaiMinutes === null ||
       minTimeMinutes === null ||
-      maxTimeMinutes === null
+      maxStartMinutes === null ||
+      maxEndMinutes === null
     ) {
       setErrorMessage("Format waktu tidak valid.");
       return;
@@ -248,14 +224,21 @@ function ReservingForm() {
 
     if (waktuMulaiMinutes < minTimeMinutes) {
       setErrorMessage(
-        `Waktu mulai harus antara ${minTime} sampai ${maxTime} WIB.`,
+        `Waktu mulai harus antara ${minTime} sampai ${maxStartTime} WIB.`,
       );
       return;
     }
 
-    if (waktuSelesaiMinutes > maxTimeMinutes) {
+    if (waktuMulaiMinutes > maxStartMinutes) {
       setErrorMessage(
-        `Waktu selesai harus antara ${minTime} sampai ${maxTime} WIB.`,
+        `Waktu mulai harus antara ${minTime} sampai ${maxStartTime} WIB.`,
+      );
+      return;
+    }
+
+    if (waktuSelesaiMinutes > maxEndMinutes) {
+      setErrorMessage(
+        `Waktu selesai harus antara ${minTime} sampai ${maxEndTime} WIB.`,
       );
       return;
     }
@@ -266,15 +249,15 @@ function ReservingForm() {
       submitWibNow.getHours() * 60 + submitWibNow.getMinutes();
 
     if (formData.tanggal_peminjaman === submitTodayWib) {
-      const roundedNowMinutes = roundUpMinutes(submitNowMinutes, 10);
+      const roundedNowMinutes = roundUpMinutes(submitNowMinutes, minuteStep);
       if (waktuMulaiMinutes < roundedNowMinutes) {
         setErrorMessage("Waktu mulai tidak boleh di waktu yang sudah lewat.");
         return;
       }
     }
 
-    if (waktuSelesaiMinutes - waktuMulaiMinutes < 40) {
-      setErrorMessage("Durasi peminjaman minimal 40 menit.");
+    if (waktuSelesaiMinutes - waktuMulaiMinutes < minDurationMinutes) {
+      setErrorMessage(`Durasi peminjaman minimal ${minDurationMinutes} menit.`);
       return;
     }
 
@@ -445,32 +428,28 @@ function ReservingForm() {
                         readOnly
                       />
                     </label>
-                    <label className="flex flex-col gap-2">
-                      <span>Tanggal Peminjaman</span>
-                      <input
-                        className="border rounded-md p-2"
-                        type="date"
-                        name="tanggal_peminjaman"
-                        value={formData.tanggal_peminjaman}
-                        onChange={handleInputChange}
-                        min={new Date().toISOString().split("T")[0]}
-                      />
-                    </label>
+                    <ReactDatePicker
+                      title="Tanggal Peminjaman"
+                      value={formData.tanggal_peminjaman}
+                      onChange={handleDateChange}
+                      min={new Date().toISOString().split("T")[0]}
+                      classname="p-0"
+                    />
                     <WibTimePicker
                       label="Waktu Mulai"
                       name="waktu_mulai"
                       value={formData.waktu_mulai}
                       onChange={handleTimeChange}
                       minTime={minSelectableTime}
-                      maxTime={maxTime}
+                      maxTime={maxStartTime}
                     />
                     <WibTimePicker
                       label="Waktu Selesai"
                       name="waktu_selesai"
                       value={formData.waktu_selesai}
                       onChange={handleTimeChange}
-                      minTime={minSelectableTime}
-                      maxTime={maxTime}
+                      minTime={minEndSelectableTime}
+                      maxTime={maxEndTime}
                     />
                   </div>
 
@@ -701,32 +680,28 @@ function ReservingForm() {
                       readOnly
                     />
                   </label>
-                  <label className="flex flex-col gap-2">
-                    <span>Tanggal Peminjaman</span>
-                    <input
-                      className="border rounded-md p-2"
-                      type="date"
-                      name="tanggal_peminjaman"
-                      value={formData.tanggal_peminjaman}
-                      onChange={handleInputChange}
-                      min={new Date().toISOString().split("T")[0]}
-                    />
-                  </label>
+                  <ReactDatePicker
+                    title="Tanggal Peminjaman"
+                    value={formData.tanggal_peminjaman}
+                    onChange={handleDateChange}
+                    min={new Date().toISOString().split("T")[0]}
+                    classname="p-0"
+                  />
                   <WibTimePicker
                     label="Waktu Mulai"
                     name="waktu_mulai"
                     value={formData.waktu_mulai}
                     onChange={handleTimeChange}
                     minTime={minSelectableTime}
-                    maxTime={maxTime}
+                    maxTime={maxStartTime}
                   />
                   <WibTimePicker
                     label="Waktu Selesai"
                     name="waktu_selesai"
                     value={formData.waktu_selesai}
                     onChange={handleTimeChange}
-                    minTime={minSelectableTime}
-                    maxTime={maxTime}
+                    minTime={minEndSelectableTime}
+                    maxTime={maxEndTime}
                   />
                 </div>
 

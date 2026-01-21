@@ -2,12 +2,21 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import assets from "../../assets/assets";
 import Caraousal from "../../components/Caraousal";
 import BuildingList from "../../components/BuildingList";
-import DatePicker from "../../components/DatePicker";
+import ReactDatePicker from "../../components/ReactDatePicker";
 import WibTimePicker from "../../components/WibTimePicker";
 import Button from "../../components/Button";
+import Container from "../../components/Container";
 import RoomCard from "../../components/RoomCard";
 import Pagination from "../../components/Pagination";
 import type { Fakultas, Ruangan } from "../../types";
+import {
+  SERVICE_TIME,
+  formatWibDate,
+  getWibNow,
+  minutesToTimeString,
+  roundUpMinutes,
+  timeToMinutes,
+} from "../../lib/time";
 
 import api from "../../services/api";
 import { AuthContext } from "../../context/AuthContext";
@@ -32,6 +41,7 @@ const Home: React.FC = () => {
     waktu_mulai: "",
     waktu_selesai: "",
   });
+  const [filterMessage, setFilterMessage] = useState<string | null>(null);
   const [viewportWidth, setViewportWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1024,
   );
@@ -80,12 +90,57 @@ const Home: React.FC = () => {
 
     if (!startDate || !filterTimes.waktu_mulai || !filterTimes.waktu_selesai) {
       alert("Tolong pilih tanggal dan waktu mulai dan selesai");
+      setFilterMessage(null);
 
       return;
     }
 
     const startDateTime = new Date(`${startDate}T${filterTimes.waktu_mulai}`);
     const endDateTime = new Date(`${startDate}T${filterTimes.waktu_selesai}`);
+    const waktuMulaiMinutes = timeToMinutes(filterTimes.waktu_mulai);
+    const waktuSelesaiMinutes = timeToMinutes(filterTimes.waktu_selesai);
+    const minTimeMinutes = timeToMinutes(minTime);
+    const maxStartMinutes = timeToMinutes(maxStartTime);
+    const maxEndMinutes = timeToMinutes(maxEndTime);
+
+    if (
+      waktuMulaiMinutes === null ||
+      waktuSelesaiMinutes === null ||
+      minTimeMinutes === null ||
+      maxStartMinutes === null ||
+      maxEndMinutes === null
+    ) {
+      alert("Format waktu tidak valid.");
+      setFilterMessage(null);
+      return;
+    }
+
+    if (
+      waktuMulaiMinutes < minTimeMinutes ||
+      waktuMulaiMinutes > maxStartMinutes
+    ) {
+      alert(`Waktu mulai harus antara ${minTime} sampai ${maxStartTime} WIB.`);
+      setFilterMessage(null);
+      return;
+    }
+
+    if (waktuSelesaiMinutes > maxEndMinutes) {
+      alert(`Waktu selesai harus antara ${minTime} sampai ${maxEndTime} WIB.`);
+      setFilterMessage(null);
+      return;
+    }
+
+    if (waktuSelesaiMinutes - waktuMulaiMinutes < minDurationMinutes) {
+      alert(`Durasi peminjaman minimal ${minDurationMinutes} menit.`);
+      setFilterMessage(null);
+      return;
+    }
+
+    if (startDate === todayWib && waktuMulaiMinutes < roundedNowMinutes) {
+      alert("Waktu mulai tidak boleh di waktu yang sudah lewat.");
+      setFilterMessage(null);
+      return;
+    }
 
     const selectedFakultasObj = fakultas.find(
       (f) => f.nama_fakultas === selectedFakultas,
@@ -100,13 +155,20 @@ const Home: React.FC = () => {
         },
       });
 
-      if (response.data?.success) {
+      if (response.data?.success || response.data?.ruangan) {
         setRuangan(response.data.ruangan);
+        const total = response.data.ruangan.length ?? 0;
+        setFilterMessage(
+          total > 0
+            ? `Menampilkan ${total} ruangan tersedia.`
+            : "Tidak ada ruangan tersedia untuk waktu tersebut.",
+        );
       } else {
         throw new Error("Invalid response format");
       }
     } catch (err) {
       console.error("Error fetching available rooms:", err);
+      setFilterMessage("Terjadi kesalahan saat memuat ruangan.");
     }
   };
 
@@ -155,8 +217,8 @@ const Home: React.FC = () => {
   const isLg = viewportWidth >= 1024;
   const isMobile = !isLg;
   const pageSize = isLg ? 8 : mobileBatchSize;
-  const minTime = "07:00";
-  const maxTime = "17:20";
+  const { minTime, maxStartTime, maxEndTime, minDurationMinutes, minuteStep } =
+    SERVICE_TIME;
 
   type TimeFieldName = "waktu_mulai" | "waktu_selesai";
 
@@ -209,6 +271,21 @@ const Home: React.FC = () => {
     return ruangan.slice(0, visibleCount);
   }, [ruangan, visibleCount]);
 
+  const wibNow = getWibNow();
+  const todayWib = formatWibDate(wibNow);
+  const nowMinutes = wibNow.getHours() * 60 + wibNow.getMinutes();
+  const roundedNowMinutes = roundUpMinutes(nowMinutes, minuteStep);
+  const minTimeMinutes = timeToMinutes(minTime) ?? 0;
+  const minSelectableTime =
+    startDate === todayWib
+      ? minutesToTimeString(Math.max(minTimeMinutes, roundedNowMinutes))
+      : minTime;
+  const minEndBaseMinutes = minTimeMinutes + minDurationMinutes;
+  const minEndSelectableTime =
+    startDate === todayWib
+      ? minutesToTimeString(Math.max(minEndBaseMinutes, roundedNowMinutes))
+      : minutesToTimeString(minEndBaseMinutes);
+
   return (
     <div className="w-full h-full mx-auto bg-gray-100">
       <Caraousal slides={slides} />
@@ -222,11 +299,11 @@ const Home: React.FC = () => {
           name="search-room-filter"
           className="flex flex-row flex-wrap justify-center lg:text-2xl md:text-xl text-sm font-medium lg:px-10 md:px-7 px-5 md:gap-10 sm:gap-7 gap-5"
         >
-          <DatePicker
+          <ReactDatePicker
             title="Tanggal Peminjaman"
             classname="lg:basis-3/14 md:basis-1/2 basis-full"
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            onChange={setStartDate}
             min={new Date().toISOString().split("T")[0]}
           />
           <WibTimePicker
@@ -234,8 +311,8 @@ const Home: React.FC = () => {
             name="waktu_mulai"
             value={filterTimes.waktu_mulai}
             onChange={handleTimeChange}
-            minTime={minTime}
-            maxTime={maxTime}
+            minTime={minSelectableTime}
+            maxTime={maxStartTime}
             showHelperText={false}
             showTimezoneLabel={false}
             className="text-left lg:p-0 md:p-1.5 p-1 lg:basis-2/14 md:basis-1/3 basis-1/2"
@@ -245,8 +322,8 @@ const Home: React.FC = () => {
             name="waktu_selesai"
             value={filterTimes.waktu_selesai}
             onChange={handleTimeChange}
-            minTime={minTime}
-            maxTime={maxTime}
+            minTime={minEndSelectableTime}
+            maxTime={maxEndTime}
             showHelperText={false}
             showTimezoneLabel={false}
             className="text-left lg:p-0 md:p-1.5 p-1 lg:basis-2/14 md:basis-1/3 basis-1/2"
@@ -260,6 +337,11 @@ const Home: React.FC = () => {
       </div>
       <div className="lg:mt-15 md:mt-10 mt-5 lg:px-9 md:px-6 px-5 flex flex-col gap-10">
         <span className="text-3xl font-medium">Informasi Ruangan</span>
+        {filterMessage && (
+          <Container className="bg-blue-50 border border-blue-200 text-blue-800 shadow-none mt-0">
+            <span className="text-sm font-medium">{filterMessage}</span>
+          </Container>
+        )}
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-10">
           {(isMobile ? mobileRooms : paginatedRooms).map((item) => {
             return (

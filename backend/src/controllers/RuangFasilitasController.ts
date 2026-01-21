@@ -269,7 +269,8 @@ export const RuanganReservationController = async (
       return ((totalMinutes % minutesInDay) + minutesInDay) % minutesInDay;
     };
     const minTimeMinutes = 7 * 60;
-    const maxTimeMinutes = 17 * 60 + 20;
+    const maxStartMinutes = 17 * 60 + 20;
+    const maxEndMinutes = 18 * 60;
     const waktuMulaiMinutes = toWibMinutes(waktuMulai);
     const waktuSelesaiMinutes = toWibMinutes(waktuSelesai);
 
@@ -280,10 +281,17 @@ export const RuanganReservationController = async (
       });
     }
 
-    if (waktuSelesaiMinutes > maxTimeMinutes) {
+    if (waktuMulaiMinutes > maxStartMinutes) {
       return res.status(400).json({
         success: false,
-        message: "Waktu selesai harus antara 07:00 sampai 17:20 WIB.",
+        message: "Waktu mulai harus antara 07:00 sampai 17:20 WIB.",
+      });
+    }
+
+    if (waktuSelesaiMinutes > maxEndMinutes) {
+      return res.status(400).json({
+        success: false,
+        message: "Waktu selesai harus antara 07:00 sampai 18:00 WIB.",
       });
     }
 

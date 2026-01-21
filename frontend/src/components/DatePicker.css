@@ -1,0 +1,27 @@
+.react-datepicker.datepicker-calendar {
+    font-size: 1.4rem;
+}
+
+.react-datepicker-popper {
+    position: absolute !important;
+    z-index: 50;
+}
+
+.react-datepicker__tab-loop {
+    position: absolute;
+}
+
+.react-datepicker.datepicker-calendar .react-datepicker__day-name,
+.react-datepicker.datepicker-calendar .react-datepicker__day {
+    width: 3rem;
+    line-height: 3.5rem;
+    margin: 0.15rem;
+}
+
+.react-datepicker.datepicker-calendar .react-datepicker__current-month {
+    font-size: 1.15rem;
+}
+
+.react-datepicker.datepicker-calendar .react-datepicker__navigation {
+    top: 0.8rem;
+}

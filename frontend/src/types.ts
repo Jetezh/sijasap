@@ -32,7 +32,7 @@ export type ButtonProps = {
   title: string;
   classname?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  type?: string;
+  type?: "button" | "submit" | "reset";
 };
 
 // type untuk component Container
@@ -46,7 +46,7 @@ export type DatePickerProps = {
   title: string;
   classname?: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (value: string) => void;
   min?: string;
 };
 
