@@ -51,6 +51,10 @@ function Ruangan() {
   }, []);
 
   const ruanganSearchTerm = ruanganSearch.trim().toLowerCase();
+  const tokens = ruanganSearchTerm
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
   const filteredRuangan = useMemo(() => {
     return ruangan
       .filter((item) => {
@@ -59,18 +63,26 @@ function Ruangan() {
       })
       .filter((item) => {
         if (!ruanganSearchTerm) return true;
-        const namaMatch = item.nama_ruangan
-          .toLowerCase()
-          .includes(ruanganSearchTerm);
-        const kapasitasMatch = String(item.kapasitas)
-          .toLowerCase()
-          .includes(ruanganSearchTerm);
-        const gedungMatch = item.gedung
-          .toLowerCase()
-          .includes(ruanganSearchTerm);
-        return namaMatch || kapasitasMatch || gedungMatch;
+        if (!tokens.length) {
+          return true;
+        }
+
+        const haystack = [
+          item.nama_ruangan,
+          item.gedung,
+          String(item.kapasitas),
+          String(item.lantai),
+        ]
+          .join(" ")
+          .toLowerCase();
+        const compactHaystack = haystack.replace(/\s+/g, "");
+
+        return tokens.every(
+          (token) =>
+            haystack.includes(token) || compactHaystack.includes(token),
+        );
       });
-  }, [ruangan, ruanganSearchTerm, selectedFakultas]);
+  }, [ruangan, ruanganSearchTerm, selectedFakultas, tokens]);
 
   const totalItems = filteredRuangan.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
