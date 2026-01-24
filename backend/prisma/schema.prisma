@@ -20,6 +20,7 @@ model User {
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
   program_studi_id    Int?
+
   peminjaman          peminjaman[]
   fakultas            fakultas?        @relation(fields: [fakultas_id], references: [id_fakultas])
   programstudi        programstudi?    @relation(fields: [program_studi_id], references: [id_program_studi])
@@ -115,6 +116,7 @@ model peminjaman {
   status_peminjaman      StatusPeminjaman @default(DIPROSES)
   createdAt              DateTime         @default(now())
   updatedAt              DateTime         @default(now()) @updatedAt
+
   alasanpenolakan        alasanpenolakan? @relation(fields: [alasan_ditolak_id], references: [id_alasan_penolakan])
   ruangan                ruangan          @relation(fields: [id_ruangan], references: [id_ruangan])
   user                   User             @relation(fields: [id_user], references: [id_user])

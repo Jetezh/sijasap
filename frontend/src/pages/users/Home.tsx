@@ -17,7 +17,6 @@ import {
   roundUpMinutes,
   timeToMinutes,
 } from "../../lib/time";
-
 import api from "../../services/api";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -28,7 +27,7 @@ const Home: React.FC = () => {
     throw new Error("AuthContext must be used within an AuthProvider");
   }
 
-  const { isAuthenticated } = authContext;
+  const { isAuthenticated, user } = authContext;
 
   const [fakultas, setFakultas] = useState<Fakultas[]>([]);
   const [ruangan, setRuangan] = useState<Ruangan[]>([]);
@@ -212,6 +211,17 @@ const Home: React.FC = () => {
     fetchRuangan();
   }, [isAuthenticated]);
 
+  // useEffect(() => {
+  //   try {
+  //     const ruanganId = Number(ruangan.id_ruangan);
+  //     if (!ruanganId) {
+
+  //     }
+  //   } catch (err) {
+
+  //   }
+  // },[ruangan])
+
   const placeholderImg = assets.fiklab301;
   const mobileBatchSize = 6;
   const isLg = viewportWidth >= 1024;
@@ -266,6 +276,18 @@ const Home: React.FC = () => {
     const end = start + pageSize;
     return ruangan.slice(start, end);
   }, [ruangan, currentPage, pageSize]);
+
+  const fakultasById = useMemo(() => {
+    return new Map(
+      fakultas.map((item) => [item.id_fakultas, item.nama_fakultas]),
+    );
+  }, [fakultas]);
+
+  const getRoomTag = (item: Ruangan) => {
+    if (item.nama_fakultas) return item.nama_fakultas;
+    if (item.fakultas_id) return fakultasById.get(item.fakultas_id) ?? "";
+    return selectedFakultas ?? user?.nama_fakultas ?? "";
+  };
 
   const mobileRooms = useMemo(() => {
     return ruangan.slice(0, visibleCount);
@@ -348,7 +370,8 @@ const Home: React.FC = () => {
               <RoomCard
                 id={item.id_ruangan}
                 img={placeholderImg}
-                tag={item.nama_ruangan}
+                tag={getRoomTag(item)}
+                title={item.nama_ruangan}
                 lokasi={`Gedung ${item.gedung}`}
                 lantai={item.lantai}
                 antrianPinjaman={0}

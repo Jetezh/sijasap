@@ -6,19 +6,28 @@ export type AlertsProps = {
   className?: string;
 };
 
-// type untuk component BuildingList
+// type untuk component fakultas
 export type Fakultas = {
   id_fakultas: number;
   nama_fakultas: string;
 };
 
-// type untuk component BuildingList
+// type untuk component roomcard
 export type Ruangan = {
   id_ruangan: number;
   nama_ruangan: string;
   kapasitas: number;
   gedung: string;
   lantai: number;
+  fakultas_id?: number | null;
+  nama_fakultas?: string;
+};
+
+// type untuk component tag
+export type TagProps = {
+  title: string;
+  classname?: string;
+  key?: string;
 };
 
 // type untuk component BuildingList
@@ -115,6 +124,7 @@ export type RoomCardProps = {
   id: number;
   img: string;
   tag: string;
+  title: string;
   lokasi: string;
   lantai: number;
   antrianPinjaman: number;

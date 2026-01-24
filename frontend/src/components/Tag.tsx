@@ -1,12 +1,11 @@
 import { cn } from "../lib/utils";
-
-type TagProps = { title: string; classname?: string; key?: string };
+import type { TagProps } from "../types";
 
 function Tag({ title, classname, key }: TagProps) {
   return (
     <div
       className={cn(
-        "px-3 py-2 bg-yellow-400 rounded-full font-medium",
+        "inline-flex w-fit px-3 py-1 rounded-lg font-bold bg-amber-300",
         classname,
       )}
       key={key}

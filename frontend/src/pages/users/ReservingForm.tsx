@@ -386,6 +386,7 @@ function ReservingForm() {
                         value={formData.nomor_telepon}
                         onChange={handleInputChange}
                         placeholder="08xxxxxxxxxx"
+                        required
                       />
                     </label>
                   </div>
@@ -465,6 +466,7 @@ function ReservingForm() {
                         min="1"
                         max={ruangan?.kapasitas}
                         placeholder="Jumlah peserta"
+                        required
                       />
                     </label>
                     <label className="flex flex-col gap-2">
@@ -638,6 +640,7 @@ function ReservingForm() {
                       value={formData.nomor_telepon}
                       onChange={handleInputChange}
                       placeholder="08xxxxxxxxxx"
+                      required
                     />
                   </label>
                 </div>
@@ -735,6 +738,7 @@ function ReservingForm() {
                       onChange={handleInputChange}
                       min="1"
                       placeholder="Jumlah peserta"
+                      required
                     />
                   </label>
                   <label className="flex flex-col gap-2">

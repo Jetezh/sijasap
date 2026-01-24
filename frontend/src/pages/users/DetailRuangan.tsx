@@ -114,6 +114,12 @@ function DetailRuangan() {
   const tableData: TableRow[] = daftarPeminjaman.map((peminjaman, index) => {
     const waktuMulai = new Date(peminjaman.waktu_mulai);
     const waktuSelesai = new Date(peminjaman.waktu_selesai);
+    const statusColor =
+      peminjaman.status_peminjaman === "DITERIMA"
+        ? "#2E7D32"
+        : peminjaman.status_peminjaman === "DIPROSES"
+          ? "#F9A825"
+          : "#616161";
 
     return {
       no: index + 1,
@@ -131,13 +137,7 @@ function DetailRuangan() {
       status: (
         <Tag
           title={peminjaman.status_peminjaman}
-          classname={
-            peminjaman.status_peminjaman === "DITERIMA"
-              ? "green"
-              : peminjaman.status_peminjaman === "DIPROSES"
-                ? "yellow"
-                : "red"
-          }
+          classname={`bg-[${statusColor}] text-base`}
         />
       ),
       namaPeminjam: peminjaman.nama_peminjam,
@@ -221,12 +221,11 @@ function DetailRuangan() {
               {fasilitas.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {fasilitas.map((item) => (
-                    <span
+                    <Tag
                       key={`${item.id_ruangan}-${item.id_fasilitas}`}
-                      className="rounded-full bg-gray-200 px-3 py-1 text-sm"
-                    >
-                      {item.fasilitas.nama_fasilitas}
-                    </span>
+                      classname="rounded-full bg-gray-200 px-3 py-1 text-sm"
+                      title={item.fasilitas.nama_fasilitas}
+                    />
                   ))}
                 </div>
               )}
