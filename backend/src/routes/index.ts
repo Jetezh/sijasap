@@ -2,6 +2,7 @@ import express from "express";
 import { loginController } from "../controllers/LoginController";
 import { ProfileController } from "../controllers/ProfileController";
 import { verifyToken } from "../middlewares/auth";
+import { loginRateLimit } from "../middlewares/loginRateLimit";
 import {
   FasilitasController,
   RuangController,
@@ -18,7 +19,7 @@ import { FakultasController } from "../controllers/FakultasController";
 const router = express.Router();
 
 // route untuk login user
-router.post("/login", loginController);
+router.post("/login", loginRateLimit, loginController);
 
 // route untuk fetch data user
 router.get("/profile", verifyToken, ProfileController);

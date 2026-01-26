@@ -3,6 +3,30 @@ import prisma from "../../prisma/client";
 import { JenisKegiatan } from "../generated/prisma";
 import { StatusPeminjaman } from "../generated/prisma";
 
+const getUserScopeFilter = (req: Request) => {
+  const role = req.user?.role;
+  if (role === "SUPERADMIN" || role === "ADMIN") {
+    return {};
+  }
+
+  const fakultasId = req.user?.fakultas_id ?? null;
+  const unitUniversitasId = req.user?.unit_universitas_id ?? null;
+
+  if (!fakultasId && !unitUniversitasId) {
+    return null;
+  }
+
+  const orFilters = [];
+  if (fakultasId) {
+    orFilters.push({ fakultas_id: fakultasId });
+  }
+  if (unitUniversitasId) {
+    orFilters.push({ unit_universitas_id: unitUniversitasId });
+  }
+
+  return { OR: orFilters };
+};
+
 export const AvailableRoomsController = async (req: Request, res: Response) => {
   try {
     if (!req.user?.id) {
@@ -52,16 +76,57 @@ export const AvailableRoomsController = async (req: Request, res: Response) => {
 
     const uniqueConflictingRoomIds = [...new Set(conflictingRoomIds)];
 
+    const scopeFilter = getUserScopeFilter(req);
+    if (!scopeFilter) {
+      return res.status(403).json({
+        success: false,
+        message: "Akses ruangan tidak diizinkan.",
+      });
+    }
+
+    const fakultasFilter =
+      (req.user?.role === "SUPERADMIN" || req.user?.role === "ADMIN") &&
+      fakultas_id &&
+      !Number.isNaN(Number(fakultas_id))
+        ? { fakultas_id: Number(fakultas_id) }
+        : {};
+
     const availableRooms = await prisma.ruangan.findMany({
       where: {
         id_ruangan: {
           notIn: uniqueConflictingRoomIds,
         },
-        ...(fakultas_id && { fakultas_id: Number(fakultas_id) }),
+        ...scopeFilter,
+        ...fakultasFilter,
       },
     });
 
-    return res.json({ success: true, ruangan: availableRooms });
+    const availableRoomIds = availableRooms.map((room) => room.id_ruangan);
+    let peminjamanCountMap = new Map<number, number>();
+
+    if (availableRoomIds.length > 0) {
+      const peminjamanCounts = await prisma.peminjaman.groupBy({
+        by: ["id_ruangan"],
+        where: {
+          id_ruangan: { in: availableRoomIds },
+          status_peminjaman: {
+            in: [StatusPeminjaman.DIPROSES, StatusPeminjaman.DITERIMA],
+          },
+        },
+        _count: { _all: true },
+      });
+
+      peminjamanCountMap = new Map(
+        peminjamanCounts.map((item) => [item.id_ruangan, item._count._all]),
+      );
+    }
+
+    const availableRoomsWithCounts = availableRooms.map((room) => ({
+      ...room,
+      antrian_peminjaman: peminjamanCountMap.get(room.id_ruangan) ?? 0,
+    }));
+
+    return res.json({ success: true, ruangan: availableRoomsWithCounts });
   } catch (err) {
     console.error("Error fetching ruangan tersedia:", err);
     return res
@@ -76,13 +141,46 @@ export const RuangController = async (req: Request, res: Response) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
+    const scopeFilter = getUserScopeFilter(req);
+    if (!scopeFilter) {
+      return res.status(403).json({
+        success: false,
+        message: "Akses ruangan tidak diizinkan.",
+      });
+    }
+
     const ruangan = await prisma.ruangan.findMany({
-      where: { fakultas_id: req.user?.fakultas_id },
+      where: scopeFilter,
     });
+
+    const ruanganIds = ruangan.map((room) => room.id_ruangan);
+    let peminjamanCountMap = new Map<number, number>();
+
+    if (ruanganIds.length > 0) {
+      const peminjamanCounts = await prisma.peminjaman.groupBy({
+        by: ["id_ruangan"],
+        where: {
+          id_ruangan: { in: ruanganIds },
+          status_peminjaman: {
+            in: [StatusPeminjaman.DIPROSES, StatusPeminjaman.DITERIMA],
+          },
+        },
+        _count: { _all: true },
+      });
+
+      peminjamanCountMap = new Map(
+        peminjamanCounts.map((item) => [item.id_ruangan, item._count._all]),
+      );
+    }
+
+    const ruanganWithCounts = ruangan.map((room) => ({
+      ...room,
+      antrian_peminjaman: peminjamanCountMap.get(room.id_ruangan) ?? 0,
+    }));
 
     return res.json({
       success: true,
-      ruangan: ruangan,
+      ruangan: ruanganWithCounts,
     });
   } catch (err) {
     console.error("Error fetching ruang data:", err);
@@ -105,14 +203,18 @@ export const RuanganDetailController = async (req: Request, res: Response) => {
         .json({ success: false, message: "Invalid ruangan id" });
     }
 
-    const fakultasId = req.user.fakultas_id ?? null;
-    const unitUniversitasId = req.user.unit_universitas_id ?? null;
+    const scopeFilter = getUserScopeFilter(req);
+    if (!scopeFilter) {
+      return res.status(403).json({
+        success: false,
+        message: "Akses ruangan tidak diizinkan.",
+      });
+    }
 
     const ruangan = await prisma.ruangan.findFirst({
       where: {
         id_ruangan: ruanganId,
-        ...(fakultasId && { fakultas_id: fakultasId }),
-        ...(unitUniversitasId && { unit_universitas_id: unitUniversitasId }),
+        ...scopeFilter,
       },
     });
 
@@ -137,7 +239,23 @@ export const FasilitasController = async (req: Request, res: Response) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const fasilitas = await prisma.fasilitas.findMany();
+    const scopeFilter = getUserScopeFilter(req);
+    if (!scopeFilter) {
+      return res.status(403).json({
+        success: false,
+        message: "Akses fasilitas tidak diizinkan.",
+      });
+    }
+
+    const fasilitas = await prisma.fasilitas.findMany({
+      where: {
+        ruanganfasilitas: {
+          some: {
+            ruangan: scopeFilter,
+          },
+        },
+      },
+    });
 
     if (!fasilitas) {
       return res
@@ -166,14 +284,18 @@ export const RuanganFasilitasController = async (
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const fakultasId = req.user.fakultas_id ?? null;
-    const unitUniversitasId = req.user.unit_universitas_id ?? null;
+    const scopeFilter = getUserScopeFilter(req);
+    if (!scopeFilter) {
+      return res.status(403).json({
+        success: false,
+        message: "Akses ruangan tidak diizinkan.",
+      });
+    }
 
     const ruanganFasilitas = await prisma.ruanganfasilitas.findMany({
       where: {
         ruangan: {
-          ...(fakultasId && { fakultas_id: fakultasId }),
-          ...(unitUniversitasId && { unit_universitas_id: unitUniversitasId }),
+          ...scopeFilter,
         },
       },
       include: {
@@ -337,14 +459,18 @@ export const RuanganReservationController = async (
       });
     }
 
-    const fakultasId = req.user.fakultas_id ?? null;
-    const unitUniversitasId = req.user.unit_universitas_id ?? null;
+    const scopeFilter = getUserScopeFilter(req);
+    if (!scopeFilter) {
+      return res.status(403).json({
+        success: false,
+        message: "Akses ruangan tidak diizinkan.",
+      });
+    }
 
     const ruangan = await prisma.ruangan.findFirst({
       where: {
         id_ruangan: ruanganId,
-        ...(fakultasId && { fakultas_id: fakultasId }),
-        ...(unitUniversitasId && { unit_universitas_id: unitUniversitasId }),
+        ...scopeFilter,
       },
       select: {
         id_ruangan: true,

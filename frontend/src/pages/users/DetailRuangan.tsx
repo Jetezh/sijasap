@@ -114,12 +114,12 @@ function DetailRuangan() {
   const tableData: TableRow[] = daftarPeminjaman.map((peminjaman, index) => {
     const waktuMulai = new Date(peminjaman.waktu_mulai);
     const waktuSelesai = new Date(peminjaman.waktu_selesai);
-    const statusColor =
+    const statusClass =
       peminjaman.status_peminjaman === "DITERIMA"
-        ? "#2E7D32"
+        ? "bg-[#2E7D32]"
         : peminjaman.status_peminjaman === "DIPROSES"
-          ? "#F9A825"
-          : "#616161";
+          ? "bg-[#F9A825]"
+          : "bg-[#616161]";
 
     return {
       no: index + 1,
@@ -137,7 +137,7 @@ function DetailRuangan() {
       status: (
         <Tag
           title={peminjaman.status_peminjaman}
-          classname={`bg-[${statusColor}] text-base`}
+          classname={`${statusClass} text-base`}
         />
       ),
       namaPeminjam: peminjaman.nama_peminjam,

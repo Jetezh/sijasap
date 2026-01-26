@@ -21,7 +21,8 @@ function RoomCard(props: RoomCardProps) {
           <img src={img} className="object-cover rounded-sm" />
           <Tag
             title={tag}
-            classname={`absolute bottom-5 left-5 text-center lg:text-2xl md:text-xl text-sm bg-[${colorhex}]`}
+            classname={`absolute bottom-5 left-5 text-center lg:text-2xl md:text-xl text-sm`}
+            style={{ backgroundColor: colorhex }}
           />
         </div>
         <div className="flex flex-col lg:text-2xl md:text-xl text-sm">

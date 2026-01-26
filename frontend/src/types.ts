@@ -21,6 +21,7 @@ export type Ruangan = {
   lantai: number;
   fakultas_id?: number | null;
   nama_fakultas?: string;
+  antrian_peminjaman?: number;
 };
 
 // type untuk component tag
@@ -28,6 +29,7 @@ export type TagProps = {
   title: string;
   classname?: string;
   key?: string;
+  style?: React.CSSProperties;
 };
 
 // type untuk component BuildingList

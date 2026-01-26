@@ -28,6 +28,7 @@ const Home: React.FC = () => {
   }
 
   const { isAuthenticated, user } = authContext;
+  const isPrivileged = user?.role === "ADMIN" || user?.role === "SUPERADMIN";
 
   const [fakultas, setFakultas] = useState<Fakultas[]>([]);
   const [ruangan, setRuangan] = useState<Ruangan[]>([]);
@@ -141,16 +142,18 @@ const Home: React.FC = () => {
       return;
     }
 
-    const selectedFakultasObj = fakultas.find(
-      (f) => f.nama_fakultas === selectedFakultas,
-    );
+    const selectedFakultasObj = isPrivileged
+      ? fakultas.find((f) => f.nama_fakultas === selectedFakultas)
+      : null;
 
     try {
       const response = await api.get("/api/ruangan-tersedia", {
         params: {
           waktu_mulai: startDateTime.toISOString(),
           waktu_selesai: endDateTime.toISOString(),
-          fakultas_id: selectedFakultasObj?.id_fakultas,
+          ...(selectedFakultasObj && {
+            fakultas_id: selectedFakultasObj.id_fakultas,
+          }),
         },
       });
 
@@ -210,17 +213,6 @@ const Home: React.FC = () => {
 
     fetchRuangan();
   }, [isAuthenticated]);
-
-  // useEffect(() => {
-  //   try {
-  //     const ruanganId = Number(ruangan.id_ruangan);
-  //     if (!ruanganId) {
-
-  //     }
-  //   } catch (err) {
-
-  //   }
-  // },[ruangan])
 
   const placeholderImg = assets.fiklab301;
   const mobileBatchSize = 6;
@@ -312,10 +304,12 @@ const Home: React.FC = () => {
     <div className="w-full h-full mx-auto bg-gray-100">
       <Caraousal slides={slides} />
       <div className="pt-5" />
-      <BuildingList
-        building={fakultas}
-        onFakultasChange={setSelectedFakultas}
-      />
+      {isPrivileged && (
+        <BuildingList
+          building={fakultas}
+          onFakultasChange={setSelectedFakultas}
+        />
+      )}
       <div className="lg:py-10 md:py-7 py-5">
         <form
           name="search-room-filter"
@@ -374,7 +368,7 @@ const Home: React.FC = () => {
                 title={item.nama_ruangan}
                 lokasi={`Gedung ${item.gedung}`}
                 lantai={item.lantai}
-                antrianPinjaman={0}
+                antrianPinjaman={item.antrian_peminjaman ?? 0}
                 key={`room-${item.id_ruangan}`}
               />
             );

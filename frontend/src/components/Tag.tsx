@@ -1,7 +1,7 @@
 import { cn } from "../lib/utils";
 import type { TagProps } from "../types";
 
-function Tag({ title, classname, key }: TagProps) {
+function Tag({ title, classname, key, style }: TagProps) {
   return (
     <div
       className={cn(
@@ -9,6 +9,7 @@ function Tag({ title, classname, key }: TagProps) {
         classname,
       )}
       key={key}
+      style={style}
     >
       {title}
     </div>

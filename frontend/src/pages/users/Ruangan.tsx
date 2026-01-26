@@ -55,11 +55,18 @@ function Ruangan() {
     .split(/\s+/)
     .map((token) => token.trim())
     .filter(Boolean);
+  const selectedFakultasId = useMemo(() => {
+    if (!selectedFakultas) return null;
+    const match = fakultas.find(
+      (item) => item.nama_fakultas === selectedFakultas,
+    );
+    return match?.id_fakultas ?? null;
+  }, [fakultas, selectedFakultas]);
   const filteredRuangan = useMemo(() => {
     return ruangan
       .filter((item) => {
-        if (!selectedFakultas) return true;
-        return item.gedung === selectedFakultas;
+        if (!selectedFakultasId) return true;
+        return item.fakultas_id === selectedFakultasId;
       })
       .filter((item) => {
         if (!ruanganSearchTerm) return true;
@@ -82,7 +89,7 @@ function Ruangan() {
             haystack.includes(token) || compactHaystack.includes(token),
         );
       });
-  }, [ruangan, ruanganSearchTerm, selectedFakultas, tokens]);
+  }, [ruangan, ruanganSearchTerm, selectedFakultasId, tokens]);
 
   const totalItems = filteredRuangan.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
@@ -150,6 +157,7 @@ function Ruangan() {
       >
         {paginatedRuangan.map((item) => (
           <RoomCard
+            title={item.nama_ruangan}
             id={item.id_ruangan}
             img={placeholderImg}
             tag={item.nama_ruangan}
