@@ -140,12 +140,26 @@ model ruangan {
   updatedAt           DateTime           @default(now()) @updatedAt
   jadwalkuliah        jadwalkuliah[]
   peminjaman          peminjaman[]
+  isActive            Boolean            @default(true)
+
   fakultas            fakultas?          @relation(fields: [fakultas_id], references: [id_fakultas])
   unituniversitas     unituniversitas?   @relation(fields: [unit_universitas_id], references: [id_unit_univesitas])
   ruanganfasilitas    ruanganfasilitas[]
+  maintenancelog     maintenancelog[]
 
   @@index([fakultas_id], map: "Ruangan_fakultas_id_fkey")
   @@index([unit_universitas_id], map: "Ruangan_unit_universitas_id_fkey")
+}
+
+model maintenancelog {
+  id              Int      @id @default(autoincrement())
+  id_ruangan      Int
+  deskripsi       String
+  waktu_mulai     DateTime
+  waktu_selesai   DateTime
+  teknisi         String?
+
+  ruangan         ruangan  @relation(fields: [id_ruangan], references: [id_ruangan])
 }
 
 model ruanganfasilitas {

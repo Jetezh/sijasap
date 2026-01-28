@@ -5,7 +5,7 @@ import { StatusPeminjaman } from "../generated/prisma";
 
 const getUserScopeFilter = (req: Request) => {
   const role = req.user?.role;
-  if (role === "SUPERADMIN" || role === "ADMIN") {
+  if (role === "SUPERADMIN") {
     return {};
   }
 
@@ -707,6 +707,37 @@ export const getPeminjamanByRuangan = async (req: Request, res: Response) => {
       success: true,
       message: "Peminjaman berhasil ditemukan.",
       data: peminjaman,
+    });
+  } catch (err) {
+    console.log("Error ", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const getRuanganMaintenance = async (req: Request, res: Response) => {
+  try {
+    const maintenance = await prisma.maintenancelog.findMany({
+      select: {
+        id: true,
+        id_ruangan: true,
+        deskripsi: true,
+        waktu_mulai: true,
+        waktu_selesai: true,
+        teknisi: true,
+        ruangan: {
+          select: {
+            nama_ruangan: true,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Maintenance berhasil ditemukan.",
+      data: maintenance,
     });
   } catch (err) {
     console.log("Error ", err);

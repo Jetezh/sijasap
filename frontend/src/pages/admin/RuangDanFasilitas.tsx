@@ -21,6 +21,7 @@ import type {
   RuanganProps,
   RuanganFasilitasType,
   FasilitasItem,
+  MaintenanceProps,
 } from "../../types";
 
 function RuangDanFasilitas() {
@@ -39,6 +40,7 @@ function RuangDanFasilitas() {
   const [lastPage, setLastPage] = useState(1);
   const [ruanganSearch, setRuanganSearch] = useState("");
   const [fasilitasSearch, setFasilitasSearch] = useState("");
+  const [maintenance, setMaintenance] = useState<MaintenanceProps[]>([]);
 
   const pageSize = 4;
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -311,6 +313,24 @@ function RuangDanFasilitas() {
     };
   }, [ruangan, ruanganSearchTerm]);
 
+  useEffect(() => {
+    const fetchRuanganMaintenance = async () => {
+      try {
+        const response = await api.get("/api/ruangan-maintenance");
+
+        if (response.data?.success && response.data?.data) {
+          setMaintenance(response.data.data);
+        } else {
+          throw new Error("Invalid response format");
+        }
+      } catch (err) {
+        console.error("Error fetching fasilitas:", err);
+      }
+    };
+
+    fetchRuanganMaintenance();
+  }, []);
+
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setRuanganSearch(event.target.value);
     setCurrentPage(1);
@@ -359,7 +379,7 @@ function RuangDanFasilitas() {
               loop
               autoplay
             />
-            <div className="font-bold text-[#000000]">{0}</div>
+            <div className="font-bold text-[#000000]">{maintenance.length}</div>
             <p className="lg:text-2xl text-gray-400">Maintenance</p>
           </Container>
         </div>

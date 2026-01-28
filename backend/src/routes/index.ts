@@ -13,6 +13,7 @@ import {
   CancelPeminjamanController,
   AvailableRoomsController,
   getPeminjamanByRuangan,
+  getRuanganMaintenance,
 } from "../controllers/RuangFasilitasController";
 import { FakultasController } from "../controllers/FakultasController";
 
@@ -57,5 +58,7 @@ router.patch(
 );
 
 router.get("/peminjaman/:id_ruangan", verifyToken, getPeminjamanByRuangan);
+
+router.get("/ruangan-maintenance", verifyToken, getRuanganMaintenance);
 
 export default router;

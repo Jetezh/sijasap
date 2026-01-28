@@ -190,3 +190,16 @@ export type PeminjamanByRuanganProps = {
   status_peminjaman: string;
   nama_peminjam: string;
 };
+
+// type untuk maintenance
+export type MaintenanceProps = {
+  id: number;
+  id_ruangan: number;
+  deksripsi: string;
+  waktu_mulai: string;
+  waktu_selesai: string;
+  teknisi?: string;
+  ruangan: {
+    nama_ruangan?: string;
+  };
+};
