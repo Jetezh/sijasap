@@ -18,10 +18,11 @@ import FasilitasCard from "../../components/FasilitasCard";
 import RoomCardAdmin from "../../components/RoomCardAdmin";
 import Pagination from "../../components/Pagination";
 import type {
-  RuanganProps,
+  Ruangan,
   RuanganFasilitasType,
   FasilitasItem,
   MaintenanceProps,
+  PeminjamanTerpakaiProps,
 } from "../../types";
 
 function RuangDanFasilitas() {
@@ -34,8 +35,11 @@ function RuangDanFasilitas() {
   const { isAuthenticated } = authContext;
 
   // state management
-  const [ruangan, setRuangan] = useState<RuanganProps[]>([]);
+  const [ruangan, setRuangan] = useState<Ruangan[]>([]);
   const [fasilitas, setFasilitas] = useState<FasilitasItem[]>([]);
+  const [peminjamanTerpakai, setPeminjamanTerpakai] = useState<
+    PeminjamanTerpakaiProps[]
+  >([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [ruanganSearch, setRuanganSearch] = useState("");
@@ -72,6 +76,22 @@ function RuangDanFasilitas() {
     };
 
     fetchRuangan();
+
+    const fetchDataPeminjamanTerpakai = async () => {
+      try {
+        const response = await api.get("/api/peminjaman-terpakai");
+
+        if (response.data?.success && response.data?.peminjaman) {
+          setPeminjamanTerpakai(response.data.peminjaman);
+        } else {
+          throw new Error("Invalid response format");
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    };
+
+    fetchDataPeminjamanTerpakai();
 
     const fetchDataFasilitas = async () => {
       try {
@@ -335,6 +355,11 @@ function RuangDanFasilitas() {
     setRuanganSearch(event.target.value);
     setCurrentPage(1);
   };
+
+  // TODO add function for ruangan terpakai dan tersedia
+  // const totalPeminjamanTerpakai = useMemo(() => {
+  //   if (ruangan.isActive);
+  // }, [peminjamanTerpakai]);
 
   return (
     <div className="flex flex-col gap-15 px-15 py-15">

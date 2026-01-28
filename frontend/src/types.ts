@@ -22,6 +22,7 @@ export type Ruangan = {
   fakultas_id?: number | null;
   nama_fakultas?: string;
   antrian_peminjaman?: number;
+  isActive?: boolean;
 };
 
 // type untuk component tag
@@ -202,4 +203,13 @@ export type MaintenanceProps = {
   ruangan: {
     nama_ruangan?: string;
   };
+};
+
+export type PeminjamanTerpakaiProps = {
+  id_peminjaman: number;
+  id_ruangan: number;
+  waktu_mulai: string;
+  waktu_selesai: string;
+  status_peminjaman: string;
+  nama_peminjam: string;
 };

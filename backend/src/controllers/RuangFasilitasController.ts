@@ -716,6 +716,30 @@ export const getPeminjamanByRuangan = async (req: Request, res: Response) => {
   }
 };
 
+export const getPeminjamanTerpakai = async (req: Request, res: Response) => {
+  try {
+    const peminjaman = await prisma.peminjaman.findMany({
+      where: {
+        status_peminjaman: {
+          in: [StatusPeminjaman.DITERIMA, StatusPeminjaman.DIPROSES],
+        },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Peminjaman berhasil ditemukan.",
+      data: peminjaman,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
 export const getRuanganMaintenance = async (req: Request, res: Response) => {
   try {
     const maintenance = await prisma.maintenancelog.findMany({
