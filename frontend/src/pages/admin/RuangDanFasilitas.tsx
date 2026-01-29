@@ -19,10 +19,9 @@ import RoomCardAdmin from "../../components/RoomCardAdmin";
 import Pagination from "../../components/Pagination";
 import type {
   Ruangan,
+  RuanganProps,
   RuanganFasilitasType,
   FasilitasItem,
-  MaintenanceProps,
-  PeminjamanTerpakaiProps,
 } from "../../types";
 
 function RuangDanFasilitas() {
@@ -37,14 +36,16 @@ function RuangDanFasilitas() {
   // state management
   const [ruangan, setRuangan] = useState<Ruangan[]>([]);
   const [fasilitas, setFasilitas] = useState<FasilitasItem[]>([]);
-  const [peminjamanTerpakai, setPeminjamanTerpakai] = useState<
-    PeminjamanTerpakaiProps[]
-  >([]);
+  const [statistics, setStatistics] = useState({
+    total: 0,
+    tersedia: 0,
+    terpakai: 0,
+    maintenance: 0,
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [ruanganSearch, setRuanganSearch] = useState("");
   const [fasilitasSearch, setFasilitasSearch] = useState("");
-  const [maintenance, setMaintenance] = useState<MaintenanceProps[]>([]);
 
   const pageSize = 4;
   const gridRef = useRef<HTMLDivElement | null>(null);
@@ -77,21 +78,21 @@ function RuangDanFasilitas() {
 
     fetchRuangan();
 
-    const fetchDataPeminjamanTerpakai = async () => {
+    const fetchStatistics = async () => {
       try {
-        const response = await api.get("/api/peminjaman-terpakai");
+        const response = await api.get("/api/ruangan/statistics");
 
-        if (response.data?.success && response.data?.peminjaman) {
-          setPeminjamanTerpakai(response.data.peminjaman);
+        if (response.data?.success && response.data?.data) {
+          setStatistics(response.data.data);
         } else {
           throw new Error("Invalid response format");
         }
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        console.error("Error fetching statistics:", err);
       }
     };
 
-    fetchDataPeminjamanTerpakai();
+    fetchStatistics();
 
     const fetchDataFasilitas = async () => {
       try {
@@ -108,6 +109,10 @@ function RuangDanFasilitas() {
     };
 
     fetchDataFasilitas();
+
+    // Refresh statistics every 30 seconds
+    const intervalId = setInterval(fetchStatistics, 30000);
+    return () => clearInterval(intervalId);
   }, [isAuthenticated]);
 
   const fasilitasByRuangan = useMemo(() => {
@@ -333,33 +338,10 @@ function RuangDanFasilitas() {
     };
   }, [ruangan, ruanganSearchTerm]);
 
-  useEffect(() => {
-    const fetchRuanganMaintenance = async () => {
-      try {
-        const response = await api.get("/api/ruangan-maintenance");
-
-        if (response.data?.success && response.data?.data) {
-          setMaintenance(response.data.data);
-        } else {
-          throw new Error("Invalid response format");
-        }
-      } catch (err) {
-        console.error("Error fetching fasilitas:", err);
-      }
-    };
-
-    fetchRuanganMaintenance();
-  }, []);
-
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setRuanganSearch(event.target.value);
     setCurrentPage(1);
   };
-
-  // TODO add function for ruangan terpakai dan tersedia
-  // const totalPeminjamanTerpakai = useMemo(() => {
-  //   if (ruangan.isActive);
-  // }, [peminjamanTerpakai]);
 
   return (
     <div className="flex flex-col gap-15 px-15 py-15">
@@ -374,7 +356,7 @@ function RuangDanFasilitas() {
               icon={faBuilding}
               className="text-(--primary-color) lg:text-5xl"
             />
-            <div className="font-bold">{ruangan.length}</div>
+            <div className="font-bold">{statistics.total}</div>
             <p className="lg:text-2xl text-gray-400">Total Ruang</p>
           </Container>
           <Container className="flex-1 justify-center items-center lg:text-5xl font-medium gap-5 flex py-10">
@@ -384,7 +366,7 @@ function RuangDanFasilitas() {
               loop
               autoplay
             />
-            <div className="font-bold text-[#41A67E]">{0}</div>
+            <div className="font-bold text-[#41A67E]">{statistics.tersedia}</div>
             <p className="lg:text-2xl text-gray-400">Tersedia</p>
           </Container>
           <Container className="flex-1 justify-center items-center lg:text-5xl font-medium gap-5 flex py-10">
@@ -394,7 +376,7 @@ function RuangDanFasilitas() {
               loop
               autoplay
             />
-            <div className="font-bold text-[#FF6C0C]">{0}</div>
+            <div className="font-bold text-[#FF6C0C]">{statistics.terpakai}</div>
             <p className="lg:text-2xl text-gray-400">Terpakai</p>
           </Container>
           <Container className="flex-1 justify-center items-center lg:text-5xl font-medium gap-5 flex py-10">
@@ -404,7 +386,7 @@ function RuangDanFasilitas() {
               loop
               autoplay
             />
-            <div className="font-bold text-[#000000]">{maintenance.length}</div>
+            <div className="font-bold text-[#000000]">{statistics.maintenance}</div>
             <p className="lg:text-2xl text-gray-400">Maintenance</p>
           </Container>
         </div>

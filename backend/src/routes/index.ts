@@ -13,8 +13,8 @@ import {
   CancelPeminjamanController,
   AvailableRoomsController,
   getPeminjamanByRuangan,
-  getRuanganMaintenance,
   getPeminjamanTerpakai,
+  getRuanganStatistics,
 } from "../controllers/RuangFasilitasController";
 import { FakultasController } from "../controllers/FakultasController";
 
@@ -28,6 +28,9 @@ router.get("/profile", verifyToken, ProfileController);
 
 // route untuk fetch data ruangan
 router.get("/ruangan", verifyToken, RuangController);
+
+// route untuk fetch statistik ruangan (harus sebelum /ruangan/:id_ruangan)
+router.get("/ruangan/statistics", verifyToken, getRuanganStatistics);
 
 // route untuk search ruangan
 router.get("/ruangan-tersedia", verifyToken, AvailableRoomsController);
@@ -61,7 +64,5 @@ router.patch(
 router.get("/peminjaman/:id_ruangan", verifyToken, getPeminjamanByRuangan);
 
 router.get("/peminjaman-terpakai", verifyToken, getPeminjamanTerpakai);
-
-router.get("/ruangan-maintenance", verifyToken, getRuanganMaintenance);
 
 export default router;

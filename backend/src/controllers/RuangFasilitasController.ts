@@ -740,28 +740,86 @@ export const getPeminjamanTerpakai = async (req: Request, res: Response) => {
   }
 };
 
-export const getRuanganMaintenance = async (req: Request, res: Response) => {
+export const getRuanganStatistics = async (req: Request, res: Response) => {
   try {
-    const maintenance = await prisma.maintenancelog.findMany({
+    if (!req.user?.id) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const scopeFilter = getUserScopeFilter(req);
+    if (!scopeFilter) {
+      return res.status(403).json({
+        success: false,
+        message: "Akses ruangan tidak diizinkan.",
+      });
+    }
+
+    const now = new Date();
+
+    // Get all ruangan in scope
+    const allRuangan = await prisma.ruangan.findMany({
+      where: {
+        ...scopeFilter,
+        isActive: true,
+      },
       select: {
-        id: true,
         id_ruangan: true,
-        deskripsi: true,
-        waktu_mulai: true,
-        waktu_selesai: true,
-        teknisi: true,
-        ruangan: {
-          select: {
-            nama_ruangan: true,
-          },
-        },
       },
     });
 
+    const totalRuanganAktif = allRuangan.length;
+    const ruanganIds = allRuangan.map((r) => r.id_ruangan);
+
+    // Get ruangan yang sedang maintenance (overlap dengan sekarang)
+    const ruanganMaintenance = await prisma.maintenancelog.findMany({
+      where: {
+        id_ruangan: { in: ruanganIds },
+        waktu_mulai: { lte: now },
+        waktu_selesai: { gte: now },
+      },
+      select: {
+        id_ruangan: true,
+      },
+    });
+
+    const maintenanceIds = new Set(
+      ruanganMaintenance.map((m) => m.id_ruangan),
+    );
+
+    // Get ruangan yang sedang terpakai (ada peminjaman DIPROSES atau DITERIMA yang overlap dengan sekarang)
+    const ruanganTerpakai = await prisma.peminjaman.findMany({
+      where: {
+        id_ruangan: { in: ruanganIds },
+        status_peminjaman: {
+          in: [StatusPeminjaman.DIPROSES, StatusPeminjaman.DITERIMA],
+        },
+      },
+      select: {
+        id_ruangan: true,
+      },
+      distinct: ["id_ruangan"],
+    });
+
+    const terpakaiIds = new Set(
+      ruanganTerpakai.map((p) => p.id_ruangan),
+    );
+
+    // Hitung ruangan tersedia: aktif, tidak maintenance, tidak terpakai
+    const tersedia = ruanganIds.filter(
+      (id) => !maintenanceIds.has(id) && !terpakaiIds.has(id),
+    ).length;
+
+    const statistics = {
+      total: totalRuanganAktif,
+      tersedia: tersedia,
+      terpakai: terpakaiIds.size,
+      maintenance: maintenanceIds.size,
+    };
+
     return res.status(200).json({
       success: true,
-      message: "Maintenance berhasil ditemukan.",
-      data: maintenance,
+      message: "Statistik ruangan berhasil ditemukan.",
+      data: statistics,
     });
   } catch (err) {
     console.log("Error ", err);
