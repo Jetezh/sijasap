@@ -25,7 +25,7 @@ function SidebarItem(props: SidebarItemProps) {
         end
         className={({ isActive }) =>
           cn(
-            "flex items-center mb-2 px-5 rounded hover:bg-green-100 hover:text-black cursor-pointer duration-300",
+            "flex items-center mb-2 px-5 rounded hover:bg-green-100 hover:text-black cursor-pointer duration-200",
             isActive && "bg-[var(--primary-color)] text-white",
             className
           )

@@ -36,7 +36,7 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-row bg-gray-100">
       <LeftSidebar
-        className={` min-h-screen ${sidebarCollapsed ? "min-w-28" : "min-w-100"} duration-300`}
+        className={` min-h-screen ${sidebarCollapsed ? "min-w-28" : "min-w-120"} duration-300`}
       >
         <div className="fixed flex flex-col justify-between h-screen">
           <div>
@@ -50,7 +50,7 @@ const AdminDashboard: React.FC = () => {
               />
               {!sidebarCollapsed && (
                 <span>
-                  {!user?.nama_fakultas ? "Fakultas UPNVJ" : user.nama_fakultas}
+                  {!user?.nama_fakultas ? "Fakultas UPNVJ" : `Fakultas ${user.nama_fakultas}`}
                 </span>
               )}
             </div>

@@ -3,6 +3,7 @@ import Button from "../../components/Button";
 import Container from "../../components/Container";
 import { faChartColumn } from "@fortawesome/free-solid-svg-icons";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import RequestCard from "../../components/RequestCard";
 
 const dataWeek = [
   { hari: 'Monday', value: 4000 },
@@ -33,8 +34,8 @@ function AdminHome() {
       <section className="">
         <h1 className="font-bold lg:text-3xl">Permintaan Peminjaman</h1>
         <Container>
-          <div>
-            
+          <div className="grid grid-cols-2 gap-5">
+            <RequestCard />
           </div>
           <Button title="Tampilkan Semua" classname="lg:text-2xl md:text-2xl lg:py-3 w-70 mx-auto" />
         </Container>
