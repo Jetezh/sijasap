@@ -331,18 +331,20 @@ function ReservingForm() {
                 </p>
                 <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-center">
                   <Button
-                    title="OK"
                     classname="px-6 py-2"
                     onClick={() => {
                       setSuccessMessage(null);
                       setFormData(initialFormData);
                     }}
-                  />
+                  >
+                    OK
+                  </Button>
                   <Button
-                    title="Kembali"
                     classname="px-6 py-2"
                     onClick={() => navigate(-1)}
-                  />
+                  >
+                    Kembali
+                  </Button>
                 </div>
               </Container>
             )}
@@ -537,9 +539,10 @@ function ReservingForm() {
                 </div>
                 <Button
                   type="submit"
-                  title={isSubmitting ? "Mengirim..." : "Submit"}
                   classname="lg:text-2xl md:text-2xl w-full py-3"
-                />
+                >
+                  {isSubmitting ? "Mengirim..." : "Submit"}
+                </Button>
               </form>
             )}
           </Container>
@@ -579,18 +582,20 @@ function ReservingForm() {
               </p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <Button
-                  title="OK"
                   classname="px-6 py-2"
                   onClick={() => {
                     setSuccessMessage(null);
                     setFormData(initialFormData);
                   }}
-                />
+                >
+                  OK
+                </Button>
                 <Button
-                  title="Kembali"
                   classname="px-6 py-2"
                   onClick={() => navigate(-1)}
-                />
+                >
+                  Kembali
+                </Button>
               </div>
             </Container>
           )}
@@ -802,9 +807,10 @@ function ReservingForm() {
               </div>
               <Button
                 type="submit"
-                title={isSubmitting ? "Mengirim..." : "Submit"}
                 classname="lg:text-2xl md:text-2xl w-full py-3"
-              />
+              >
+                {isSubmitting ? "Mengirim..." : "Submit"}
+              </Button>
             </form>
           )}
         </Container>

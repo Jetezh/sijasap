@@ -41,7 +41,7 @@ export type BuildingListProps = {
 
 // type untuk component Button
 export type ButtonProps = {
-  title: string;
+  children: React.ReactNode;
   classname?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   type?: "button" | "submit" | "reset";

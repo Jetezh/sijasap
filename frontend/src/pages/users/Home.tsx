@@ -345,10 +345,11 @@ const Home: React.FC = () => {
             className="text-left lg:p-0 md:p-1.5 p-1 lg:basis-2/14 md:basis-1/3 basis-1/2"
           />
           <Button
-            title="Check"
             classname="lg:basis-3/14 md:basis-1/3 basis-full lg:text-3xl md:text-2xl text-xl lg:h-34 md:h-25 md:mt-4 lg:mt-0 mt-2 lg:mx-0 md:mx-0 mx-1 py-4"
             onClick={handleFilterCheck}
-          />
+          >
+            Check
+          </Button>
         </form>
       </div>
       <div className="lg:mt-15 md:mt-10 mt-5 lg:px-9 md:px-6 px-5 flex flex-col gap-10">

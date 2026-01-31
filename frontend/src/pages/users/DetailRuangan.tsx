@@ -160,9 +160,10 @@ function DetailRuangan() {
           state={{ ruangan }}
         >
           <Button
-            title="Pinjam Ruangan"
             classname="absolute bottom-4 right-4 lg:py-4 lg:px-10 md:py-3 md:px-7 py-2 px-5"
-          />
+          >
+            Pinjam Ruangan
+          </Button>
         </Link>
       </section>
       <section className="flex lg:flex-row md:flex-row flex-col lg:gap-10 md:gap-7 gap-5 lg:px-5 md:px-2 px-4">

@@ -33,11 +33,11 @@ function AdminHome() {
     <div className="flex flex-col gap-5 px-5 py-5">
       <section className="">
         <h1 className="font-bold lg:text-3xl">Permintaan Peminjaman</h1>
-        <Container>
+        <Container className="flex flex-col gap-5">
           <div className="grid grid-cols-2 gap-5">
             <RequestCard />
           </div>
-          <Button title="Tampilkan Semua" classname="lg:text-2xl md:text-2xl lg:py-3 w-70 mx-auto" />
+          <Button classname="lg:text-2xl md:text-2xl lg:py-3 w-70 mx-auto">Tampilkan Semua</Button>
         </Container>
       </section>
       <section className="flex flex-row gap-5">
@@ -48,8 +48,8 @@ function AdminHome() {
                 <h1 className="font-medium">Frekuensi Peminjaman</h1>
               </div>
               <div className="flex flex-row flex-start gap-5">
-                <Button title="Minggu ini" classname="lg:text-xl md:text-lg px-8 py-2" />
-                <Button title="Bulan" classname="lg:text-xl md:text-lg px-8" />
+                <Button classname="lg:text-xl md:text-lg px-8 py-2">Minggu ini</Button>
+                <Button classname="lg:text-xl md:text-lg px-8" >Button</Button>
               </div>
               <div className="h-80 bg-gray-200 rounded-md justify-center items-end flex">
                 <ResponsiveContainer width="90%" height="90%">

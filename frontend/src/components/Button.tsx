@@ -2,7 +2,7 @@ import { cn } from "../lib/utils";
 import type { ButtonProps } from "../types";
 
 function Button(props: ButtonProps) {
-  const { title, classname, onClick, type } = props;
+  const { children, classname, onClick, type } = props;
 
   return (
     <button
@@ -13,7 +13,7 @@ function Button(props: ButtonProps) {
         classname,
       )}
     >
-      {title}
+      {children}
     </button>
   );
 }
